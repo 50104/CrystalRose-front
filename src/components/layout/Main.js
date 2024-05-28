@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Test from '../Test';
+import Login from '../InputBox/Login';
 
 function Main() {
+
   return (
     <div>
-      <Test />
+      {/* <Test /> */}
+      <Login/>
     </div>
   );
 }
