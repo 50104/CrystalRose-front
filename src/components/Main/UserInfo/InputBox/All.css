@@ -8,7 +8,7 @@
     justify-content: center;
     align-items: center;
 
-    background-color: rgba(181, 150, 255, 0.7);
+    background-color: rgb(232, 222, 255);
 
     color: rgb(0, 0, 0);
 
@@ -19,7 +19,7 @@
     cursor: pointer;
 }
 
-.primary-button-lg-disable {
+.disable-button-lg {
     border-radius: 6px;
     padding: 8px 24px;
 
@@ -41,10 +41,14 @@
 }
   
 .primary-button-lg:hover {
-    opacity: 0.8;
+    background-color: rgb(212, 194, 255);
 }
 
-.test-link-lg {
+.full-width {
+    width: 100%;
+}
+
+.text-link-lg {
     box-sizing: border-box;
 
     display: inline-flex;
@@ -60,7 +64,7 @@
     cursor: pointer;
 }
 
-.test-link-lg:hover {
+.text-link-lg:hover {
     color: rgb(62, 62, 62);
 }
 
@@ -69,23 +73,37 @@
 }
 
 .kakao-sign-in-button {
-    width: 80px;
+    width: 50px;
     height: 50px;
 
+    border-radius: 10px;
     background-position: 50% 50%;
     background-size: 100% 100%;
-    background-image: url(../../../assets/images/kakao-sign-in.png);
+    background-image: url(../../../../assets/images/kakao-sign-in.png);
 
     cursor: pointer;
 }
 
 .naver-sign-in-button {
-    width: 80px;
+    width: 50px;
     height: 50px;
 
+    border-radius: 10px;
     background-position: 50% 50%;
     background-size: 100% 100%;
-    background-image: url(../../../assets/images/naver-sign-in.png);
+    background-image: url(../../../../assets/images/naver-sign-in.png);
+
+    cursor: pointer;
+}
+
+.google-sign-in-button {
+    width: 50px;
+    height: 50px;
+
+    border-radius: 10px;
+    background-position: 50% 50%;
+    background-size: 100% 100%;
+    background-image: url(../../../../assets/images/google-sign-in.png);
 
     cursor: pointer;
 }

@@ -1,14 +1,21 @@
 import React, { forwardRef } from 'react';
-import './style.css'
+import './InputBox.css'
+import './All.css'
 
 const InputBox = forwardRef((props, ref) => {
     
     const { title, placeholder, type, value, message, isErrorMessage, 
     buttonTitle, onChange, onKeyDown, onButtonClick } = props;
-  
+
     const buttonClass = value === ''?'input-box-button-disable':'input-box-button';
     const messageClass = isErrorMessage ? 'input-box-message-error':'input-box-message';
-  
+
+    // event handler : Key 처리 //
+    const onKeyDownHandler = (event) => {
+        if(!onKeyDown) return;
+        onKeyDown(event);
+    };
+
     return (
         <div className='input-box'>
             <div className='input-box-title'>{title}</div>
@@ -18,7 +25,6 @@ const InputBox = forwardRef((props, ref) => {
                     {buttonTitle !== undefined && onButtonClick !== undefined && <div className={buttonClass} onClick={onButtonClick}>{buttonTitle}</div>}
                 </div>
                 {message !== undefined && <div className={messageClass}>{message}</div>}
-                {/* <div className='input-box-message-error'>{'사용 불가능한 아이디 입니다'}</div> */}
             </div>
         </div>
     );
