@@ -11,10 +11,10 @@ import ReviewWrite from '../components/Main/Review/ReviewWrite';
 import RoseInfo from '../components/Main/Review/RoseInfo';
 
 
-// import Login from '../components/Main/UserInfo/Login';
 import Login from '../components/Main/UserInfo/InputBox/Login';
 import SignUp from '../components/Main/UserInfo/Authentication/SignUp/SignUp';
 import SignIn from '../components/Main/UserInfo/Authentication/SignIn/SignIn';
+import OAuth from '../components/Main/UserInfo/Authentication/OAuth/OAuth';
 
 function Main() {
   return (
@@ -31,15 +31,9 @@ function Main() {
 
 
         {/* 로그인,회원가입 */}
-        <Route path="/auth">
-          <Route path="sign-up" element={<SignUp />} />
-          <Route path="sign-in" element={<SignIn />} />
-        </Route>
-
-        {/* <Route path="/login" element={<Login />} /> */}
         <Route path="/login" element={<SignIn />} />
-        {/* <Login/> */}
         <Route path="/join" element={<SignUp />} />
+        <Route path="oauth-response/:token/:expirationTime" element={<OAuth />} />
 
 
 
