@@ -1,107 +1,113 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import './SignIn.css';
 import InputBox from '../../InputBox/InputBox';
-import { useNavigate } from 'react-router-dom';
-import { SNS_SIGN_IN_URL, signInRequest } from '../index';
-import { useCookies } from 'react-cookie';
-import ResponseCode from '../../types/enums/ResponseCode';
+import axios from 'axios';
 
 function SignIn() {
 
-    // 레퍼런스 객체
-    const userIdRef = useRef(null);
-    const userPwdRef = useRef(null);
-
-    const [cookie, setCookies] = useCookies();
-
-    // 상태값
     const [userId, setUserId] = useState('');
     const [userPwd, setUserPwd] = useState('');
 
-    const [message, setMessage] = useState('');
+    const [userIdMessage, setUserIdMessage] = useState('');
+    const [userPwdMessage, setUserPwdMessage] = useState('');
 
-    // navigate // 
-    const navigate = useNavigate();
+    const [isUserIdError, setUserIdError] = useState(false);
+    const [isUserPwdError, setUserPwdError] = useState(false);
 
-    const signInResponse = (responseBody) => {
-        if(!responseBody) return;
-        
-        const { code } = responseBody;
-        if(code === ResponseCode.VALIDATION_FAIL) alert('아이디와 비밀번호를 입력하세요.');
-        if(code === ResponseCode.SIGN_IN_FAIL) setMessage('로그인 정보가 일치하지 않습니다.');
-        if(code === ResponseCode.DATABASE_ERROR) alert('데이터베이스 오류입니다.');
-        if(code !== ResponseCode.SUCCESS) return;
+    const userPwdPattern = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*]{8,13}$/; // '!@#$%^&*'
+    const userIdPattern = /^(?=.*[a-zA-Z])[-a-zA-Z0-9_.]{5,10}$/;
 
-        const { token, expirationTime } = responseBody;
-
-        const now = (new Date().getTime()) * 1000;
-        const expires = new Date(now + expirationTime);
-        setCookies('accessToken', token, { expires, path: '/' });
-        navigate('/');
-    };
-
-    // onChange
-    const onUserIdChangeHandler = (event) => {
-        const { value } = event.target;
+    // 아이디 입력 시 상태 업데이트 핸들러
+    const handleUserId = (e) => {
+        const { value } = e.target;
         setUserId(value);
-        setMessage('');
-    };
-    const onUserPwdChangeHandler = (event) => {
-        const { value } = event.target;
-        setUserPwd(value);
-        setMessage('');
-    };
-
-    const onSignUpButtonClickHandler = () => {
-        navigate('/auth/sign-up');
-    };
-
-    const onSignInButtonClickHandler = () => {
-        if(!userId || !userPwd) {
-        alert('아이디와 비밀번호 모두 입력해주세요.');
-        return;
+        setUserIdMessage('');
+        if (!userIdPattern.test(value)) {
+            setUserIdError(true);
+            setUserIdMessage('문자, 숫자 포함 5~10자리로 입력해주세요.');
+        } else {
+            setUserIdError(false);
+            setUserIdMessage('');
         }
-        const requestBody = { userId, userPwd };
-        signInRequest(requestBody).then(signInResponse);
-
-        console.log("로그인 성공");
-        window.location.href = '/';
     };
 
-    // OAuth 로그인 //
-    const onSnsSignInButtonClickHandler = (type) => {
-        window.location.href = SNS_SIGN_IN_URL(type);
+    // 비밀번호 입력 시 상태 업데이트 핸들러
+    const handleUserPwd = (e) => {
+        const { value } = e.target;
+        setUserPwd(value);
+        setUserPwdMessage('');
+        if(!userPwdPattern.test(value)) {
+            setUserPwdError(true);
+            setUserPwdMessage('영문, 숫자 포함 8자 이상으로 입력해주세요.');
+        } else{
+            setUserPwdError(false);
+        }
     };
 
     // key down
     const onUserIdKeyDownHandler = (event) => {
         if(event.key !== 'Enter') return;
-        if(!userPwdRef.current) return;
-        userPwdRef.current.focus();
     };
     const onUserPwdKeyDownHandler = (event) => {
         if(event.key !== 'Enter') return;
         onSignInButtonClickHandler();
     };
 
+    // OAuth
+    const onSnsSignInButtonClickHandler = (type) => {
+        window.location.href = `${process.env.REACT_APP_API_URL}/api/v1/auth/oauth2/${type}`;
+    };
+
     // 로그인 버튼
-    const signInButtonClass = userId && userPwd ?
-    'primary-button-lg' : 'disable-button-lg';
+    const signInButtonClass = userId && userPwd ? 'primary-button-lg' : 'disable-button-lg';
+
+    const onSignInButtonClickHandler = async (e) => {
+        e.preventDefault();
+        if(!userId || !userPwd) {
+            alert('아이디와 비밀번호 모두 입력해주세요.');
+            return;
+        }
+        try {
+            let formData= new FormData();
+            formData.append('userId', userId);
+            formData.append('userPwd',userPwd);
+            console.log('로그인:', userId, userPwd);
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, formData, {
+                withCredentials: true
+            });
+            const accessToken = response.headers['access'];
+            if (accessToken) {
+                localStorage.setItem('access', accessToken);
+                // alert("로그인 성공!");
+                window.location.href = '/';
+            } else {
+                alert("엑세스 토큰을 받아오지 못했습니다.");
+            }
+        } catch (error) {
+            if (error.response.status === 401) alert('아이디 혹은 비밀번호가 틀렸습니다.');
+            else alert('서버 오류')
+            console.error('로그인 오류:', error.response ? error.response.data : error.message);
+        }
+    };
 
     return (
         <div id='sign-in-wrapper'>
         <div className='sign-in-image'></div>
         <div className='sign-in-container'>
             <div className='sign-in-box'>
-            <div className='sign-in-title'>{'빛나는 크리스퇄'}</div>
+            <div className='sign-in-title'>{'CineBite 로그인'}</div>
             <div className='sign-in-content-box'>
                 <div className='sign-in-content-input-box'>
-                <InputBox ref={userIdRef} title='아이디' placeholder='아이디를 입력해주세요.' type='text' value={userId} onChange={onUserIdChangeHandler} onKeyDown={onUserIdKeyDownHandler} />
-                <InputBox ref={userPwdRef} title='비밀번호' placeholder='비밀번호를 입력해주세요.' type='password' value={userPwd} onChange={onUserPwdChangeHandler} isErrorMessage message={message} onKeyDown={onUserPwdKeyDownHandler}/>        
+                <InputBox title='아이디' id="userId" name="userId" autoComplete="userId" required placeholder='아이디를 입력해주세요.' type='text' value={userId} isErrorMessage={isUserIdError} message={userIdMessage} onChange={handleUserId} onKeyDown={onUserIdKeyDownHandler} />
+                <InputBox title='비밀번호' id="userPwd" name="userPwd" autoComplete="userPwd" required placeholder='비밀번호를 입력해주세요.' type='password' value={userPwd} onChange={handleUserPwd} onKeyDown={onUserPwdKeyDownHandler} isErrorMessage={isUserPwdError} message={userPwdMessage} />        
                 </div>
                 <div className='sign-in-content-button-box'>
                 <div className={`${signInButtonClass} full-width`}  onClick={onSignInButtonClickHandler}>로그인</div>
-                <div className='text-link-lg full-width' onClick={onSignUpButtonClickHandler} >{'회원가입'}</div>
+                <div class="link-container">
+                    <div className='text-link-lg'><a href="/find/id">아이디 찾기</a></div>
+                    <div className='text-link-lg'><a href="/find/pwd">비밀번호 찾기</a></div>
+                    <div className='text-link-lg'><a href="/join">회원가입</a></div>
+                </div>
                 </div>
                 <div className='sign-in-content-divider'></div>
                 <div className='sign-in-content-sns-sign-in-box'>
