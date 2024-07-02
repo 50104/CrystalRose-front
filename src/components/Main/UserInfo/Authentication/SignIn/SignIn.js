@@ -95,7 +95,7 @@ function SignIn() {
         <div className='sign-in-image'></div>
         <div className='sign-in-container'>
             <div className='sign-in-box'>
-            <div className='sign-in-title'>{'CineBite 로그인'}</div>
+            <div className='sign-in-title'>{'빛나는 크리스퇄 로그인'}</div>
             <div className='sign-in-content-box'>
                 <div className='sign-in-content-input-box'>
                 <InputBox title='아이디' id="userId" name="userId" autoComplete="userId" required placeholder='아이디를 입력해주세요.' type='text' value={userId} isErrorMessage={isUserIdError} message={userIdMessage} onChange={handleUserId} onKeyDown={onUserIdKeyDownHandler} />

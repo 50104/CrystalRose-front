@@ -11,6 +11,7 @@ import RoseInfo from '../components/Main/Review/RoseInfo';
 import SignUp from '../components/Main/UserInfo/Authentication/SignUp/SignUp';
 import SignIn from '../components/Main/UserInfo/Authentication/SignIn/SignIn';
 import MyPage from '../components/Main/MyPage/MyPage';
+import GetAccess from '../components/Main/MyPage/api/getAccess';
 
 
 function Main() {
@@ -30,6 +31,7 @@ function Main() {
         {/* 로그인,회원가입 */}
         <Route path="/login" element={<SignIn />} />
         <Route path="/join" element={<SignUp />} />
+        <Route path="/getAccess" element={<GetAccess />} />
 
         {/* 장미 검색 */}
         <Route path="/search" element={<Search />} />
@@ -43,6 +45,7 @@ function Main() {
         {/* 장미정보 및 리뷰 */}
         <Route path="/review/:roseId" element={<RoseInfo />} />
         <Route path="/review/write/:roseId" element={<ReviewWrite />} />
+
         {/* 404 페이지 */}
         <Route path="/*" element={<NotFound />} />
       </Routes>

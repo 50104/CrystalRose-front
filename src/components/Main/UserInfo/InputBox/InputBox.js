@@ -10,12 +10,6 @@ const InputBox = forwardRef((props, ref) => {
     const buttonClass = value === ''?'input-box-button-disable':'input-box-button';
     const messageClass = isErrorMessage ? 'input-box-message-error':'input-box-message';
 
-    // event handler : Key 처리 //
-    const onKeyDownHandler = (event) => {
-        if(!onKeyDown) return;
-        onKeyDown(event);
-    };
-
     return (
         <div className='input-box'>
             <div className='input-box-title'>{title}</div>
