@@ -1,9 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import ResponseCode from '../../types/enums/ResponseCode';
-import InputBox from '../../InputBox/InputBox';
-import './SignUp.css';
+import ResponseCode from '../../../utils/userInfo/ResponseCode';
+import '../../../styles/Main/UserInfo/InputBox.css';
+import '../../../styles/Main/UserInfo/Authentication/SignUp.css';
+import InputBox from './InputBox';
 
 function SignUp() {
 

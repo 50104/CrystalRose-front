@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
-import './InputBox.css'
-import './All.css'
+import '../../../styles/Main/UserInfo/InputBox.css';
+import '../../../styles/Main/UserInfo/All.css'
 
 const InputBox = forwardRef((props, ref) => {
     

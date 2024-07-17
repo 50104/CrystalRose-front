@@ -79,7 +79,7 @@
     border-radius: 10px;
     background-position: 50% 50%;
     background-size: 100% 100%;
-    background-image: url(../../../../assets/images/kakao-sign-in.png);
+    background-image: url(../../../../src/assets/images/kakao-sign-in.png);
 
     cursor: pointer;
 }
@@ -91,7 +91,7 @@
     border-radius: 10px;
     background-position: 50% 50%;
     background-size: 100% 100%;
-    background-image: url(../../../../assets/images/naver-sign-in.png);
+    background-image: url(../../../../src/assets/images/naver-sign-in.png);
 
     cursor: pointer;
 }
@@ -103,7 +103,7 @@
     border-radius: 10px;
     background-position: 50% 50%;
     background-size: 100% 100%;
-    background-image: url(../../../../assets/images/google-sign-in.png);
+    background-image: url(../../../../src/assets/images/google-sign-in.png);
 
     cursor: pointer;
 }

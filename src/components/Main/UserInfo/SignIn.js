@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import './SignIn.css';
-import InputBox from '../../InputBox/InputBox';
+import '../../../styles/Main/UserInfo/Authentication/SignIn.css';
+import '../../../styles/Main/UserInfo/InputBox.css';
 import axios from 'axios';
+import InputBox from './InputBox';
 
 function SignIn() {
 
