@@ -8,9 +8,11 @@ import Recommend from '../components/Main/Recommend/Recommend';
 import NotFound from '../components/Main/NotFound';
 import ReviewWrite from '../components/Main/Review/ReviewWrite';
 import RoseInfo from '../components/Main/Review/RoseInfo';
-import SignUp from '../components/Main/UserInfo/Authentication/SignUp/SignUp';
-import SignIn from '../components/Main/UserInfo/Authentication/SignIn/SignIn';
+import SignUp from '../components/Main/UserInfo/SignUp';
+import SignIn from '../components/Main/UserInfo/SignIn';
 import MyPage from '../components/Main/MyPage/MyPage';
+import FindId from '../components/Main/UserInfo/FindId';
+import FindPwd from '../components/Main/UserInfo/FindPwd';
 import GetAccess from '../components/Main/MyPage/api/getAccess';
 
 
@@ -32,6 +34,8 @@ function Main() {
         <Route path="/login" element={<SignIn />} />
         <Route path="/join" element={<SignUp />} />
         <Route path="/getAccess" element={<GetAccess />} />
+        <Route path="/find/id" element={<FindId />} />
+        <Route path="/find/pwd" element={<FindPwd />} />
 
         {/* 장미 검색 */}
         <Route path="/search" element={<Search />} />
