@@ -84,14 +84,15 @@ function SignUp() {
     const onUserPwdCheckChangeHandler = (event) => {
         const { value } = event.target;
         setUserPwdCheck(value);
-        if (!userPwdPattern.test(value)) {
-            setUserPwdError(true);
-            setUserPwdMessage('영문, 숫자 포함 8자 이상으로 입력해주세요.');
+        if (value !== userPwd) {
+            setUserPwdCheckError(true);
+            setUserPwdCheckMessage('비밀번호가 일치하지 않습니다.');
         } else {
-            setUserPwdError(false);
-            setUserPwdMessage('');
+            setUserPwdCheckError(false);
+            setUserPwdCheckMessage('');
         }
     };
+
 
     const onUserEmailChangeHandler = (event) => {
         const { value } = event.target;

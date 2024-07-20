@@ -14,6 +14,8 @@ import MyPage from '../components/Main/MyPage/MyPage';
 import FindId from '../components/Main/UserInfo/FindId';
 import FindPwd from '../components/Main/UserInfo/FindPwd';
 import GetAccess from '../components/Main/MyPage/api/getAccess';
+import CheckUserPwd from '../components/Main/MyPage/CheckUserPwd';
+import UserUpdate from '../components/Main/MyPage/UserUpdate';
 
 
 function Main() {
@@ -29,13 +31,15 @@ function Main() {
 
         {/* 마이페이지 */}
         <Route path="/myPage" element={<MyPage />} />
+        <Route path="/checkUserPwd" element={<CheckUserPwd />} />
+        <Route path="/modifyUser" element={<UserUpdate />} />
 
         {/* 로그인,회원가입 */}
         <Route path="/login" element={<SignIn />} />
         <Route path="/join" element={<SignUp />} />
         <Route path="/getAccess" element={<GetAccess />} />
-        <Route path="/find/id" element={<FindId />} />
-        <Route path="/find/pwd" element={<FindPwd />} />
+        <Route path="/findId" element={<FindId />} />
+        <Route path="/findPwd" element={<FindPwd />} />
 
         {/* 장미 검색 */}
         <Route path="/search" element={<Search />} />
