@@ -1,14 +1,12 @@
-#sign-up-wrapper {
-    width: 100vw;
-    min-width: 1440px;
-    height: 100vh;
-    min-height: 1024px;
+#sign-in-wrapper {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 5%;
 }
 
-.sign-up-container {
-    flex: 1;
-    /* display: flex; */
+.sign-in-container {
+    display: flex;
     justify-content: center;
     align-items: center;
 }

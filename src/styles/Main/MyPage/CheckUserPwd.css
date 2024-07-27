@@ -1,40 +1,42 @@
-#user-update-wrapper {
+#pwd-check-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
     padding-bottom: 5%;
 }
 
-.user-update-container {
+.pwd-check-container {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.user-update-box {
+.pwd-check-title {
+    color: rgba(64,64,64,1);
+    display: flex;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 173%;
+}
+
+.pwd-check-box {
     width: 380px;
     display: flex;
     flex-direction: column;
     gap: 24px;
 }
 
-.user-update-content-box {
+.pwd-check-content-box {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 24px;
 }
 
-.user-update-content-input-box {
+.pwd-check-content-input-box {
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 14px;
-}
-
-.user-update-content-button-box {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
 }

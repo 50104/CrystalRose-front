@@ -1,10 +1,19 @@
 .nav_userInfo {
-    display: flex;
-    font-size: 13px;
-    justify-content: right;
-    margin-right: 10px;
-  }
-  
-  .nav_userInfo ul {
-    margin-right: 10px;
-  }
+  display: flex;
+  font-size: 13px;
+  justify-content: right;
+  margin-right: 10px;
+  color: rgb(0, 0, 0);
+}
+
+.nav_userInfo:hover {
+  color: rgb(183, 183, 183);
+}
+
+.nav_userInfo ul {
+  margin-right: 10px;
+}
+
+.cursor {
+  cursor: pointer;
+}
