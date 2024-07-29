@@ -1,0 +1,75 @@
+.content h1 {
+    font-size: 2em;
+    font-weight: bold;
+    margin-top: 1em;
+}
+
+.content h2 {
+    font-size: 1.75em;
+    font-weight: bold;
+    margin-top: 0.75em;
+}
+
+.content h3 {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-top: 0.5em;
+}
+
+.content h4 {
+    font-size: 1.25em;
+    font-weight: bold;
+    margin-top: 0.25em;
+}
+
+.content b, .content strong {
+    font-weight: bold;
+}
+
+.content i, .content em {
+    font-style: italic;
+}
+
+.content a {
+    color: blue;
+}
+
+.content ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+.content ol {
+    list-style-type: decimal;
+    margin-left: 20px;
+}
+
+.content blockquote {
+    border-left: 5px solid #ccc;
+    margin: 1em 0;
+    padding-left: 1em;
+    color: #666;
+}
+
+.content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+}
+
+.content th, .content td {
+    border: 1px solid black;
+    padding: 0.5em;
+    text-align: left;
+}
+
+.content figure.table {
+    margin: 1em 0;
+}
+
+.content img, .content video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1em 0;
+}
