@@ -20,7 +20,6 @@ import Board from '../components/Main/Board/Board';
 import Content from '../components/Main/Board/Content';
 import List from '../components/Main/Board/List';
 import Editor from '../components/Main/Board/Editor';
-import Save from '../components/Main/Board/Save';
 
 
 function Main() {
@@ -53,10 +52,11 @@ function Main() {
         {/* 장미 커뮤니티 */}
         <Route path="/community" element={<Community />} />
         <Route path="/board" element={<Board />} />
+        <Route path="/content" element={<Content />} />
         <Route path="/content/:boardNo" element={<Content />} />
         <Route path="/list" element={<List />} />
-        <Route path="/save" element={<Save />} />
         <Route path="/editor" element={<Editor />} />
+        <Route path="/editor/:boardNo" element={<Editor />} />
 
         {/* 장미정보 및 리뷰 */}
         <Route path="/review/:roseId" element={<RoseInfo />} />

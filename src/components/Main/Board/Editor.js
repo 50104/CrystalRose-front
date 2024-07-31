@@ -4,15 +4,55 @@ import { useUserData } from '../../../utils/userInfo/api/userApi';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import styles from '../../../styles/Main/board/CKEditor.module.css';
+import '../../../styles/Main/board/Editor.css';
+
+function CustomUploadAdapterPlugin(editor) {
+    editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+        return new CustomUploadAdapter(loader);
+    };
+}
+
+class CustomUploadAdapter {
+    constructor(loader) {
+        this.loader = loader;
+    }
+    upload() {
+        return this.loader.file
+            .then(file => new Promise((resolve, reject) => {
+                const data = new FormData();
+                data.append('file', file);
+
+                fetch(`${process.env.REACT_APP_API_URL}/image/upload`, {
+                    method: 'POST',
+                    body: data
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result && result.url) {
+                        resolve({
+                            default: result.url
+                        });
+                    } else {
+                        reject(result.error || '이미지 업로드 실패');
+                    }
+                })
+                .catch(error => {
+                    reject(error);
+                });
+            }));
+    }
+    abort() {
+    }
+}
 
 function Editor() {
     const { userData, loading, isLogin } = useUserData();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [isFormValid, setIsFormValid] = useState(false);
     const navigate = useNavigate();
     const { boardNo } = useParams();
 
-    // 게시글 데이터 불러오기
     useEffect(() => {
         if (boardNo) {
             const fetchContent = async () => {
@@ -22,9 +62,7 @@ function Editor() {
                         const result = await response.json();
                         const data = result.data;
                         setTitle(data.boardTitle || '');
-                        console.log('제목:', data.boardTitle);
                         setContent(data.boardContent || '');
-                        console.log('내용:', data.boardContent);
                     } else {
                         console.error('게시글 불러오기 실패:', response.statusText);
                     }
@@ -37,11 +75,18 @@ function Editor() {
         }
     }, [boardNo]);
 
-    // 폼 제출 핸들러
+    useEffect(() => {
+        setIsFormValid(title.trim() !== '' && content.trim() !== '');
+    }, [title, content]);
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (!window.confirm('수정하시겠습니까?')) {
+        const confirmationMessage = boardNo 
+        ? '수정하시겠습니까?' 
+        : '작성하시겠습니까?';
+
+        if (!window.confirm(confirmationMessage)) {
             return;
         }
 
@@ -67,13 +112,16 @@ function Editor() {
             });
 
             if (response.ok) {
-                console.log('글 작성 성공');
-                navigate(`/content/${boardNo}`);
+                const result = await response.json();
+                const data = result.data;
+                const savedBoardNo = data.boardNo;
+                console.log('글 업로드 성공');
+                navigate(`/content/${savedBoardNo}`);
             } else {
-                console.error('글 작성 실패:', response.statusText);
+                console.error('글 업로드 실패:', response.statusText);
             }
         } catch (error) {
-            console.error('글 작성 오류', error);
+            console.error('글 업로드 오류', error);
         }
     };
 
@@ -86,9 +134,10 @@ function Editor() {
     }
 
     return (
-        <div className={styles.content}>
+        <div className={`${styles.content} custom-editor`}>
             <form onSubmit={handleSubmit}>
                 <input
+                    className='inputTitle'
                     name="boardTitle"
                     type="text"
                     placeholder="제목"
@@ -98,6 +147,11 @@ function Editor() {
                 <CKEditor
                     editor={ClassicEditor}
                     data={content}
+                    config={{
+                        extraPlugins: [CustomUploadAdapterPlugin],
+                        height: 450,
+                        extraAllowedContent: 'div(custom-editor-height)'
+                    }}
                     onReady={editor => {
                         console.log('에디터 사용 가능', editor);
                     }}
@@ -111,8 +165,16 @@ function Editor() {
                     onFocus={(event, editor) => {
                         console.log('Focus.', editor);
                     }}
+                    className={styles.customEditor}
                 />
-                <input type="submit" value={boardNo ? "수정" : "등록"} />
+                <div className='uploadButtonBox'>
+                    <input
+                        className={isFormValid ? 'uploadButton' : 'uploadButton-disable'}
+                        type="submit"
+                        value={boardNo ? "수정" : "등록"}
+                        disabled={!isFormValid}
+                    />
+                </div>
             </form>
         </div>
     );

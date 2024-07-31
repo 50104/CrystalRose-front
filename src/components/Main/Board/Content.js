@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import parse from 'html-react-parser';
+import '../../../styles/Main/board/Content.css';
 import styles from '../../../styles/Main/board/CKEditor.module.css';
 
 function Content() {
@@ -57,20 +58,42 @@ function Content() {
         }
     };
 
+    const handleEdit = () => {
+        navigate(`/editor/${boardNo}`);
+    };
+
     if (!content) {
         return <div>Loading...</div>;
     }
 
     return (
-        <div className={styles.content}>
-            <h1>Content</h1><br />
-            {content.boardTitle}<br />
-            <hr />
-            <br />
-            <div className={styles.boardContent}>{parse(content.boardContent)}</div><br />
-            <hr />
-            <a href={`/editor/${content.boardNo}`}>수정</a><br /><br />
-            <button onClick={handleDelete}>삭제</button>
+        <div>
+            <div className='contentBox'>
+                <div className={styles.content}>
+                    <div className='headerBox'>
+                        <div className='titleBox'>
+                            {content.boardTitle}
+                        </div>
+                        <div className='authorBox'>
+                            작성자 : {content.userId}
+                        </div>
+                    </div>
+                    <div className='contentDivider'></div>
+                    <div className='boardContent'>{parse(content.boardContent)}</div>
+                </div>
+            </div>
+            <div className='contentButtonBox'>
+                <input
+                    className='contentButton'
+                    type="submit"
+                    onClick={handleEdit}
+                    value="수정"/>
+                <input
+                    className='contentButton'
+                    type="submit"
+                    onClick={handleDelete}
+                    value="삭제"/>
+            </div>
         </div>
     );
 }

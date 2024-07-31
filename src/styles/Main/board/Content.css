@@ -1,0 +1,70 @@
+.contentBox {
+    /* display: flex; */
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 127vh;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin: 0 auto;
+}
+
+.contentDivider {
+    border-top: 1px solid rgb(114, 114, 114);
+    width: 64px;
+    margin: 15px 0px 15px 0px;
+}
+
+.headerBox {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.titleBox {
+    font-size: 20px;
+    font-weight: bold;
+    flex: 1;
+}
+
+.authorBox {
+    font-size: 13px;
+    color: #555;
+}
+
+.boardContent {
+    margin-bottom: 16px;
+    word-break: break-word;
+    width: 100%;
+}
+
+.contentButtonBox {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+.contentButton {
+    border: 1px solid #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    width: 65px;
+    height: 33px;
+    background-color: rgb(232, 222, 255);
+    color: rgb(0, 0, 0);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 175%;
+    margin: 5px;
+    cursor: pointer;
+}
+
+.contentButton:hover {
+    background-color: rgb(212, 194, 255);
+}
