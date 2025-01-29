@@ -78,3 +78,31 @@
 html {
     word-break : break-all; 
 }
+
+/* CKEditor 높이 조정 */
+.customEditor .ck-editor__editable {
+    height: 450px !important;
+}
+
+.customEditor .ck-editor__main > .ck-editor__editable:not(.ck-focused) {
+    height: 500px !important;
+}
+
+/* CKEditor 이미지 스타일 */
+.customEditor img {
+    height: 100px;
+    width: auto;
+}
+
+/* 이미지 사이즈 변경 */
+.content img {
+    max-width: 100%; /* 이미지가 컨테이너의 너비에 맞게 조절됩니다. */
+    height: auto; /* 이미지의 비율을 유지합니다. */
+    display: block; /* 이미지 주변의 여백을 조절합니다. */
+    margin: 1em 0; /* 이미지 위아래 여백을 설정합니다. */
+}
+
+/* 에디터의 이미지 크기 조절 핸들 스타일 */
+.ck-content .ck-widget__resize-handler {
+    background-color: #000; /* 크기 조절 핸들의 배경 색상 설정 */
+}

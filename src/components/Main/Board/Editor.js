@@ -151,6 +151,21 @@ function Editor() {
                         extraPlugins: [CustomUploadAdapterPlugin],
                         height: 450,
                         extraAllowedContent: 'div(custom-editor-height)'
+                        ,
+                        codeBlock: {
+                            languages: [
+                                { language: 'plaintext', label: 'PlainText' },
+                                { language: 'c', label: 'C' },
+                                { language: 'cpp', label: 'C++' },
+                                { language: 'java', label: 'Java' },
+                                { language: 'python', label: 'Python' },
+                                { language: 'xml', label: 'XML' },
+                                { language: 'json', label: 'JSON' },
+                                { language: 'html', label: 'HTML' },
+                                { language: 'css', label: 'CSS' },
+                                { language: 'gradle', label: 'Gradle' }
+                            ]
+                        },
                     }}
                     onReady={editor => {
                         console.log('에디터 사용 가능', editor);
