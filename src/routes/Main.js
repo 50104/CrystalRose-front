@@ -20,6 +20,7 @@ import Board from '../components/Main/Board/Board';
 import Content from '../components/Main/Board/Content';
 import List from '../components/Main/Board/List';
 import Editor from '../components/Main/Board/Editor';
+import MemberList from '../components/Main/Chat/MemberList';
 
 
 function Main() {
@@ -61,6 +62,13 @@ function Main() {
         {/* 장미정보 및 리뷰 */}
         <Route path="/review/:roseId" element={<RoseInfo />} />
         <Route path="/review/write/:roseId" element={<ReviewWrite />} />
+
+        {/* 채팅 관련 */}
+        <Route path="/memberList" element={<MemberList />} />
+        {/* <Route path="/simple/chat" element={<SimpleWebsocket />} /> */}
+        {/* <Route path="/chatpage/:roomId" element={<StompChatPage />} /> */}
+        {/* <Route path="/groupChatting/list" element={<GroupChattingList />} /> */}
+        {/* <Route path="/my/chat/page" element={<MyChatPage />} /> */}
 
         {/* 404 페이지 */}
         <Route path="/*" element={<NotFound />} />

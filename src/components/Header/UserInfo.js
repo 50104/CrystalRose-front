@@ -26,6 +26,7 @@ function UserInfo() {
         <div className="nav_userInfo"><a href="/join"><ul>회원가입</ul></a></div>
         <div className="nav_userInfo"><a href="/login"><ul>로그인</ul></a></div>
       </> : <>
+        <div className='nav_userInfo'><a href="/memberList"><ul>회원 리스트</ul></a></div>
         {userRole === 'ROLE_ADMIN' && (
           <div className="nav_userInfo"><a href="/admin"><ul>{userIdForDisplay}님 관리자 페이지</ul></a></div>
         )}
