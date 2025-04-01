@@ -22,6 +22,7 @@ import List from '../components/Main/Board/List';
 import Editor from '../components/Main/Board/Editor';
 import MemberList from '../components/Main/Chat/MemberList';
 import StompChatPage from '../components/Main/Chat/StompChatPage';
+import GroupChattingList from '../components/Main/Chat/GroupCattingList';
 
 
 function Main() {
@@ -67,8 +68,8 @@ function Main() {
         {/* 채팅 관련 */}
         <Route path="/memberList" element={<MemberList />} />
         <Route path="/chatpage/:roomId" element={<StompChatPage />} />
+        <Route path="/groupChatting/list" element={<GroupChattingList />} />
         {/* <Route path="/simple/chat" element={<SimpleWebsocket />} /> */}
-        {/* <Route path="/groupChatting/list" element={<GroupChattingList />} /> */}
         {/* <Route path="/my/chat/page" element={<MyChatPage />} /> */}
 
         {/* 404 페이지 */}
