@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, Container, Grid, Card, CardContent, Typography, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const MemberList = () => {
   const [memberList, setMemberList] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMemberList = async () => {
@@ -17,6 +19,16 @@ const MemberList = () => {
 
     fetchMemberList();
   }, []);
+
+  const startChat = async (otherMemberId) => {
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/chat/room/private/create?otherMemberId=${otherMemberId}`);
+      const roomId = response.data;
+      navigate(`/chatpage/${roomId}`);
+    } catch (error) {
+      console.error('채팅방을 생성하는 중 오류 발생:', error);
+    }
+  };
 
   return (
     <Container>
@@ -43,6 +55,7 @@ const MemberList = () => {
                       <TableCell>
                         <Button
                           color="primary"
+                          onClick={() => startChat(member.userNo)}
                         >
                           채팅하기
                         </Button>
