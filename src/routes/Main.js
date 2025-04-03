@@ -69,8 +69,8 @@ function Main() {
         <Route path="/memberList" element={<MemberList />} />
         <Route path="/chatpage/:roomId" element={<StompChatPage />} />
         <Route path="/groupChatting/list" element={<GroupChattingList />} />
+        <Route path="/my/chat/page" element={<MyChatPage />} />
         {/* <Route path="/simple/chat" element={<SimpleWebsocket />} /> */}
-        {/* <Route path="/my/chat/page" element={<MyChatPage />} /> */}
 
         {/* 404 페이지 */}
         <Route path="/*" element={<NotFound />} />
