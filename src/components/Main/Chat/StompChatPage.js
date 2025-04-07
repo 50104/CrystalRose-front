@@ -1,22 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import SockJS from 'sockjs-client';
 import Stomp from 'webstomp-client';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import axiosInstance from '../../../utils/userInfo/api/axiosInstance';
+import { jwtDecode } from 'jwt-decode';
 
 const Chat = () => {
   const { roomId } = useParams();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [stompClient, setStompClient] = useState(null);
-  const [senderEmail, setSenderEmail] = useState(null);
+  const [senderId, setSenderId] = useState(null);
   const chatBoxRef = useRef(null);
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('access');
 
   useEffect(() => {
-    setSenderEmail(localStorage.getItem('email'));
+    const token = localStorage.getItem('access');
+    if (token) {
+      const decoded = jwtDecode(token);
+      setSenderId(decoded.userId);
+    }
     fetchMessageHistory();
-
+  
     return () => {
       disconnectWebSocket();
     };
@@ -24,7 +29,7 @@ const Chat = () => {
 
   const fetchMessageHistory = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/chat/history/${roomId}`);
+      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/chat/history/${roomId}`);
       setMessages(response.data);
       connectWebSocket();  // 메시지 기록을 가져온 후 WebSocket 연결
     } catch (error) {
@@ -61,8 +66,15 @@ const Chat = () => {
   const sendMessage = () => {
     if (newMessage.trim() === '') return;
 
+    const token = localStorage.getItem('access');
+    let sender = null;
+    if (token) {
+      const decoded = jwtDecode(token);
+      sender = decoded.userId;
+    }
+
     const message = {
-      senderEmail,
+      senderId: sender,
       message: newMessage,
     };
 
@@ -82,7 +94,7 @@ const Chat = () => {
 
   const disconnectWebSocket = async () => {
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/chat/room/${roomId}/read`);
+      await axiosInstance.post(`${process.env.REACT_APP_API_URL}/chat/room/${roomId}/read`);
       if (stompClient && stompClient.connected) {
         stompClient.unsubscribe(`/topic/${roomId}`);
         stompClient.disconnect();
@@ -107,14 +119,14 @@ const Chat = () => {
         }}
       >
         {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`chat-message ${msg.senderEmail === senderEmail ? 'sent' : 'received'}`}
-            style={{
-              textAlign: msg.senderEmail === senderEmail ? 'right' : 'left',
-            }}
-          >
-            <strong>{msg.senderEmail}: </strong> {msg.message}
+          <div key={index}>
+            <div
+              style={{
+                textAlign: msg.senderId?.toString() === senderId?.toString() ? 'right' : 'left',
+              }}
+            >
+              <strong>{msg.senderId}: </strong> {msg.message}
+            </div>
           </div>
         ))}
       </div>

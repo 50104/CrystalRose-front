@@ -23,7 +23,7 @@ import Editor from '../components/Main/Board/Editor';
 import MemberList from '../components/Main/Chat/MemberList';
 import StompChatPage from '../components/Main/Chat/StompChatPage';
 import GroupChattingList from '../components/Main/Chat/GroupCattingList';
-
+import MyChatPage from '../components/Main/Chat/MyChatPage';
 
 function Main() {
   return (
@@ -70,8 +70,7 @@ function Main() {
         <Route path="/chatpage/:roomId" element={<StompChatPage />} />
         <Route path="/groupChatting/list" element={<GroupChattingList />} />
         <Route path="/my/chat/page" element={<MyChatPage />} />
-        {/* <Route path="/simple/chat" element={<SimpleWebsocket />} /> */}
-
+        
         {/* 404 페이지 */}
         <Route path="/*" element={<NotFound />} />
       </Routes>
