@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../utils/axiosInstance';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useUserData } from '../../../utils/userInfo/api/userApi';
 import InputBox from '../UserInfo/InputBox';
@@ -16,7 +16,7 @@ const CheckUserPwd = () => {
             return;
         }
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/user/validatePassword`, { 
+            const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/user/validatePassword`, { 
                 userId: userData.userId,
                 userPwd 
             });

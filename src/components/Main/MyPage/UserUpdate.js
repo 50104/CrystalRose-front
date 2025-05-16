@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../utils/axiosInstance';
 import { useUserData } from '../../../utils/userInfo/api/userApi';
 import { Navigate } from 'react-router-dom';
 import InputBox from '../UserInfo/InputBox';
@@ -121,7 +121,7 @@ const UserUpdate = () => {
         if (!userInfo.userEmail) return;
         if (isUserEmailError) return;
         try {
-            await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/email-check`, {
+            await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/email-check`, {
                 userId: userInfo.userId, userEmail: userInfo.userEmail,
             });
         } catch (error) {
@@ -134,7 +134,7 @@ const UserUpdate = () => {
         setUserEmailMessage('인증번호가 전송되었습니다.');
         console.log('userEmail:', userInfo.userEmail);
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/email-certification`, {
+            const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/email-certification`, {
                 userId: userInfo.userId, userEmail: userInfo.userEmail,
             });
             userEmailCertificationResponse(response.data);
@@ -170,7 +170,7 @@ const UserUpdate = () => {
         if (!userInfo.userEmail || !userInfo.certificationNumber) return;
         console.log('certificationNumber:', userInfo.certificationNumber);
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/check-certification`, {
+            const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/check-certification`, {
                 userId: userInfo.userId, userEmail: userInfo.userEmail, certificationNumber: userInfo.certificationNumber,
             });
             checkCertificationResponse(response.data);
@@ -213,7 +213,7 @@ const UserUpdate = () => {
             userRole: userInfo.userRole
         })], { type: 'application/json' }));
         try {
-            await axios.put(`${process.env.REACT_APP_API_URL}/api/user/update`, formData, {
+            await axiosInstance.put(`${process.env.REACT_APP_API_URL}/api/user/update`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

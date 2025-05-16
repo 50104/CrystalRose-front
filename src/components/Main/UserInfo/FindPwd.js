@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../utils/axiosInstance';
 import InputBox from './InputBox';
 import '../../../styles/Main/UserInfo/Authentication/Find.css';
 
@@ -46,7 +46,7 @@ function FindPwd() {
             return;
         }
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/findUserPwd`, {
+            const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/findUserPwd`, {
                 userId: userId,
                 userEmail: userEmail
             });

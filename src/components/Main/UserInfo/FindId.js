@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosInstance from '../../../utils/axiosInstance';
 import InputBox from "./InputBox";
 import '../../../styles/Main/UserInfo/Authentication/Find.css';
 
@@ -29,7 +29,7 @@ function FindId() {
             return;
         }
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/findUserId`, { 
+            const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/findUserId`, { 
                 userEmail:userEmail 
             });
             if (response.status===200) {

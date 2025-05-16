@@ -1,8 +1,8 @@
-import axios from "axios";
+import axiosInstance from '../../axiosInstance';
 
 export const getAccessToken = async () => {
     try {
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}/reissue`, {}, {
+        const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/reissue`, {}, {
         withCredentials: true
         });
         const accessToken = response.headers['access'];
@@ -15,7 +15,7 @@ export const getAccessToken = async () => {
 
     export const logoutFunction =  async () => {
     try {
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}/logout`, {}, {
+        const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/logout`, {}, {
         withCredentials: true
         });
         if (response.status === 200) {

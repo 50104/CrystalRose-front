@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../utils/axiosInstance';
 import useFetchData from '../hooks/useFetchData';
 import handleChange from '../utils/handleChange';
 
@@ -21,7 +21,7 @@ function Test() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/test/save`, user);
+      const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/test/save`, user);
       alert('데이터 추가 완료 / ' + response.data);
       fetchData(); //추가후 재로딩
     } catch (error) {

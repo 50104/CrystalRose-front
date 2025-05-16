@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../../../styles/Main/UserInfo/Authentication/SignIn.css';
 import '../../../styles/Main/UserInfo/InputBox.css';
-import axios from 'axios';
+import axiosInstance from '../../../utils/axiosInstance';
 import InputBox from './InputBox';
 
 function SignIn() {
@@ -70,7 +70,7 @@ function SignIn() {
             formData.append('userId', userId);
             formData.append('userPwd',userPwd);
             console.log('로그인:', userId, userPwd);
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, formData, {
+            const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/login`, formData, {
                 withCredentials: true
             });
             const accessToken = response.headers['access'];

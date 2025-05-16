@@ -1,4 +1,4 @@
-import axios from "axios"
+import axiosInstance from '../../axiosInstance';
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -71,7 +71,7 @@ export const getUserData = async (navigate, setIsLogin) => {
   }
   setIsLogin(true);
 
-  const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/user/data`, { headers: { access: token }, withCredentials: true });
+  const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/user/data`, { headers: { access: token }, withCredentials: true });
   console.log('접속한 유저1 : ', JSON.stringify(response.data));
   return response.data;
 }
@@ -79,7 +79,7 @@ export const getUserData = async (navigate, setIsLogin) => {
 export const modifyUserData = async (data) => {
   const token = localStorage.getItem('access');
 
-  const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/user/modify`, data, {
+  const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/user/modify`, data, {
       headers: {
           'Content-Type': 'multipart/form-data',
           'access': token,

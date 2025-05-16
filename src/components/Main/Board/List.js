@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../utils/axiosInstance';
 
 function List() {
     const [contents, setContents] = useState([]);
 
     useEffect(() => {
-        axios.get(`${process.env.REACT_APP_API_URL}/board/list`)
+        axiosInstance.get(`${process.env.REACT_APP_API_URL}/board/list`)
             .then(response => {
                 setContents(response.data.ContentList);
             })

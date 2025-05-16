@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import SockJS from 'sockjs-client';
 import Stomp from 'webstomp-client';
 import { useParams } from 'react-router-dom';
-import axiosInstance from '../../../utils/userInfo/api/axiosInstance';
+import axiosInstance from '../../../utils/axiosInstance';
 import { jwtDecode } from 'jwt-decode';
 
 const Chat = () => {

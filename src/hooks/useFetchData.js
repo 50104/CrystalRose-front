@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../utils/axiosInstance';
 
 const useFetchData = (apiUrl) => {
   const [entities, setEntities] = useState([]);
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(apiUrl);
+      const response = await axiosInstance.get(apiUrl);
       console.log(apiUrl + ' 데이터 불러오기 성공');
       setEntities(response.data);
     } catch (error) {

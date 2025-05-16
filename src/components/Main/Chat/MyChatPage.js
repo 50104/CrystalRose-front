@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../../../utils/userInfo/api/axiosInstance';
+import axiosInstance from '../../../utils/axiosInstance';
 
 const ChatList = () => {
   const [chatList, setChatList] = useState([]);

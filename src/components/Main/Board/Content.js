@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../utils/axiosInstance';
 import { useParams, useNavigate } from 'react-router-dom';
 import parse from 'html-react-parser';
 import '../../../styles/Main/board/Content.css';
@@ -47,7 +47,7 @@ function Content() {
 
     const handleDelete = () => {
         if (window.confirm('게시글을 삭제하시겠습니까?')) {
-            axios.get(`${process.env.REACT_APP_API_URL}/board/delete/${boardNo}`)
+            axiosInstance.get(`${process.env.REACT_APP_API_URL}/board/delete/${boardNo}`)
                 .then(response => {
                     console.log('삭제 성공', response.data);
                     navigate('/list');
