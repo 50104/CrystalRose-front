@@ -1,0 +1,81 @@
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import './AppRoutes.css';
+import Home from '@components/pages/Home/Home';
+import Search from '@components/pages/Search/Search';
+import Community from '@components/pages/Board/Community';
+import Recommend from '@components/pages/Recommend/Recommend';
+import NotFound from '@components/pages/Error/NotFound';
+import ReviewWrite from '@components/pages/Review/ReviewWrite';
+import RoseInfo from '@components/pages/Review/RoseInfo';
+import SignUp from '@components/pages/Auth/SignUp';
+import SignIn from '@components/pages/Auth/SignIn';
+import MyPage from '@components/pages/MyPage/MyPage';
+import FindId from '@components/pages/Auth/FindId';
+import FindPwd from '@components/pages/Auth/FindPwd';
+import CheckUserPwd from '@components/pages/MyPage/CheckUserPwd';
+import UserUpdate from '@components/pages/MyPage/UserUpdate';
+import { GetAccess } from '@utils/api/token';
+import Board from '@components/pages/Board/Board';
+import Content from '@components/pages/Board/Content';
+import List from '@components/pages/Board/List';
+import Editor from '@components/pages/Board/Editor';
+import MemberList from '@components/pages/Chat/MemberList';
+import StompChatPage from '@components/pages/Chat/StompChatPage';
+import GroupChattingList from '@components/pages/Chat/GroupCattingList';
+import MyChatPage from '@components/pages/Chat/MyChatPage';
+
+function AppRoutes() {
+  return (
+    <div className="main_div">
+      <Routes>
+        {/* <Test /> */}
+
+        {/* 메인 */}
+        <Route path="/" element={<Home />} />
+
+        {/* 마이페이지 */}
+        <Route path="/myPage" element={<MyPage />} />
+        <Route path="/checkUserPwd" element={<CheckUserPwd />} />
+        <Route path="/modifyUser" element={<UserUpdate />} />
+
+        {/* 로그인,회원가입 */}
+        <Route path="/login" element={<SignIn />} />
+        <Route path="/join" element={<SignUp />} />
+        <Route path="/getAccess" element={<GetAccess />} />
+        <Route path="/findId" element={<FindId />} />
+        <Route path="/findPwd" element={<FindPwd />} />
+
+        {/* 장미 검색 */}
+        <Route path="/search" element={<Search />} />
+
+        {/* 사용자 영화 추천 */}
+        <Route path="/recommend" element={<Recommend />} />
+
+        {/* 장미 커뮤니티 */}
+        <Route path="/community" element={<Community />} />
+        <Route path="/board" element={<Board />} />
+        <Route path="/content" element={<Content />} />
+        <Route path="/content/:boardNo" element={<Content />} />
+        <Route path="/list" element={<List />} />
+        <Route path="/editor" element={<Editor />} />
+        <Route path="/editor/:boardNo" element={<Editor />} />
+
+        {/* 장미정보 및 리뷰 */}
+        <Route path="/review/:roseId" element={<RoseInfo />} />
+        <Route path="/review/write/:roseId" element={<ReviewWrite />} />
+
+        {/* 채팅 관련 */}
+        <Route path="/memberList" element={<MemberList />} />
+        <Route path="/chatpage/:roomId" element={<StompChatPage />} />
+        <Route path="/groupChatting/list" element={<GroupChattingList />} />
+        <Route path="/my/chat/page" element={<MyChatPage />} />
+        
+        {/* 404 페이지 */}
+        <Route path="/*" element={<NotFound />} />
+      </Routes>
+    </div>
+  );
+}
+
+export default AppRoutes;

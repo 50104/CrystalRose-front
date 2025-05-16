@@ -1,0 +1,41 @@
+.header_div {
+    padding-top: 30px;
+  }
+
+.nav_box {
+    display: flex;
+    align-items: center;
+  }
+  
+  .nav_log {
+    width: 200px;
+    margin-right: 50px;
+  }
+  
+  .nav_menu {
+    display: flex;
+  }
+  
+  .nav_menu ul {
+    margin-right: 50px;
+  }
+
+.nav_userInfo {
+  display: flex;
+  font-size: 13px;
+  justify-content: right;
+  margin-right: 10px;
+  color: rgb(0, 0, 0);
+}
+
+.nav_userInfo:hover {
+  color: rgb(183, 183, 183);
+}
+
+.nav_userInfo ul {
+  margin-right: 10px;
+}
+
+.cursor {
+  cursor: pointer;
+}

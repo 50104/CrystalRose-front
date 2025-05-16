@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import axiosInstance from '../../../utils/axiosInstance';
+import { axiosInstance } from '@utils/axios';
 import useFetchData from '../hooks/useFetchData';
-import handleChange from '../utils/handleChange';
+import handleChange from '@utils/helpers/handleChange';
 
 function Test() {
   //hook 사용

@@ -7,11 +7,16 @@
     "@ckeditor/ckeditor5-build-classic": "^42.0.2",
     "@ckeditor/ckeditor5-react": "^8.0.0",
     "@ckeditor/ckeditor5-upload": "^42.0.2",
+    "@craco/craco": "^7.1.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^6.4.8",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "apis": "^0.1.2",
     "axios": "^1.7.2",
+    "core-js": "^3.8.3",
     "html-react-parser": "^5.1.12",
     "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
@@ -20,15 +25,10 @@
     "react-icons": "^5.2.1",
     "react-router-dom": "^6.23.1",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4",
-
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.0",
-    "@mui/material": "^6.4.8",
-    "core-js": "^3.8.3",
     "reactstrap": "^9.2.3",
     "sockjs-client": "^1.6.1",
     "vuetify": "^3.7.13",
+    "web-vitals": "^2.1.4",
     "webstomp-client": "^1.2.6"
   },
   "devDependencies": {
@@ -39,10 +39,9 @@
     "react-scripts": "^5.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test"
   },
   "eslintConfig": {
     "extends": [

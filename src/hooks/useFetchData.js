@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axiosInstance from '../../../utils/axiosInstance';
+import { axiosInstance } from '@utils/axios';
 
 const useFetchData = (apiUrl) => {
   const [entities, setEntities] = useState([]);
