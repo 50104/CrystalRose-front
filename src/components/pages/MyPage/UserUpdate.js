@@ -232,6 +232,39 @@ const UserUpdate = () => {
         }
     };
 
+    const handleDelete = async () => {
+        const { userPwd, userPwdCheck } = userInfo;
+
+        if (!userPwd || !userPwdCheck) {
+            alert('비밀번호를 입력해주세요.');
+            return;
+        }
+
+        if (userPwd !== userPwdCheck) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+
+        const confirmDelete = window.confirm('정말 탈퇴하시겠습니까?');
+        if (!confirmDelete) return;
+
+        try {
+            await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/withdraw`, {
+                userPwd: userInfo.userPwd,
+            }, {
+                headers: {
+                    access: localStorage.getItem('access'),
+                }
+            });
+            alert('탈퇴 요청이 완료되었습니다. 계정은 1주일 후 삭제됩니다.');
+            window.location.href = '/login';
+        } catch (error) {
+            console.error('탈퇴 요청 실패:', error);
+            alert('탈퇴 요청에 실패했습니다. 비밀번호를 다시 확인해주세요.');
+        }
+    };
+
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -261,7 +294,12 @@ const UserUpdate = () => {
                                 <InputBox ref={userPwdCheckRef} title='비밀번호 확인' placeholder='비밀번호를 한 번 더 입력해주세요.' type='password' value={userInfo.userPwdCheck} onChange={onUserPwdCheckChangeHandler} isErrorMessage={isUserPwdCheckError} message={userPwdCheckMessage}/>
                             </div>
                             <div className='user-update-content-button-box'>
-                                <div className="primary-button-lg full-width" onClick={handleUpdate} onKeyDown={onKeyDownHandler}>{'정보 수정'}</div>
+                              <div className="primary-button-lg" onClick={handleUpdate} onKeyDown={onKeyDownHandler}>
+                                정보 수정
+                              </div>
+                              <div className="danger-button-lg" onClick={handleDelete}>
+                                회원 탈퇴
+                              </div>
                             </div>
                         </div>
                     </div>

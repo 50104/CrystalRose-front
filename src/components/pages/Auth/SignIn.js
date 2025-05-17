@@ -69,21 +69,60 @@ function SignIn() {
             let formData= new FormData();
             formData.append('userId', userId);
             formData.append('userPwd',userPwd);
+
             console.log('로그인:', userId, userPwd);
+
             const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/login`, formData, {
                 withCredentials: true
             });
+console.log("응답:", response);
+
             const accessToken = response.headers['access'];
-            if (accessToken) {
-                localStorage.setItem('access', accessToken);
-                // alert("로그인 성공!");
-                window.location.href = '/';
-            } else {
-                alert("엑세스 토큰을 받아오지 못했습니다.");
+            const withdrawalHeader  = response.headers['withdrawal'];
+            console.log("withdrawal header:", withdrawalHeader );
+            const isWithdrawal = withdrawalHeader === 'true';
+
+            if (!accessToken) {
+                alert("access 토큰을 받아오지 못했습니다.");
+                return;
             }
+
+            localStorage.setItem('access', accessToken);
+
+            // 탈퇴 철회
+            if (isWithdrawal) {
+                const confirmUndo = window.confirm("탈퇴 요청된 계정입니다. 철회하시겠습니까?");
+                if (confirmUndo) {
+                    try {
+                        const cancelResponse = await axiosInstance.put(`${process.env.REACT_APP_API_URL}/api/v1/auth/withdraw/cancel`, null,
+                            {
+                                headers: { access: accessToken },
+                                withCredentials: true
+                            }
+                        );
+                        alert(cancelResponse.data); // 예: "탈퇴 철회가 완료되었습니다. 다시 로그인해주세요."
+                        localStorage.removeItem("access");
+                        window.location.reload();
+                        return;
+                    } catch (e) {
+                        alert("탈퇴 철회 중 오류 발생");
+                        console.error(e);
+                        return;
+                    }
+                } else { // 철회 안 하고 나가는 경우
+                    localStorage.removeItem("access");
+                    return;
+                }
+            }
+            window.location.href = '/';
         } catch (error) {
-            if (error.response.status === 401) alert('아이디 혹은 비밀번호가 틀렸습니다.');
-            else alert('서버 오류')
+            if (error.response?.status === 401) {
+                alert('아이디 혹은 비밀번호가 틀렸습니다.');
+            } else if (error.response?.status === 403 && error.response?.data === "삭제된 계정입니다.") {
+                alert('삭제된 계정입니다. 로그인할 수 없습니다.');
+            } else {
+                alert('서버 오류');
+            }
             console.error('로그인 오류:', error.response ? error.response.data : error.message);
         }
     };
