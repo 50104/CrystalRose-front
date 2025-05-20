@@ -48,3 +48,7 @@
 .uploadButton:hover {
     background-color: rgb(212, 194, 255);
 }
+
+.custom-editor .ck-editor__editable_inline {
+    min-height: 500px;
+}

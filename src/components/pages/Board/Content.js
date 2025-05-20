@@ -5,6 +5,7 @@ import parse from 'html-react-parser';
 import { useUserData } from '@utils/api/user';
 import './Content.css';
 import styles from './CKEditor.module.css';
+import CommentList from './CommentList';
 
 function Content() {
     const { userData } = useUserData();
@@ -33,6 +34,18 @@ function Content() {
         return `${year}-${month}-${day} ${hour}:${min}:${sec}`;
     };
 
+    const fetchComments = async () => {
+      try {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/board/${boardNo}/comments`);
+        const data = await res.json();
+        const array = Array.isArray(data) ? data : data.data;
+        setComments(array || []);
+      } catch (err) {
+        console.error("댓글 불러오기 오류:", err);
+        setComments([]);
+      }
+    };
+
     useEffect(() => {
         if (boardNo) {
             const getContent = async () => {
@@ -58,6 +71,7 @@ function Content() {
                 }
             };
             getContent();
+            fetchComments(); 
 
             console.log("댓글 요청 보냄", newComment);
             fetch(`${process.env.REACT_APP_API_URL}/board/${boardNo}/comments`)
@@ -103,13 +117,13 @@ function Content() {
     };
 
     const handleDeleteComment = (commentId) => {
-        if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
+      if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
 
-        axiosInstance.delete(`${process.env.REACT_APP_API_URL}/board/comments/${commentId}`)
-            .then(() => {
-                setComments((prev) => prev.filter((c) => c.id !== commentId));
-            })
-            .catch((err) => console.error("댓글 삭제 실패", err));
+      axiosInstance.delete(`${process.env.REACT_APP_API_URL}/board/comments/${commentId}`)
+          .then(() => {
+              fetchComments();
+          })
+          .catch((err) => console.error("댓글 삭제 실패", err));
     };
 
     const handleDelete = () => {
@@ -124,6 +138,23 @@ function Content() {
                 });
         }
     };
+
+    function nestComments(comments) {
+        const map = {};
+        const roots = [];
+
+        comments.forEach(c => map[c.id] = { ...c, children: [] });
+
+        comments.forEach(c => {
+            if (c.parentId) {
+                map[c.parentId]?.children.push(map[c.id]);
+            } else {
+                roots.push(map[c.id]);
+            }
+        });
+
+        return roots;
+    }
 
     const handleEdit = () => {
         navigate(`/editor/${boardNo}`);
@@ -150,19 +181,33 @@ function Content() {
                 </div>
             </div>
             <div className='contentButtonBox'>
-                <input
+              {userData?.userId === content.userId && (
+                <>
+                  <input
                     className='contentButton'
                     type="submit"
                     onClick={handleEdit}
-                    value="수정"/>
-                <input
+                    value="수정"
+                  />
+                  <input
                     className='contentButton'
                     type="submit"
                     onClick={handleDelete}
-                    value="삭제"/>
+                    value="삭제"
+                  />
+                </>
+              )}
             </div>
             <div className="commentSection">
                 <h3>댓글</h3>
+                <CommentList
+                    nestedComments={nestComments(comments)}
+                    userData={userData}
+                    boardNo={boardNo}
+                    formatDateTime={formatDateTime}
+                    handleDeleteComment={handleDeleteComment}
+                    onRefresh={fetchComments}
+                />
                 <div className="commentInputBox">
                     <textarea
                         value={newComment}
@@ -173,22 +218,6 @@ function Content() {
                         <button className="contentButton" onClick={handleAddComment}>등록</button>
                     </div>
                 </div>
-                <ul className="commentList">
-                    {comments.map((c) => (
-                        <li key={c.id} className="commentItem">
-                            <div className="commentHeader">
-                                <div className="commentUser">{c.userId}</div>
-                                <div className="commentDate">{formatDateTime(c.createdDate)}</div>
-                            </div>
-                            <div className="commentBody">
-                                <div className="commentContent">{c.content}</div>
-                                {userData?.userId === c.userId && (
-                                    <button className="contentButton commentDeleteButton" onClick={() => handleDeleteComment(c.id)}>삭제</button>
-                                )}
-                            </div>
-                        </li>
-                    ))}
-                </ul>
             </div>
         </div>
     );

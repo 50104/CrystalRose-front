@@ -1,71 +1,70 @@
 .contentBox {
-    /* display: flex; */
-    flex-direction: column;
-    align-items: center;
-    max-width: 127vh;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin: 0 auto;
+  flex-direction: column;
+  align-items: center;
+  max-width: 127vh;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 0 auto;
 }
 
 .contentDivider {
-    border-top: 1px solid rgb(114, 114, 114);
-    width: 64px;
-    margin: 15px 0px 15px 0px;
+  border-top: 1px solid rgb(114, 114, 114);
+  width: 64px;
+  margin: 15px 0;
 }
 
 .headerBox {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  width: 100%;
 }
 
 .titleBox {
-    font-size: 20px;
-    font-weight: bold;
-    flex: 1;
+  font-size: 20px;
+  font-weight: bold;
+  flex: 1;
 }
 
 .authorBox {
-    font-size: 13px;
-    color: #555;
+  font-size: 13px;
+  color: #555;
 }
 
 .boardContent {
-    margin-bottom: 16px;
-    word-break: break-word;
-    width: 100%;
+  margin-bottom: 16px;
+  word-break: break-word;
+  width: 100%;
 }
 
 .contentButtonBox {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
 }
 
 .contentButton {
-    border: 1px solid #ddd;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 6px;
-    width: 65px;
-    height: 33px;
-    background-color: rgb(232, 222, 255);
-    color: rgb(0, 0, 0);
-    font-size: 15px;
-    font-weight: 400;
-    line-height: 175%;
-    margin: 5px;
-    cursor: pointer;
+  border: 1px solid #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  width: 65px;
+  height: 33px;
+  background-color: rgb(232, 222, 255);
+  color: rgb(0, 0, 0);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 175%;
+  margin: 5px;
+  cursor: pointer;
 }
 
 .contentButton:hover {
-    background-color: rgb(212, 194, 255);
+  background-color: rgb(212, 194, 255);
 }
 
 /* 댓글 영역 전체 */
@@ -73,7 +72,6 @@
   margin-top: 30px;
   padding-top: 20px;
   border-top: 1px solid #ccc;
-  
   flex-direction: column;
   align-items: center;
   max-width: 127vh;
@@ -92,88 +90,156 @@
   width: 100%;
   height: 80px;
   resize: none;
-  margin-bottom: 10px;
+  margin: 10px 0;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 14px;
 }
 
-/* 댓글 박스 */
-.commentItem {
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
+/* 댓글 리스트 */
+.commentList {
+  list-style: none;
+  margin: 0;
+  padding: 10px 0;
 }
 
-/* 작성자 */
+/* 댓글 항목 (중복 정의 정리됨) */
+.commentItem {
+  padding: 10px 0px 0px 0px;
+  border-top: 1px solid #eee;
+  margin-top: 25px;
+}
+
+/* 작성자 이름 */
 .commentUser {
   font-weight: bold;
   margin-bottom: 4px;
 }
 
-/* 댓글 리스트 */
-.commentList {
-  list-style: none;
-  padding: 0;
-}
-
-.commentList li {
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.commentItem {
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
-}
-
-
 /* 상단: 작성자 + 시간 */
 .commentHeader {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 0.9rem;
   margin-bottom: 6px;
   color: #555;
+  position: relative;
 }
 
-/* 본문: 댓글 + 삭제 버튼 */
-.commentBody {
+.leftBox {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 10px;
 }
 
+.rightButtons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  position: absolute;
+  right: 0;
+}
+
+/* 본문: 댓글 + 버튼 */
+.commentBody {
+  display: block;
+}
+
+/* 댓글 내용 */
 .commentContent {
+  margin-bottom: 6px;
   font-size: 0.95rem;
   line-height: 1.4;
   word-break: break-word;
   max-width: 90%;
 }
 
-.commentDeleteButton {
-  height: 30px;
-  padding: 0 12px;
-  margin-left: 8px;
-}
-
+/* 댓글 시간 */
 .commentDate {
+  display: flex;
+  gap: 6px;
+  align-items: center;
   font-size: 0.85rem;
   color: #999;
 }
 
-.commentContent {
-  margin-bottom: 6px;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-.commentDate {
-  font-size: 0.85rem;
-  color: #999;
-}
-
-/* 댓글 입력 버튼 위치 */
+/* 대댓글 입력 버튼 */
 .commentButtonBox {
   display: flex;
   justify-content: flex-end;
+  gap: 6px;
+}
+
+/* 대댓글 입력 박스 */
+.nestedReplyBox {
+  margin-left: 20px;
+  margin-top: 8px;
+}
+
+/* 대댓글 리스트 */
+.nestedCommentList {
+  list-style: none;
+  padding-left: 20px;
+  margin-top: 8px;
+}
+
+.nestedCommentList .commentItem {
+  background-color: #f9f9ff;
+  padding-left: 10px;
+  margin-left: 10px;
+  border-radius: 4px;
+}
+
+/* @부모닉네임 */
+.replyTo {
+  font-weight: bold;
+  color: #888;
+  margin-right: 4px;
+}
+
+/* 수정 버튼 */
+.editButton {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: #666;
+  margin-left: 6px;
+  cursor: pointer;
+}
+
+.editButton:hover {
+  color: #333;
+  text-decoration: underline;
+}
+
+/* 삭제 아이콘 */
+.deleteIcon {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 14px;
+  margin-left: 6px;
+  cursor: pointer;
+}
+
+.deleteIcon:hover {
+  color: red;
+}
+
+.commentEditBox {
+  margin-top: 6px;
+}
+
+/* 수정 중 textarea */
+.commentEditBox textarea {
+  width: 100%;
+  height: 60px;
+  resize: vertical;
+  font-size: 14px;
+  margin-top: 8px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
