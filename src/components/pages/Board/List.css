@@ -1,0 +1,46 @@
+.list-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.list-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    display: block;
+    padding: 16px;
+    background-color: white;
+    border: 1px solid #eaeaea;
+    border-radius: 10px;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+    color: black;
+}
+
+.card:hover {
+    border-color: #d2b6ff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-author {
+    font-size: 0.9rem;
+    color: #666;
+}
