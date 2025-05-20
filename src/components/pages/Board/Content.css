@@ -2,7 +2,6 @@
     /* display: flex; */
     flex-direction: column;
     align-items: center;
-    width: 100%;
     max-width: 127vh;
     padding: 20px;
     border: 1px solid #ddd;
@@ -67,4 +66,114 @@
 
 .contentButton:hover {
     background-color: rgb(212, 194, 255);
+}
+
+/* 댓글 영역 전체 */
+.commentSection {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #ccc;
+  
+  flex-direction: column;
+  align-items: center;
+  max-width: 127vh;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 0 auto;
+}
+
+/* 댓글 입력 박스 */
+.commentInputBox {
+  margin-bottom: 15px;
+}
+
+.commentInputBox textarea {
+  width: 100%;
+  height: 80px;
+  resize: none;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* 댓글 박스 */
+.commentItem {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+/* 작성자 */
+.commentUser {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+/* 댓글 리스트 */
+.commentList {
+  list-style: none;
+  padding: 0;
+}
+
+.commentList li {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.commentItem {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+
+/* 상단: 작성자 + 시간 */
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  color: #555;
+}
+
+/* 본문: 댓글 + 삭제 버튼 */
+.commentBody {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.commentContent {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  word-break: break-word;
+  max-width: 90%;
+}
+
+.commentDeleteButton {
+  height: 30px;
+  padding: 0 12px;
+  margin-left: 8px;
+}
+
+.commentDate {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+.commentContent {
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.commentDate {
+  font-size: 0.85rem;
+  color: #999;
+}
+
+/* 댓글 입력 버튼 위치 */
+.commentButtonBox {
+  display: flex;
+  justify-content: flex-end;
 }

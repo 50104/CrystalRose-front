@@ -2,13 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { axiosInstance } from '@utils/axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import parse from 'html-react-parser';
+import { useUserData } from '@utils/api/user';
 import './Content.css';
 import styles from './CKEditor.module.css';
 
 function Content() {
+    const { userData } = useUserData();
     const { boardNo } = useParams();
     const [content, setContent] = useState(null);
     const navigate = useNavigate();
+    const [comments, setComments] = useState([]);
+    const [newComment, setNewComment] = useState(""); 
 
     // HTML 디코딩 함수
     function decodeHtml(html) {
@@ -16,6 +20,18 @@ function Content() {
         txt.innerHTML = html;
         return txt.value;
     }
+
+    const formatDateTime = (isoString) => {
+        if (!isoString) return "";
+        const date = new Date(isoString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        const hour = String(date.getHours()).padStart(2, "0");
+        const min = String(date.getMinutes()).padStart(2, "0");
+        const sec = String(date.getSeconds()).padStart(2, "0");
+        return `${year}-${month}-${day} ${hour}:${min}:${sec}`;
+    };
 
     useEffect(() => {
         if (boardNo) {
@@ -42,8 +58,59 @@ function Content() {
                 }
             };
             getContent();
+
+            console.log("댓글 요청 보냄", newComment);
+            fetch(`${process.env.REACT_APP_API_URL}/board/${boardNo}/comments`)
+              .then(res => res.json())
+              .then(data => {
+                const array = Array.isArray(data) ? data : data.data;
+                setComments(array || []);
+              })
+              .catch(err => {
+                console.error("댓글 불러오기 오류:", err);
+                setComments([]); // 안전하게 fallback
+            });
         }
     }, [boardNo]);
+
+    const handleAddComment = () => {
+        if (!newComment.trim()) {
+            console.warn("댓글 내용이 비어 있음 — 전송 안함");
+            return;
+        }
+
+        const payload = {
+            content: newComment,
+            userId: userData?.userId 
+        };
+
+        console.log("댓글 등록 요청", payload);
+
+        axiosInstance.post(`${process.env.REACT_APP_API_URL}/board/${boardNo}/comments`, payload)
+            .then(() => {
+                console.log("댓글 등록 성공");
+                setNewComment("");
+                return fetch(`${process.env.REACT_APP_API_URL}/board/${boardNo}/comments`);
+            })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log("댓글 목록 새로고침 응답", data);
+                setComments(data);
+            })
+            .catch((error) => {
+                console.error("댓글 등록 중 오류 발생", error);
+            });
+    };
+
+    const handleDeleteComment = (commentId) => {
+        if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
+
+        axiosInstance.delete(`${process.env.REACT_APP_API_URL}/board/comments/${commentId}`)
+            .then(() => {
+                setComments((prev) => prev.filter((c) => c.id !== commentId));
+            })
+            .catch((err) => console.error("댓글 삭제 실패", err));
+    };
 
     const handleDelete = () => {
         if (window.confirm('게시글을 삭제하시겠습니까?')) {
@@ -93,6 +160,35 @@ function Content() {
                     type="submit"
                     onClick={handleDelete}
                     value="삭제"/>
+            </div>
+            <div className="commentSection">
+                <h3>댓글</h3>
+                <div className="commentInputBox">
+                    <textarea
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        placeholder="댓글을 입력하세요"
+                    />
+                    <div className="commentButtonBox">
+                        <button className="contentButton" onClick={handleAddComment}>등록</button>
+                    </div>
+                </div>
+                <ul className="commentList">
+                    {comments.map((c) => (
+                        <li key={c.id} className="commentItem">
+                            <div className="commentHeader">
+                                <div className="commentUser">{c.userId}</div>
+                                <div className="commentDate">{formatDateTime(c.createdDate)}</div>
+                            </div>
+                            <div className="commentBody">
+                                <div className="commentContent">{c.content}</div>
+                                {userData?.userId === c.userId && (
+                                    <button className="contentButton commentDeleteButton" onClick={() => handleDeleteComment(c.id)}>삭제</button>
+                                )}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
             </div>
         </div>
     );
