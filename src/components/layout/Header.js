@@ -85,6 +85,7 @@ const Header = () => {
           </ul>
           <ul><a href="/list">리스트</a></ul>
           <ul><a href="/editor">에디터</a></ul>
+          <ul><a href="/wiki/list">도감 목록</a></ul>
           <ul><a href="/admin/wiki">도감 승인</a></ul>
           <ul><a href="/wiki/register">도감 요청</a></ul>
 

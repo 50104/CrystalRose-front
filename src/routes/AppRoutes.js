@@ -26,6 +26,8 @@ import GroupChattingList from '@components/pages/Chat/GroupCattingList';
 import MyChatPage from '@components/pages/Chat/MyChatPage';
 import WikiApprove from '../components/pages/admin/WikiApproval';
 import WikiRegister from '../components/pages/wiki/WikiRegister';
+import WikiList from '../components/pages/wiki/WikiList';
+import WikiDetail from '../components/pages/wiki/WikiDetail';
 
 function AppRoutes() {
   return (
@@ -68,9 +70,10 @@ function AppRoutes() {
         <Route path="/review/write/:roseId" element={<ReviewWrite />} />
 
         {/* 장미 위키 */}
-        {/* 도감 승인 요청 목록 */}
         <Route path="/admin/wiki" element={<WikiApprove />} />
         <Route path="/wiki/register" element={<WikiRegister />} />
+        <Route path="/wiki/list" element={<WikiList />} />
+        <Route path="/wiki/:wikiId" element={<WikiDetail />} />
 
         {/* 채팅 관련 */}
         <Route path="/memberList" element={<MemberList />} />
