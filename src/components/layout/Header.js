@@ -85,7 +85,8 @@ const Header = () => {
           </ul>
           <ul><a href="/list">리스트</a></ul>
           <ul><a href="/editor">에디터</a></ul>
-          <ul><a href="/board">보드</a></ul>
+          <ul><a href="/admin/wiki">도감 승인</a></ul>
+          <ul><a href="/wiki/register">도감 요청</a></ul>
 
           <ul><a href="/groupchatting/list">채팅방목록</a></ul>
           <ul><a href="/my/chat/page">MyChatPage</a></ul>

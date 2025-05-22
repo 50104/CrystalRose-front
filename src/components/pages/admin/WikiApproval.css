@@ -1,0 +1,177 @@
+/* AdminApprovalPage.css */
+
+.admin-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.admin-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #111827;
+}
+
+.admin-message {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.25rem;
+}
+
+.admin-message.success {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.admin-message.error {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.pending-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+.no-entries {
+  background-color: #f3f4f6;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  text-align: center;
+  color: #4b5563;
+}
+
+.entries-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.entry-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background-color: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.entry-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.entry-card.selected {
+  border-color: #ec4899;
+  box-shadow: 0 4px 6px rgba(236, 72, 153, 0.1);
+}
+
+.entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.entry-info {
+  flex: 1;
+}
+
+.entry-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+  color: #111827;
+}
+
+.entry-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.entry-category {
+  background-color: #f3f4f6;
+  border-radius: 999px;
+  padding: 0.125rem 0.5rem;
+}
+
+.entry-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.approve-button,
+.reject-button {
+  padding: 0.375rem 0.75rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.approve-button {
+  background-color: #10b981;
+  color: white;
+}
+
+.approve-button:hover {
+  background-color: #059669;
+}
+
+.reject-button {
+  background-color: #ef4444;
+  color: white;
+}
+
+.reject-button:hover {
+  background-color: #dc2626;
+}
+
+.entry-details {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 16rem;
+}
+
+.loading-text {
+  font-size: 1.125rem;
+  color: #6b7280;
+}
+
+.error-container {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 1rem;
+  border-radius: 0.25rem;
+}
+
+.retry-button {
+  margin-top: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.retry-button:hover {
+  background-color: #dc2626;
+}

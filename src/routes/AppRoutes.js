@@ -24,6 +24,8 @@ import MemberList from '@components/pages/Chat/MemberList';
 import StompChatPage from '@components/pages/Chat/StompChatPage';
 import GroupChattingList from '@components/pages/Chat/GroupCattingList';
 import MyChatPage from '@components/pages/Chat/MyChatPage';
+import WikiApprove from '../components/pages/admin/WikiApproval';
+import WikiRegister from '../components/pages/wiki/WikiRegister';
 
 function AppRoutes() {
   return (
@@ -64,6 +66,11 @@ function AppRoutes() {
         {/* 장미정보 및 리뷰 */}
         <Route path="/review/:roseId" element={<RoseInfo />} />
         <Route path="/review/write/:roseId" element={<ReviewWrite />} />
+
+        {/* 장미 위키 */}
+        {/* 도감 승인 요청 목록 */}
+        <Route path="/admin/wiki" element={<WikiApprove />} />
+        <Route path="/wiki/register" element={<WikiRegister />} />
 
         {/* 채팅 관련 */}
         <Route path="/memberList" element={<MemberList />} />
