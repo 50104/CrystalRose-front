@@ -9,9 +9,9 @@ function Home() {
     <div>
       <Test />
       {/*  */}
-      <RoseRanking />
+      {/* <RoseRanking />
       <RoseReview />
-      <RoseToday />
+      <RoseToday /> */}
     </div>
   );
 }

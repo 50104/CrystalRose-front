@@ -28,6 +28,7 @@ import WikiApprove from '../components/pages/admin/WikiApproval';
 import WikiRegister from '../components/pages/wiki/WikiRegister';
 import WikiList from '../components/pages/wiki/WikiList';
 import WikiDetail from '../components/pages/wiki/WikiDetail';
+import MyBlockList from '../components/pages/report/MyBlockList';
 
 function AppRoutes() {
   return (
@@ -80,7 +81,10 @@ function AppRoutes() {
         <Route path="/chatpage/:roomId" element={<StompChatPage />} />
         <Route path="/groupChatting/list" element={<GroupChattingList />} />
         <Route path="/my/chat/page" element={<MyChatPage />} />
-        
+
+        {/* 신고 차단 */}
+        <Route path="/mypage/blocks" element={<MyBlockList />} />
+
         {/* 404 페이지 */}
         <Route path="/*" element={<NotFound />} />
       </Routes>
