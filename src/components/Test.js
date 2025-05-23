@@ -1,52 +1,25 @@
-import React, { useState } from 'react';
-import { axiosInstance } from '@utils/axios';
-import useFetchData from '../hooks/useFetchData';
-import handleChange from '@utils/helpers/handleChange';
-
 function Test() {
-  //hook 사용
-  const apiUrl = `${process.env.REACT_APP_API_URL}/test/findAll`;
-  const { entities, fetchData } = useFetchData(apiUrl);
 
-  //인풋 데이터
-  const [user, setUser] = useState({
-    userId: '',
-    userPw: '',
-  });
-
-  const handleInputChange = (e) => {
-    handleChange(e, setUser);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/test/save`, user);
-      alert('데이터 추가 완료 / ' + response.data);
-      fetchData(); //추가후 재로딩
-    } catch (error) {
-      console.log('데이터 추가 에러: ' + error);
-    }
-  };
 
   return (
-    <div>
-      <h3>데이터 인풋</h3>
-      <form onSubmit={handleSubmit}>
-        <input type="text" id="userId" value={user.userId} placeholder="아이디" onChange={handleInputChange} />
-        <input type="text" id="userPw" value={user.userPw} placeholder="비밀번호" onChange={handleInputChange} />
-        <button type="submit">데이터 저장</button>
-      </form>
-      <div>
-        <h2>TestEntity DB</h2>
-        <ul>
-          {entities.map((entity) => (
-            <li key={entity.id}>
-              아이디: {entity.userId} / 비밀번호: {entity.userPw}
-            </li>
-          ))}
-        </ul>
-      </div>
+    <div style={{ padding: '10px' }}>
+      <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}> {/* 기본 ul 스타일 제거 */}
+        <li style={{ marginBottom: '18px' }}>
+          <a href="/wiki/list" style={{ fontSize: '16px', textDecoration: 'none', color: '#333' }}>도감 목록</a>
+        </li>
+        <li style={{ marginBottom: '18px' }}>
+          <a href="/admin/wiki" style={{ fontSize: '16px', textDecoration: 'none', color: '#333' }}>도감 승인</a>
+        </li>
+        <li style={{ marginBottom: '18px' }}>
+          <a href="/wiki/register" style={{ fontSize: '16px', textDecoration: 'none', color: '#333' }}>도감 요청</a>
+        </li>
+        <li style={{ marginBottom: '18px' }}>
+          <a href="/mypage/blocks" style={{ fontSize: '16px', textDecoration: 'none', color: '#333' }}>차단 목록</a>
+        </li>
+        <li>
+          <a href="/admin/reports" style={{ fontSize: '16px', textDecoration: 'none', color: '#333' }}>신고 목록</a>
+        </li>
+      </ul>
     </div>
   );
 }
