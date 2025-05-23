@@ -6,14 +6,18 @@ import { useUserData } from '@utils/api/user';
 import './Content.css';
 import styles from './CKEditor.module.css';
 import CommentList from './CommentList';
+import { reportPost, blockUser } from '@utils/api/report';
 
 function Content() {
-    const { userData } = useUserData();
+    const { userData, loading, isLogin } = useUserData();
     const { boardNo } = useParams();
     const [content, setContent] = useState(null);
     const navigate = useNavigate();
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState(""); 
+    const [showReport, setShowReport] = useState(false);
+    const [reason, setReason] = useState('');
+
 
     // HTML 디코딩 함수
     function decodeHtml(html) {
@@ -86,6 +90,10 @@ function Content() {
             });
         }
     }, [boardNo]);
+
+    if (!content) {
+        return <div>Loading...</div>;
+    }
 
     const handleAddComment = () => {
         if (!newComment.trim()) {
@@ -160,6 +168,23 @@ function Content() {
         navigate(`/editor/${boardNo}`);
     };
 
+    const handleReportSubmit = async () => {
+      try {
+        await reportPost(content.boardNo, reason);
+        const confirmBlock = window.confirm("차단하시겠습니까?");
+        if (confirmBlock) {
+          await blockUser(content.writer.userNo);
+          alert("차단 완료");
+        } else {
+          alert("신고 완료");
+        }
+        setShowReport(false);
+        setReason('');
+      } catch (err) {
+        alert('신고 실패: ' + err.response?.data?.message || '오류 발생');
+      }
+    };
+
     if (!content) {
         return <div>Loading...</div>;
     }
@@ -173,15 +198,30 @@ function Content() {
                             {content.boardTitle}
                         </div>
                         <div className='authorBox'>
-                            작성자 : {content.userId}
+                            작성자 : {content.writer?.userNick || content.userId}
                         </div>
+                        {!loading && userData && content.writer && userData.userNo !== content.writer.userNo && (
+                          <>
+                            <button className="contentButton" onClick={() => setShowReport(true)}>신고</button>
+                            {showReport && (
+                              <div className="reportForm">
+                                <textarea
+                                  value={reason}
+                                  onChange={(e) => setReason(e.target.value)}
+                                  placeholder="신고 사유를 입력하세요"
+                                />
+                                <button onClick={handleReportSubmit}>신고 제출</button>
+                              </div>
+                            )}
+                          </>
+                        )}
                     </div>
                     <div className='contentDivider'></div>
                     <div className='boardContent'>{parse(content.boardContent)}</div>
                 </div>
             </div>
             <div className='contentButtonBox'>
-              {userData?.userId === content.userId && (
+              {userData && content.writer && userData.userNo === content.writer.userNo && (
                 <>
                   <input
                     className='contentButton'

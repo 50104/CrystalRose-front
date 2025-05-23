@@ -243,3 +243,28 @@
   border-radius: 4px;
   box-sizing: border-box;
 }
+
+.reportForm {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.reportForm textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.reportForm button {
+  align-self: flex-end;
+  background-color: #ef4444;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
