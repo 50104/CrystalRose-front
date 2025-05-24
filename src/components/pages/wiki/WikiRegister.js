@@ -20,6 +20,38 @@ export default function WikiRegisterPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await axiosInstance.post(
+        `${process.env.REACT_APP_API_URL}/api/v1/wiki/image/upload`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      const url = response.data.url;
+      setFormData(prev => ({ ...prev, imageUrl: url }));
+      setImagePreview(url);
+    } catch (error) {
+      console.error('이미지 업로드 실패:', error);
+      console.log('imageUrl:', formData.imageUrl);
+      setMessage({ type: 'error', text: '이미지 업로드에 실패했습니다.' });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,6 +95,7 @@ export default function WikiRegisterPage() {
           recommendedPosition: '',
           imageUrl: ''
         });
+        setImagePreview(null);
       } else {
         setMessage({
           type: 'error',
@@ -271,17 +304,18 @@ export default function WikiRegisterPage() {
 
           <div className="form-group">
             <label className="form-label">
-              대표 이미지 URL <span className="required">*</span>
+              대표 이미지 업로드 <span className="required">*</span>
             </label>
             <input
-              type="url"
-              name="imageUrl"  
-              value={formData.imageUrl}
-              onChange={handleChange}
-              className="form-input"
-              placeholder="https://example.com/image.jpg"
-              required
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              disabled={uploading}
             />
+            {uploading && <p>업로드 중...</p>}
+            {imagePreview && (
+              <img src={imagePreview} alt="preview" style={{ marginTop: '0.5rem', maxWidth: '100%' }} />
+            )}
           </div>
         </div>
 
@@ -302,7 +336,7 @@ export default function WikiRegisterPage() {
         <div className="form-actions">
           <button
             onClick={handleSubmit}
-            disabled={isSubmitting}
+            disabled={isSubmitting || uploading}
             className="submit-button"
           >
             {isSubmitting ? '등록 중...' : '도감 등록하기'}

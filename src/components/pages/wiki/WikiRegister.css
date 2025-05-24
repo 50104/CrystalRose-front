@@ -127,3 +127,8 @@
   background-color: #f9a8d4;
   cursor: not-allowed;
 }
+
+img {
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+}
