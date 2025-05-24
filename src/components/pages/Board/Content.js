@@ -9,7 +9,7 @@ import CommentList from './CommentList';
 import { reportPost, blockUser } from '@utils/api/report';
 
 function Content() {
-    const { userData, loading, isLogin } = useUserData();
+    const { userData, loading } = useUserData();
     const { boardNo } = useParams();
     const [content, setContent] = useState(null);
     const navigate = useNavigate();
@@ -169,19 +169,31 @@ function Content() {
     };
 
     const handleReportSubmit = async () => {
+      if (!reason.trim()) {
+        alert("신고 사유를 입력하세요.");
+        return;
+      }
       try {
         await reportPost(content.boardNo, reason);
-        const confirmBlock = window.confirm("차단하시겠습니까?");
-        if (confirmBlock) {
-          await blockUser(content.writer.userNo);
-          alert("차단 완료");
-        } else {
-          alert("신고 완료");
-        }
+        alert("신고 완료");
         setShowReport(false);
         setReason('');
       } catch (err) {
         alert('신고 실패: ' + err.response?.data?.message || '오류 발생');
+      }
+    };
+
+    const checkAlreadyReported = async () => {
+      try {
+        const res = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/reports/check`, {
+          params: { postId: content.boardNo },
+          headers: { access: localStorage.getItem('access') },
+          withCredentials: true
+        });
+        return res.data.alreadyReported; // true or false
+      } catch (err) {
+        console.error("신고 여부 확인 실패", err);
+        return false;
       }
     };
 
@@ -202,7 +214,32 @@ function Content() {
                         </div>
                         {!loading && userData && content.writer && userData.userNo !== content.writer.userNo && (
                           <>
-                            <button className="contentButton" onClick={() => setShowReport(true)}>신고</button>
+                            <button
+                              className="contentButton"
+                              onClick={async () => {
+                                try {
+                                  await blockUser(content.writer.userNo);
+                                  alert("차단 완료");
+                                } catch (err) {
+                                  alert('차단 실패: ' + err.response?.data?.message || '오류 발생');
+                                }
+                              }}
+                            >
+                              차단
+                            </button>
+                            <button
+                              className="contentButton"
+                              onClick={async () => {
+                                const alreadyReported = await checkAlreadyReported();
+                                if (alreadyReported) {
+                                  alert("이미 신고한 게시글입니다.");
+                                  return;
+                                }
+                                setShowReport(prev => !prev);
+                              }}
+                            >
+                              {showReport ? '신고 닫기' : '신고'}
+                            </button>
                             {showReport && (
                               <div className="reportForm">
                                 <textarea
