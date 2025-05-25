@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
+import './MyChatPage.css';
 
-const ChatList = () => {
+const MyChatPage = () => {
   const [chatList, setChatList] = useState([]);
   const navigate = useNavigate();
 
@@ -18,6 +19,12 @@ const ChatList = () => {
     };
 
     fetchChatList();
+
+    // 읽음 메세지 수신 시 목록 새로고침
+    const handleRead = () => fetchChatList();
+    window.addEventListener('chat-read', handleRead);
+
+    return () => window.removeEventListener('chat-read', handleRead);
   }, []);
 
   const enterChatRoom = (roomId) => {
@@ -34,17 +41,23 @@ const ChatList = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto', border: '1px solid #ccc', borderRadius: '8px', padding: '20px' }}>
-        <Typography variant="h5" align="center">내 채팅목록</Typography>
+    <div className="chatlist-container">
+      <div className="chatlist-inner">
+        <Typography variant="h5" className="chatlist-header">내 채팅목록</Typography>
         <div>
           {chatList.map((chat) => (
-            <div key={chat.roomId} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #eee' }}>
+            <div key={chat.roomId} className="chatlist-item">
               <div>{chat.roomName}</div>
               <div>{chat.unReadCount}</div>
               <div>
                 <Button color="primary" onClick={() => enterChatRoom(chat.roomId)}>입장</Button>
-                <Button color="secondary" disabled={chat.isGroupChat === 'N'} onClick={() => leaveChatRoom(chat.roomId)}>나가기</Button>
+                <Button
+                  color="secondary"
+                  disabled={chat.isGroupChat === 'N'}
+                  onClick={() => leaveChatRoom(chat.roomId)}
+                >
+                  나가기
+                </Button>
               </div>
             </div>
           ))}
@@ -54,4 +67,4 @@ const ChatList = () => {
   );
 };
 
-export default ChatList;
+export default MyChatPage;

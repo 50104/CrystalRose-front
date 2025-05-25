@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
+import './MemberList.css';
 
 const MemberList = () => {
   const [memberList, setMemberList] = useState([]);
@@ -31,12 +32,12 @@ const MemberList = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto', border: '1px solid #ccc', borderRadius: '8px', padding: '20px' }}>
-        <Typography variant="h5" align="center">회원목록</Typography>
+    <div className="memberlist-container">
+      <div className="memberlist-inner">
+        <Typography variant="h5" className="memberlist-header">회원목록</Typography>
         <div>
           {memberList.map((member) => (
-            <div key={member.userNo} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #eee' }}>
+            <div key={member.userNo} className="memberlist-item">
               <div>{member.userNo}</div>
               <div>{member.userId}</div>
               <div>{member.userEmail}</div>

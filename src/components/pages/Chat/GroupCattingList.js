@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from '@mui/material';
 import { axiosInstance } from '@utils/axios';
+import './GroupCattingList.css';
 
-const ChatRoomList = () => {
+const GroupCattingList = () => {
   const [chatRoomList, setChatRoomList] = useState([]);
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
   const [newRoomTitle, setNewRoomTitle] = useState("");
@@ -30,13 +31,15 @@ const ChatRoomList = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-        <Typography variant="h5" align="center">채팅방 목록</Typography>
-        <Button variant="contained" color="secondary" onClick={() => setShowCreateRoomModal(true)}>채팅방 생성</Button>
-        <div style={{ marginTop: '20px' }}>
+    <div className="chatroom-container">
+      <div className="chatroom-inner">
+        <Typography variant="h5" className="chatroom-header">채팅방 목록</Typography>
+        <Button variant="contained" color="secondary" onClick={() => setShowCreateRoomModal(true)} className="chatroom-create-button">
+          채팅방 생성
+        </Button>
+        <div className="chatroom-list">
           {chatRoomList.map(chat => (
-            <div key={chat.roomId} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #eee' }}>
+            <div key={chat.roomId} className="chatroom-item">
               <div>{chat.roomId}</div>
               <div>{chat.roomName}</div>
               <div>
@@ -61,4 +64,4 @@ const ChatRoomList = () => {
   );
 };
 
-export default ChatRoomList;
+export default GroupCattingList;

@@ -1,0 +1,28 @@
+.chatroom-container {
+  padding: 20px;
+}
+
+.chatroom-inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.chatroom-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.chatroom-create-button {
+  margin-bottom: 20px;
+}
+
+.chatroom-list {
+  margin-top: 20px;
+}
+
+.chatroom-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}

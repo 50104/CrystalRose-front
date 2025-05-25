@@ -1,0 +1,42 @@
+.stompchat-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.stompchat-box {
+  height: 300px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.stompchat-message-right {
+  text-align: right;
+}
+
+.stompchat-message-left {
+  text-align: left;
+}
+
+.stompchat-input {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.stompchat-button {
+  padding: 10px;
+  background-color: rgb(212, 194, 255);
+  color: black;
+  border: none;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+}

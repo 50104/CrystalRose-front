@@ -1,0 +1,23 @@
+.chatlist-container {
+  padding: 20px;
+}
+
+.chatlist-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.chatlist-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.chatlist-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
