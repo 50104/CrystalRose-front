@@ -15,9 +15,14 @@ function MyPage() {
 
     useEffect(() => {
         if (userData) {
-            setCurrentProfileImage(userData.userProfileImg ? `${process.env.REACT_APP_API_URL}/${userData.userProfileImg}` : "https://i.pinimg.com/564x/d9/7b/bb/d97bbb08017ac2309307f0822e63d082.jpg");
+            setCurrentProfileImage(
+                userData.userProfileImg && userData.userProfileImg.startsWith('http')
+                    ? userData.userProfileImg
+                    : "https://i.pinimg.com/564x/d9/7b/bb/d97bbb08017ac2309307f0822e63d082.jpg"
+            );
         }
     }, [userData]);
+
 
     console.log('currentProfileImage:', currentProfileImage);
 
