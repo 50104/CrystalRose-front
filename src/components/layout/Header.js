@@ -1,5 +1,3 @@
-// src/components/layout/Header.jsx
-
 import React from 'react';
 import { FaSearch, FaUser } from 'react-icons/fa';
 import { IoChatbubbleEllipses } from 'react-icons/io5';

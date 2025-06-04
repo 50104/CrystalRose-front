@@ -30,6 +30,7 @@ import WikiList from '../components/pages/wiki/WikiList';
 import WikiDetail from '../components/pages/wiki/WikiDetail';
 import MyBlockList from '../components/pages/report/MyBlockList';
 import AdminReport from '../components/pages/admin/AdminReport';
+import AdminCommentReport from '../components/pages/admin/AdminCommentReport';
 
 function AppRoutes() {
   return (
@@ -86,6 +87,7 @@ function AppRoutes() {
         {/* 신고 차단 */}
         <Route path="/mypage/blocks" element={<MyBlockList />} />
         <Route path="/admin/reports" element={<AdminReport />} />
+        <Route path="/admin/comment-reports" element={<AdminCommentReport />} />
 
         {/* 404 페이지 */}
         <Route path="/*" element={<NotFound />} />
