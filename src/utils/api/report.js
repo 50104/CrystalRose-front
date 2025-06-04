@@ -17,3 +17,12 @@ export const blockUser = async (blockedUserId) => {
   );
   return res.data;
 };
+
+export const reportComment = async (commentId, reason) => {
+  const token = localStorage.getItem('access');
+  const res = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/comment-reports`,
+    { commentId, reason },
+    { headers: { access: token }, withCredentials: true }
+  );
+  return res.data;
+};

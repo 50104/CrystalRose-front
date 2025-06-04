@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { axiosInstance } from "@utils/axios";
 import "./Content.css";
+import ReportModal from '../../common/ReportModal';
+import { reportComment } from "@utils/api/report";
 
 function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateTime, handleDeleteComment }) {
   const [replyBoxOpen, setReplyBoxOpen] = useState(null);
   const [replyContents, setReplyContents] = useState({});
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editContents, setEditContents] = useState({});
+  const [reportingCommentId, setReportingCommentId] = useState(null);
 
   const toggleReplyBox = (commentId) => {
     setEditingCommentId(null); // 수정 중이면 닫기
@@ -70,6 +73,15 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
     return null;
   };
 
+  const handleCommentReport = async (commentId, reason) => {
+    try {
+      await reportComment(commentId, reason);
+      alert("댓글 신고 완료");
+    } catch (err) {
+      alert("신고 실패: " + err.response?.data?.message);
+    }
+  };
+
   const renderComment = (comment) => (
     <li key={comment.id} className="commentItem">
       <div className="commentHeader">
@@ -81,22 +93,19 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
           <div className="rightButtons">
             {userData?.userId === comment.userId && (
               <>
-                <button
-                  className="editButton"
-                  onClick={() => {
-                    if (editingCommentId === comment.id) {
-                      setEditingCommentId(null); // 수정 토글 종료
-                    } else {
-                      handleEditComment(comment.id);
-                    }
-                  }}
-                >
-                  수정
-                </button>
+                <button className="editButton" onClick={() => handleEditComment(comment.id)}>수정</button>
                 <button className="deleteIcon" onClick={() => handleDeleteComment(comment.id)}>삭제</button>
               </>
             )}
             <button className="editButton" onClick={() => toggleReplyBox(comment.id)}>답글</button>
+            <button onClick={() => setReportingCommentId(comment.id)}>신고</button>
+
+            <ReportModal
+              visible={reportingCommentId !== null}
+              onClose={() => setReportingCommentId(null)}
+              onSubmit={handleCommentReport}
+              targetId={reportingCommentId}
+            />
           </div>
         )}
       </div>
