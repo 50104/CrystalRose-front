@@ -22,6 +22,9 @@ function Test() {
         <li style={{ marginBottom: '18px' }}>
           <a href="/admin/comment-reports" style={{ fontSize: '16px', textDecoration: 'none', color: '#333' }}>댓글 신고 목록</a>
         </li>
+        <li style={{ marginBottom: '18px' }}>
+          <a href="/rose/register" style={{ fontSize: '16px', textDecoration: 'none', color: '#333' }}>장미 등록</a>
+        </li>
       </ul>
     </div>
   );

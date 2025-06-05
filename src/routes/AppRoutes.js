@@ -31,6 +31,7 @@ import WikiDetail from '../components/pages/wiki/WikiDetail';
 import MyBlockList from '../components/pages/report/MyBlockList';
 import AdminReport from '../components/pages/admin/AdminReport';
 import AdminCommentReport from '../components/pages/admin/AdminCommentReport';
+import RoseRegister from '../components/pages/rose/RoseRegister';
 
 function AppRoutes() {
   return (
@@ -77,6 +78,9 @@ function AppRoutes() {
         <Route path="/wiki/register" element={<WikiRegister />} />
         <Route path="/wiki/list" element={<WikiList />} />
         <Route path="/wiki/:wikiId" element={<WikiDetail />} />
+
+        {/* 장미 관련 */}
+        <Route path="/rose/register" element={<RoseRegister />} />
 
         {/* 채팅 관련 */}
         <Route path="/memberList" element={<MemberList />} />
