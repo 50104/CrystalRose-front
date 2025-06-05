@@ -71,20 +71,22 @@ export const getUserData = async (navigate, setIsLogin) => {
   }
   setIsLogin(true);
 
-  const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/user/data`, { headers: { access: token }, withCredentials: true });
+  const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/user/data`);
+
   console.log('접속한 유저1 : ', JSON.stringify(response.data));
   return response.data;
 }
 
 export const modifyUserData = async (data) => {
-  const token = localStorage.getItem('access');
-
-  const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/user/modify`, data, {
+  const response = await axiosInstance.post(
+    `${process.env.REACT_APP_API_URL}/api/user/modify`,
+    data,
+    {
       headers: {
-          'Content-Type': 'multipart/form-data',
-          'access': token,
+        'Content-Type': 'multipart/form-data',
       },
-  });
+    }
+  );
 
   return response.data;
 };

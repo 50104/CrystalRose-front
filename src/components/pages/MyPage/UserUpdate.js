@@ -251,10 +251,6 @@ const UserUpdate = () => {
         try {
             await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/withdraw`, {
                 userPwd: userInfo.userPwd,
-            }, {
-                headers: {
-                    access: localStorage.getItem('access'),
-                }
             });
             alert('탈퇴 요청이 완료되었습니다. 계정은 1주일 후 삭제됩니다.');
             window.location.href = '/login';

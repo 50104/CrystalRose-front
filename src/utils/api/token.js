@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { axiosInstance } from '@utils/axios';
 
-// refresh 토큰으로 access 토큰을 재발급 받은 후 홈으로 이동
+// refresh 토큰으로 access 토큰 재발급 이후 홈으로 이동
 export function GetAccess() {
   useEffect(() => {
     const fetchAccessToken = async () => {
@@ -15,12 +15,8 @@ export function GetAccess() {
 // access 토큰 재발급 요청 함수
 export const getAccessToken = async () => {
   try {
-    const response = await axiosInstance.post(
-      `${process.env.REACT_APP_API_URL}/reissue`,
-      {},
-      { withCredentials: true }
-    );
-    const accessToken = response.headers['access'];
+    const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/reissue`);
+    const accessToken = response.data.accessToken;
     localStorage.setItem('access', accessToken);
   } catch (error) {
     console.error('토큰 갱신 실패:', error);

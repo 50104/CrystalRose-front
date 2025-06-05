@@ -95,34 +95,42 @@ const StompChatPage = () => {
     }
   };
 
-  const connectWebSocket = () => {
+  const connectWebSocket = async () => {
     if (stompClient && stompClient.connected) return;
 
-    const sockJs = new SockJS(`${process.env.REACT_APP_API_URL}/connect`);
-    const client = Stomp.over(sockJs);
-    client.connect(
-      { access: token, roomId },
-      () => {
-        client.subscribe(
-          `/topic/${roomId}`,
-          (message) => {
-            const parsedMessage = JSON.parse(message.body);
+    try {
+      const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/reissue`);
+      const accessToken = response.data.accessToken;
+      localStorage.setItem("access", accessToken);
 
-            if (parsedMessage.type === 'READ') {
-              window.dispatchEvent(new Event('chat-read')); // 읽음 브로드캐스트 수신 → MyChatPage 새로고침 트리거
-              return;
+      const sockJs = new SockJS(`${process.env.REACT_APP_API_URL}/connect`);
+      const client = Stomp.over(sockJs);
+
+      client.connect(
+        { Authorization: `Bearer ${accessToken}`, roomId },
+        () => {
+          client.subscribe(
+            `/topic/${roomId}`,
+            (message) => {
+              const parsedMessage = JSON.parse(message.body);
+              if (parsedMessage.type === 'READ') {
+                window.dispatchEvent(new Event('chat-read'));
+                return;
+              }
+              setMessages((prev) => [...prev, parsedMessage]);
+              scrollToBottom();
             }
-            setMessages((prev) => [...prev, parsedMessage]);
-            scrollToBottom(); // 새로운 메시지는 하단으로
-          },
-          { access: token }
-        );
-      },
-      (error) => {
-        console.error('웹소켓 오류:', error);
-      }
-    );
-    setStompClient(client);
+          );
+        },
+        (error) => {
+          console.error('웹소켓 오류:', error);
+        }
+      );
+
+      setStompClient(client);
+    } catch (error) {
+      console.error("WebSocket 연결 전 토큰 재발급 실패:", error);
+    }
   };
 
   const sendMessage = () => {

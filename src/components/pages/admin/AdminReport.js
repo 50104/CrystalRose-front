@@ -10,10 +10,7 @@ export default function AdminReport() {
   const fetchReports = async () => {
     setLoading(true);
     try {
-      const res = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/v1/admin/reports`, {
-        headers: { access: localStorage.getItem('access') },
-        withCredentials: true,
-      });
+      const res = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/v1/admin/reports`);
       setReports(res.data);
     } catch (err) {
       setError(err.response?.data?.message || '신고 데이터를 불러오지 못했습니다.');

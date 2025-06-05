@@ -61,25 +61,24 @@ function SignIn() {
 
     const onSignInButtonClickHandler = async (e) => {
         e.preventDefault();
-        if(!userId || !userPwd) {
+        if (!userId || !userPwd) {
             alert('아이디와 비밀번호 모두 입력해주세요.');
             return;
         }
         try {
-            let formData= new FormData();
+            let formData = new FormData();
             formData.append('userId', userId);
-            formData.append('userPwd',userPwd);
+            formData.append('userPwd', userPwd);
 
             console.log('로그인:', userId, userPwd);
 
-            const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/login`, formData, {
-                withCredentials: true
-            });
-console.log("응답:", response);
+            const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/login`, formData);
+            console.log("응답:", response);
 
-            const accessToken = response.headers['access'];
-            const withdrawalHeader  = response.headers['withdrawal'];
-            console.log("withdrawal header:", withdrawalHeader );
+            const authorizationHeader = response.headers['authorization'];
+            const accessToken = authorizationHeader?.split(' ')[1];
+
+            const withdrawalHeader = response.headers['withdrawal'];
             const isWithdrawal = withdrawalHeader === 'true';
 
             if (!accessToken) {
@@ -89,18 +88,14 @@ console.log("응답:", response);
 
             localStorage.setItem('access', accessToken);
 
-            // 탈퇴 철회
             if (isWithdrawal) {
                 const confirmUndo = window.confirm("탈퇴 요청된 계정입니다. 철회하시겠습니까?");
                 if (confirmUndo) {
                     try {
-                        const cancelResponse = await axiosInstance.put(`${process.env.REACT_APP_API_URL}/api/v1/auth/withdraw/cancel`, null,
-                            {
-                                headers: { access: accessToken },
-                                withCredentials: true
-                            }
+                        const cancelResponse = await axiosInstance.put(
+                            `${process.env.REACT_APP_API_URL}/api/v1/auth/withdraw/cancel`
                         );
-                        alert(cancelResponse.data); // 예: "탈퇴 철회가 완료되었습니다. 다시 로그인해주세요."
+                        alert(cancelResponse.data);
                         localStorage.removeItem("access");
                         window.location.reload();
                         return;
@@ -114,6 +109,7 @@ console.log("응답:", response);
                     return;
                 }
             }
+
             window.location.href = '/';
         } catch (error) {
             if (error.response?.status === 401) {

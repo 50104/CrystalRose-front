@@ -187,8 +187,6 @@ function Content() {
       try {
         const res = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/reports/check`, {
           params: { postId: content.boardNo },
-          headers: { access: localStorage.getItem('access') },
-          withCredentials: true
         });
         return res.data.alreadyReported; // true or false
       } catch (err) {

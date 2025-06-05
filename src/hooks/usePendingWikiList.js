@@ -3,13 +3,7 @@ import { axiosInstance } from '@utils/axios';
 
 export const usePendingWikiList = () => {
   return useQuery(['pendingWikiList'], async () => {
-    const token = localStorage.getItem('access');
-    const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/v1/admin/wiki/pending`, {
-      headers: {
-        access: token,
-      },
-      withCredentials: true,
-    });
+    const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/v1/admin/wiki/pending`);
     return response.data;
   });
 };

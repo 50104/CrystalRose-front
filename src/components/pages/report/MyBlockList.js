@@ -11,11 +11,7 @@ export default function MyBlockList() {
     try {
         const url = `${process.env.REACT_APP_API_URL}/api/v1/blocks/me`;
         console.log('Request URL:', url); // 실제 URL 확인
-        
-        const res = await axiosInstance.get(url, {
-        headers: { access: localStorage.getItem('access') },
-        withCredentials: true,
-      });
+        const res = await axiosInstance.get(url);
       setBlockedUsers(res.data);
     } catch (err) {
       console.error('Full error:', err);
@@ -27,10 +23,7 @@ export default function MyBlockList() {
 
   const handleUnblock = async (id) => {
     try {
-      await axiosInstance.delete(`${process.env.REACT_APP_API_URL}/api/v1/blocks/${id}`, {
-        headers: { access: localStorage.getItem('access') },
-        withCredentials: true,
-      });
+      await axiosInstance.delete(`${process.env.REACT_APP_API_URL}/api/v1/blocks/${id}`);
       setBlockedUsers(blockedUsers.filter(u => u.userNo !== id));
     } catch (err) {
       alert('차단 해제 실패');

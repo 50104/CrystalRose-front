@@ -5,19 +5,19 @@ const instance = axios.create({
   withCredentials: true,
 });
 
-// 요청 전에 access 토큰을 헤더에 세팅
+// 요청 전에 access 토큰을 Authorization 헤더에 세팅
 instance.interceptors.request.use(
   async (config) => {
     const token = localStorage.getItem('access');
     if (token) {
-      config.headers['access'] = token;
+      config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// 응답 에러 처리: access 토큰 만료 시 /getAccess로 리다이렉트
+// 응답 에러 처리 (401이면 refresh 로 이동)
 instance.interceptors.response.use(
   (response) => response,
   async (error) => {
