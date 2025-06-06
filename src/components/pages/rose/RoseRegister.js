@@ -9,12 +9,15 @@ export default function RoseRegister({ onSuccess }) {
     wikiId: '',
     nickname: '',
     acquiredDate: '',
-    locationNote: ''
+    locationNote: '',
+    imageUrl: ''
   });
 
   const [wikiList, setWikiList] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/v1/wiki/list`)
@@ -27,6 +30,31 @@ export default function RoseRegister({ onSuccess }) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const uploadForm = new FormData();
+      uploadForm.append('file', file);
+
+      const res = await axiosInstance.post(
+        `${process.env.REACT_APP_API_URL}/api/v1/roses/image/upload`,
+        uploadForm,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
+
+      const url = res.data.url;
+      setFormData(prev => ({ ...prev, imageUrl: url }));
+      setImagePreview(url);
+    } catch (err) {
+      console.error('이미지 업로드 실패:', err);
+      setMessage({ type: 'error', text: '이미지 업로드에 실패했습니다.' });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -35,7 +63,10 @@ export default function RoseRegister({ onSuccess }) {
         ...formData
       });
       setMessage({ type: 'success', text: '등록 성공!' });
-      setFormData({ wikiId: '', nickname: '', acquiredDate: '', locationNote: '' });
+      setFormData({
+        wikiId: '', nickname: '', acquiredDate: '', locationNote: '', imageUrl: ''
+      });
+      setImagePreview(null);
       onSuccess?.();
     } catch (err) {
       console.error(err);
@@ -69,7 +100,14 @@ export default function RoseRegister({ onSuccess }) {
         <label>장소 메모</label>
         <input type="text" name="locationNote" value={formData.locationNote} onChange={handleChange} />
 
-        <button type="submit" disabled={isSubmitting || !isLogin}>
+        <label>대표 이미지</label>
+        <input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+        {uploading && <p>업로드 중...</p>}
+        {imagePreview && (
+          <img src={imagePreview} alt="preview" style={{ marginTop: '0.5rem', maxWidth: '100%' }} />
+        )}
+
+        <button type="submit" disabled={isSubmitting || !isLogin || uploading}>
           {isSubmitting ? '등록 중...' : '등록하기'}
         </button>
       </form>
