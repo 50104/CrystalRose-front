@@ -208,47 +208,56 @@ function Content() {
                             {content.boardTitle}
                         </div>
                         <div className='authorBox'>
-                            작성자 : {content.writer?.userNick || content.userId}
+                          작성자 : {content.writer 
+                              ? (content.writer.userStatus === 'DELETED' 
+                                  ? '탈퇴한 사용자입니다' 
+                                  : content.writer.userNick) 
+                              : '알 수 없는 사용자'}
                         </div>
-                        {!loading && userData && content.writer && userData.userNo !== content.writer.userNo && (
-                          <>
-                            <button
-                              className="contentButton"
-                              onClick={async () => {
-                                try {
-                                  await blockUser(content.writer.userNo);
-                                  alert("차단 완료");
-                                } catch (err) {
-                                  alert('차단 실패: ' + err.response?.data?.message || '오류 발생');
-                                }
-                              }}
-                            >
-                              차단
-                            </button>
-                            <button
-                              className="contentButton"
-                              onClick={async () => {
-                                const alreadyReported = await checkAlreadyReported();
-                                if (alreadyReported) {
-                                  alert("이미 신고한 게시글입니다.");
-                                  return;
-                                }
-                                setShowReport(prev => !prev);
-                              }}
-                            >
-                              {showReport ? '신고 닫기' : '신고'}
-                            </button>
-                            {showReport && (
-                              <div className="reportForm">
-                                <textarea
-                                  value={reason}
-                                  onChange={(e) => setReason(e.target.value)}
-                                  placeholder="신고 사유를 입력하세요"
-                                />
-                                <button onClick={handleReportSubmit}>신고 제출</button>
-                              </div>
-                            )}
-                          </>
+                        {!loading 
+                          && userData 
+                          && content.writer 
+                          && content.writer.userStatus !== 'DELETED'
+                          && userData.userNo !== content.writer.userNo 
+                          && (
+                            <>
+                              <button
+                                className="contentButton"
+                                onClick={async () => {
+                                  try {
+                                    await blockUser(content.writer.userNo);
+                                    alert("차단 완료");
+                                  } catch (err) {
+                                    alert('차단 실패: ' + err.response?.data?.message || '오류 발생');
+                                  }
+                                }}
+                              >
+                                차단
+                              </button>
+                              <button
+                                className="contentButton"
+                                onClick={async () => {
+                                  const alreadyReported = await checkAlreadyReported();
+                                  if (alreadyReported) {
+                                    alert("이미 신고한 게시글입니다.");
+                                    return;
+                                  }
+                                  setShowReport(prev => !prev);
+                                }}
+                              >
+                                {showReport ? '신고 닫기' : '신고'}
+                              </button>
+                              {showReport && (
+                                <div className="reportForm">
+                                  <textarea
+                                    value={reason}
+                                    onChange={(e) => setReason(e.target.value)}
+                                    placeholder="신고 사유를 입력하세요"
+                                  />
+                                  <button onClick={handleReportSubmit}>신고 제출</button>
+                                </div>
+                              )}
+                            </>
                         )}
                     </div>
                     <div className='contentDivider'></div>

@@ -24,7 +24,9 @@ function List() {
                 {contents.map(c => (
                     <a key={c.boardNo} href={`/content/${c.boardNo}`} className="card">
                         <h2 className="card-title">{c.boardTitle}</h2>
-                        <p className="card-author">작성자: {c.writer}</p>
+                        <p className="card-author">
+                          작성자: {c.writerStatus === 'DELETED' ? '탈퇴한 사용자입니다' : c.writerNick}
+                        </p>
                     </a>
                 ))}
             </div>

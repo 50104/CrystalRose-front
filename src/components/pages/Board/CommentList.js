@@ -86,10 +86,12 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
     <li key={comment.id} className="commentItem">
       <div className="commentHeader">
         <div className="leftBox">
-          <span className="commentUser">{comment.userId}</span>
+          <span className="commentUser">
+            {comment.userStatus === 'DELETED' ? '탈퇴한 사용자입니다' : comment.userId}
+          </span>
           <span className="commentDate">{formatDateTime(comment.createdDate)}</span>
         </div>
-        {!comment.deleted && (
+        {!comment.deleted && comment.userStatus !== 'DELETED' && (
           <div className="rightButtons">
             {userData?.userId === comment.userId && (
               <>
