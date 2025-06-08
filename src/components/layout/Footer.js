@@ -13,10 +13,10 @@ function Footer() {
                 <p></p>
             </div>
             <div>
-                <Link to={"https://github.com/50104/CristalRose-back"}>
+                <Link to={"https://github.com/50104/CrystalRose-back"}>
                     <FaGithub color="gray" size={30} style={{ marginRight: "10" }} />
                 </Link>
-                <Link to={"https://github.com/50104/CristalRose-front"}>
+                <Link to={"https://github.com/50104/CrystalRose-front"}>
                     <FaGithub color="gray" size={30} />
                 </Link>
             </div>

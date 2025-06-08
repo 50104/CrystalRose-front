@@ -39,7 +39,7 @@ export default function RoseRegister({ onSuccess }) {
       uploadForm.append('file', file);
 
       const res = await axiosInstance.post(
-        `${process.env.REACT_APP_API_URL}/api/v1/roses/image/upload`,
+        `${process.env.REACT_APP_API_URL}/api/roses/upload`,
         uploadForm,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
