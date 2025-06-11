@@ -22,7 +22,7 @@ class CustomUploadAdapter {
                 const data = new FormData();
                 data.append('file', file);
 
-                fetch(`${process.env.REACT_APP_API_URL}/image/upload`, {
+                fetch(`${process.env.REACT_APP_API_URL}/board/image/upload`, {
                     method: 'POST',
                     body: data
                 })
