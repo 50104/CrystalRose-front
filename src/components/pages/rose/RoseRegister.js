@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { axiosInstance } from '@utils/axios';
 import { GetUser } from '@utils/api/user';
-import './Rose.css';
+import './RoseRegister.css';
 
 export default function RoseRegister({ onSuccess }) {
   const { isLogin } = GetUser();
