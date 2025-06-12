@@ -34,6 +34,7 @@ import AdminCommentReport from '../components/pages/admin/AdminCommentReport';
 import RoseRegister from '../components/pages/rose/RoseRegister';
 import DiaryRegister from '../components/pages/rose/DiaryRegister';
 import RoseListPage from '../components/pages/rose/RoseListPage';
+import DiaryList from '../components/pages/rose/DiaryList';
 
 function AppRoutes() {
   return (
@@ -87,6 +88,7 @@ function AppRoutes() {
 
         {/* 성장 기록 */}
         <Route path="/diaries/register" element={<DiaryRegister />} />
+        <Route path="/diaries/list" element={<DiaryList />} />
 
         {/* 채팅 관련 */}
         <Route path="/memberList" element={<MemberList />} />

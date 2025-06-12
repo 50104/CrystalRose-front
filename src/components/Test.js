@@ -32,6 +32,9 @@ function Test() {
         <li style={{ marginBottom: '18px' }}>
           <a href="/diaries/register" style={{ fontSize: '16px', textDecoration: 'none', color: '#333' }}>다이어리 등록</a>
         </li>
+        <li style={{ marginBottom: '18px' }}>
+          <a href="/diaries/list" style={{ fontSize: '16px', textDecoration: 'none', color: '#333' }}>다이어리 목록</a>
+        </li>
       </ul>
     </div>
   );
