@@ -36,6 +36,7 @@ import DiaryRegister from '../components/pages/rose/DiaryRegister';
 import RoseListPage from '../components/pages/rose/RoseListPage';
 import DiaryList from '../components/pages/rose/DiaryList';
 import TimelinePage from '../components/pages/rose/TimelinePage';
+import TimelapsePage from '../components/pages/rose/TimelapsePage';
 
 function AppRoutes() {
   return (
@@ -91,6 +92,7 @@ function AppRoutes() {
         <Route path="/diaries/register" element={<DiaryRegister />} />
         <Route path="/diaries/list" element={<DiaryList />} />
         <Route path="/diaries/:roseId/timeline" element={<TimelinePage />} />
+        <Route path="/diaries/:roseId/timelapse" element={<TimelapsePage />} />
 
         {/* 채팅 관련 */}
         <Route path="/memberList" element={<MemberList />} />
