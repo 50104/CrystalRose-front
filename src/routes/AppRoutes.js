@@ -32,6 +32,8 @@ import MyBlockList from '../components/pages/report/MyBlockList';
 import AdminReport from '../components/pages/admin/AdminReport';
 import AdminCommentReport from '../components/pages/admin/AdminCommentReport';
 import RoseRegister from '../components/pages/rose/RoseRegister';
+import DiaryRegister from '../components/pages/rose/DiaryRegister';
+import RoseListPage from '../components/pages/rose/RoseListPage';
 
 function AppRoutes() {
   return (
@@ -79,8 +81,12 @@ function AppRoutes() {
         <Route path="/wiki/list" element={<WikiList />} />
         <Route path="/wiki/:wikiId" element={<WikiDetail />} />
 
-        {/* 장미 관련 */}
+        {/* 나의 장미 */}
         <Route path="/rose/register" element={<RoseRegister />} />
+        <Route path="/roses/list" element={<RoseListPage />} />
+
+        {/* 성장 기록 */}
+        <Route path="/diaries/register" element={<DiaryRegister />} />
 
         {/* 채팅 관련 */}
         <Route path="/memberList" element={<MemberList />} />
