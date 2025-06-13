@@ -1,5 +1,3 @@
-/* RoseWikiForm.css */
-
 .form-container {
   max-width: 1024px;
   margin: 0 auto;
@@ -52,13 +50,6 @@
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.description-group {
-  grid-column: span 2;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -129,6 +120,167 @@
 }
 
 img {
-  /* border: 1px solid #e5e7eb; */
   border-radius: 4px;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin: 0;
+}
+
+/* 상단 섹션: 이미지 + 기본 정보 */
+.top-section {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  align-items: flex-start;
+}
+
+.image-upload-section {
+  flex: 0 0 350px;
+}
+
+.image-upload-container {
+  width: 350px;
+  height: 350px;
+  position: relative;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  border: 2px dashed #d1d5db;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: #f9fafb;
+}
+
+.image-placeholder:hover {
+  border-color: #ec4899;
+  background-color: #fdf2f8;
+}
+
+.upload-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.6;
+}
+
+.image-placeholder p {
+  color: #6b7280;
+  font-size: 0.875rem;
+  text-align: center;
+  margin: 0;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  border: 2px solid #e5e7eb;
+}
+
+.upload-status {
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #ec4899;
+  margin: 0;
+}
+
+.basic-info-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0; /* 추가: flex item이 shrink될 수 있도록 */
+}
+
+.basic-info-section .form-input {
+  width: 100%; /* max-width: none 대신 width: 100% 사용 */
+  box-sizing: border-box; /* 추가: padding과 border를 포함한 크기 계산 */
+}
+
+.basic-info-section .checkbox-group {
+  width: 100%; /* max-width: none 대신 width: 100% 사용 */
+}
+
+/* 3x3 그리드 */
+.form-grid-3x3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .form-grid-3x3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .image-upload-section {
+    flex: 0 0 300px;
+  }
+  
+  .image-upload-container {
+    width: 300px;
+    height: 300px;
+  }
+  
+  .basic-info-section {
+    flex: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-section {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .image-upload-section {
+    flex: none;
+  }
+  
+  .basic-info-section {
+    flex: none;
+    width: 100%;
+  }
+  
+  .basic-info-section .form-input {
+    max-width: none;
+  }
+  
+  .basic-info-section .checkbox-group {
+    max-width: none;
+  }
+  
+  .form-grid-3x3 {
+    grid-template-columns: 1fr;
+  }
 }

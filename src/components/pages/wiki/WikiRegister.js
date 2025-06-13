@@ -7,7 +7,6 @@ export default function WikiRegisterPage() {
     name: '',
     category: '',
     cultivarCode: '',
-    description: '',
     flowerSize: '',
     petalCount: '',
     fragrance: '',
@@ -15,7 +14,11 @@ export default function WikiRegisterPage() {
     growthType: '',
     usageType: '',
     recommendedPosition: '',
-    imageUrl: ''
+    imageUrl: '',
+    continuousBlooming: '', 
+    multiBlooming: '',      
+    growthPower: '',        
+    coldResistance: ''     
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -85,7 +88,6 @@ export default function WikiRegisterPage() {
           name: '',
           category: '',
           cultivarCode: '',
-          description: '',
           flowerSize: '',
           petalCount: '',
           fragrance: '',
@@ -93,7 +95,11 @@ export default function WikiRegisterPage() {
           growthType: '',
           usageType: '',
           recommendedPosition: '',
-          imageUrl: ''
+          imageUrl: '',
+          continuousBlooming: '',
+          multiBlooming: '',
+          growthPower: '',
+          coldResistance: ''
         });
         setImagePreview(null);
       } else {
@@ -113,6 +119,20 @@ export default function WikiRegisterPage() {
     }
   };
 
+  const handleCheckboxChange = (field, value) => {
+    setFormData(prevState => {
+      const currentValues = prevState[field] ? prevState[field].split(',') : [];
+      const updatedValues = currentValues.includes(value)
+        ? currentValues.filter(v => v !== value)
+        : [...currentValues, value];
+      
+      return {
+        ...prevState,
+        [field]: updatedValues.join(',')
+      };
+    });
+  };
+
   return (
     <div className="form-container">
       <h1 className="form-title">장미 도감 등록</h1>
@@ -124,21 +144,119 @@ export default function WikiRegisterPage() {
       )}
 
       <div className="form-content">
-        <div className="form-grid">
-          <div className="form-group">
-            <label className="form-label">
-              품종명 <span className="required">*</span>
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="form-input"
-              required
-            />
+        <div className="top-section">
+          <div className="image-upload-section">
+            <div className="image-upload-container">
+              {imagePreview ? (
+                <img 
+                  src={imagePreview} 
+                  alt="preview" 
+                  className="image-preview"
+                  onClick={() => document.getElementById('image-input').click()}
+                />
+              ) : (
+                <div 
+                  className="image-placeholder"
+                  onClick={() => document.getElementById('image-input').click()}
+                >
+                  <div className="upload-icon">📷</div>
+                  <p>클릭하여 이미지 업로드</p>
+                </div>
+              )}
+              <input
+                id="image-input"
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={uploading}
+                style={{ display: 'none' }}
+              />
+              {uploading && <p className="upload-status">업로드 중...</p>}
+            </div>
           </div>
 
+          <div className="basic-info-section">
+            <div className="form-group">
+              <label className="form-label">
+                품종명 <span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="form-input"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">
+                품종 코드 <span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                name="cultivarCode"  
+                value={formData.cultivarCode}
+                onChange={handleChange}
+                className="form-input"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">
+                꽃잎 수 <span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                name="petalCount"
+                value={formData.petalCount}
+                onChange={handleChange}
+                className="form-input"
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">
+                사용 용도 <span className="required">*</span>
+              </label>
+              <div className="checkbox-group">
+                {['울타리', '화분', '화단', '조경', '장미보더'].map(option => (
+                  <label key={option} className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={formData.usageType.split(',').includes(option)}
+                      onChange={() => handleCheckboxChange('usageType', option)}
+                    />
+                    {option}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">
+                추천 위치 <span className="required">*</span>
+              </label>
+              <div className="checkbox-group">
+                {['양지', '일부 그늘진 위치', '트인 공간 어디나'].map(option => (
+                  <label key={option} className="checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={formData.recommendedPosition.split(',').includes(option)}
+                      onChange={() => handleCheckboxChange('recommendedPosition', option)}
+                    />
+                    {option}
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="form-grid-3x3">
           <div className="form-group">
             <label className="form-label">
               카테고리 <span className="required">*</span>
@@ -151,29 +269,14 @@ export default function WikiRegisterPage() {
               required
             >
               <option value="">선택하세요</option>
-              <option value="하이브리드 티">하이브리드 티</option>
-              <option value="플로리분다">플로리분다</option>
-              <option value="그랜디플로라">그랜디플로라</option>
-              <option value="클라이밍">클라이밍</option>
-              <option value="미니어처">미니어처</option>
-              <option value="올드 가든 로즈">올드 가든 로즈</option>
-              <option value="영국 로즈">영국 로즈</option>
+              <option value="오스틴">오스틴</option>
+              <option value="에버로즈">에버로즈</option>
+              <option value="가와모토">가와모토</option>
+              <option value="델바">델바</option>
+              <option value="와바라">와바라</option>
+              <option value="로사오리엔티스">로사오리엔티스</option>
               <option value="기타">기타</option>
             </select>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              품종 코드 <span className="required">*</span>
-            </label>
-            <input
-              type="text"
-              name="cultivarCode"  
-              value={formData.cultivarCode}
-              onChange={handleChange}
-              className="form-input"
-              required
-            />
           </div>
 
           <div className="form-group">
@@ -188,24 +291,12 @@ export default function WikiRegisterPage() {
               required
             >
               <option value="">선택하세요</option>
-              <option value="소형">소형</option>
-              <option value="중형">중형</option>
-              <option value="대형">대형</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
             </select>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              꽃잎 수 <span className="required">*</span>
-            </label>
-            <input
-              type="text"
-              name="petalCount"
-              value={formData.petalCount}
-              onChange={handleChange}
-              className="form-input"
-              required
-            />
           </div>
 
           <div className="form-group">
@@ -220,10 +311,11 @@ export default function WikiRegisterPage() {
               required
             >
               <option value="">선택하세요</option>
-              <option value="약함">약함</option>
-              <option value="중간">중간</option>
-              <option value="강함">강함</option>
-              <option value="없음">없음</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
             </select>
           </div>
 
@@ -239,15 +331,97 @@ export default function WikiRegisterPage() {
               required
             >
               <option value="">선택하세요</option>
-              <option value="약함">약함</option>
-              <option value="중간">중간</option>
-              <option value="강함">강함</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
             </select>
           </div>
 
           <div className="form-group">
             <label className="form-label">
-              생장 형태 <span className="required">*</span>
+              내한성 <span className="required">*</span>
+            </label>
+            <select
+              name="coldResistance"
+              value={formData.coldResistance}
+              onChange={handleChange}
+              className="form-select"
+              required
+            >
+              <option value="">선택하세요</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">
+              연속개화성 <span className="required">*</span>
+            </label>
+            <select
+              name="continuousBlooming"
+              value={formData.continuousBlooming}
+              onChange={handleChange}
+              className="form-select"
+              required
+            >
+              <option value="">선택하세요</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">
+              다화성 <span className="required">*</span>
+            </label>
+            <select
+              name="multiBlooming"
+              value={formData.multiBlooming}
+              onChange={handleChange}
+              className="form-select"
+              required
+            >
+              <option value="">선택하세요</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">
+              수세 <span className="required">*</span>
+            </label>
+            <select
+              name="growthPower"
+              value={formData.growthPower}
+              onChange={handleChange}
+              className="form-select"
+              required
+            >
+              <option value="">선택하세요</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">
+              생장 습성 <span className="required">*</span>
             </label>
             <select
               name="growthType" 
@@ -257,80 +431,12 @@ export default function WikiRegisterPage() {
               required
             >
               <option value="">선택하세요</option>
-              <option value="직립형">직립형</option>
-              <option value="덩굴형">덩굴형</option>
-              <option value="관목형">관목형</option>
+              <option value="직립성 관목형">직립성 관목형</option>
+              <option value="약하게 퍼지는 관목형">약하게 퍼지는 관목형</option>
+              <option value="반직립성 관목형">반직립성 관목형</option>
               <option value="포복형">포복형</option>
             </select>
           </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              사용 용도 <span className="required">*</span>
-            </label>
-            <select
-              name="usageType" 
-              value={formData.usageType}
-              onChange={handleChange}
-              className="form-select"
-              required
-            >
-              <option value="">선택하세요</option>
-              <option value="정원용">정원용</option>
-              <option value="절화용">절화용</option>
-              <option value="화단용">화단용</option>
-              <option value="지피용">지피용</option>
-              <option value="다목적">다목적</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              추천 위치 <span className="required">*</span>
-            </label>
-            <select
-              name="recommendedPosition"
-              value={formData.recommendedPosition}
-              onChange={handleChange}
-              className="form-select"
-              required
-            >
-              <option value="">선택하세요</option>
-              <option value="양지">양지</option>
-              <option value="반음지">반음지</option>
-              <option value="음지">음지</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              대표 이미지 업로드 <span className="required">*</span>
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              disabled={uploading}
-            />
-            {uploading && <p>업로드 중...</p>}
-            {imagePreview && (
-              <img src={imagePreview} alt="preview" style={{ marginTop: '0.5rem', maxWidth: '100%' }} />
-            )}
-          </div>
-        </div>
-
-        <div className="description-group">
-          <label className="form-label">
-            설명 <span className="required">*</span>
-          </label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows="4"
-            className="form-textarea"
-            required
-          ></textarea>
         </div>
 
         <div className="form-actions">
