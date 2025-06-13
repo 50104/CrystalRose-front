@@ -73,7 +73,7 @@ export default function TimelapsePage() {
             initial={{ opacity: 0, scale: 1.05, filter: 'blur(3px)' }}
             animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
             exit={{ opacity: 0, scale: 0.98, filter: 'blur(3px)' }}  
-            transition={{ duration: 0.35 }}
+            transition={{ duration: 0.3 }}
           />
         </AnimatePresence>
 
