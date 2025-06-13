@@ -37,7 +37,7 @@ export default function DiaryListPage() {
 
   return (
     <div className="diary-list-container">
-      <h1 className="diary-list-title">🌹 성장 기록</h1>
+      <h1 className="diary-list-title">성장 기록</h1>
       {diaries.length === 0 ? (
         <div className="diary-list-empty">등록된 성장 기록이 없습니다.</div>
       ) : (
@@ -54,7 +54,7 @@ export default function DiaryListPage() {
                 <div className="diary-info">
                   <p className="diary-date">
                     📅 {new Date(diary.recordedAt).toLocaleDateString('ko-KR')}
-                    {isCare && <span className="care-dot">🧴</span>}
+                    {isCare && <span className="care-dot">🌹</span>}
                   </p>
                   <p className="diary-note">
                     📝 {diary.note || '메모 없음'}

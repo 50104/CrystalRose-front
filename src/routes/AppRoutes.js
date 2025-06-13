@@ -38,6 +38,7 @@ import DiaryList from '../components/pages/rose/DiaryList';
 import TimelinePage from '../components/pages/rose/TimelinePage';
 import TimelapsePage from '../components/pages/rose/TimelapsePage';
 import CareLogRegister from '../components/pages/rose/CareLogRegister';
+import CareLogCalendarPage from '../components/pages/rose/CareCalendarPage';
 
 function AppRoutes() {
   return (
@@ -97,6 +98,9 @@ function AppRoutes() {
 
         {/* 관리 기록 등록 */}
         <Route path="/carelogs/register" element={<CareLogRegister />} />
+
+        {/* 관리 기록 전체 달력 보기 */}
+        <Route path="/carelogs/calendar" element={<CareLogCalendarPage />} />
 
         {/* 채팅 관련 */}
         <Route path="/memberList" element={<MemberList />} />

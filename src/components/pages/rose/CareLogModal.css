@@ -1,0 +1,47 @@
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 999; /* 💡 FullCalendar보다 위에 오도록 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-box {
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  width: 300px;
+  max-width: 90vw;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  position: relative;
+  z-index: 1000;
+}
+
+.modal-box h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  color: #111827;
+}
+
+.modal-box ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 1rem 0;
+}
+
+.modal-box li {
+  margin-bottom: 0.5rem;
+}
+
+.modal-box button {
+  background-color: #7700ff38;
+  color: #111827;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+}

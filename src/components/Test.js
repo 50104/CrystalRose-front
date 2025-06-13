@@ -38,6 +38,9 @@ function Test() {
         <li style={{ marginBottom: '18px' }}>
           <a href='/carelogs/register' style={{ fontSize: '16px', textDecoration: 'none', color: '#333' }}>관리 기록 등록</a>
         </li>
+        <li style={{ marginBottom: '18px' }}>
+          <a href='/carelogs/calendar' style={{ fontSize: '16px', textDecoration: 'none', color: '#333' }}>관리 기록 달력 보기</a>
+        </li>
       </ul>
     </div>
   );

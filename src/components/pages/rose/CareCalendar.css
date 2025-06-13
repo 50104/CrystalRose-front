@@ -1,0 +1,42 @@
+.fullcalendar-wrapper {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 1rem; /* 모서리 둥글게 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 내부 캘린더 폰트와 크기 조정 */
+.fc {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 0.95rem;
+}
+
+/* 캘린더 셀 사이 간격 제거 + 높이 조정 */
+.fc-daygrid-day-frame {
+  padding: 0.25rem;
+  min-height: 80px;
+  border-radius: 0.5rem;
+}
+
+/* 오늘 날짜 강조 색상 변경 */
+.fc .fc-day-today {
+  background-color: rgb(240, 234, 255) !important;
+  border-radius: 0.75rem;
+}
+
+/* 이벤트 블록 스타일 */
+.fc-event {
+  background-color: #e1d6ff !important;
+  color: #000000d4 !important;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 2px 4px;
+  font-size: 0.85rem;
+}
+
+/* 이벤트 제목 텍스트도 검정으로 설정 */
+.fc-event-title {
+  color: #000000d4 !important;
+}
