@@ -66,7 +66,8 @@ function Content() {
 
     const payload = {
       content: newComment,
-      userId: userData?.userId
+      userId: userData?.userId,
+      userNick: userData?.userNick
     };
 
     axiosInstance.post(`/board/${boardNo}/comments`, payload)
@@ -88,7 +89,7 @@ function Content() {
 
   const handleDelete = () => {
     if (window.confirm('게시글을 삭제하시겠습니까?')) {
-      axiosInstance.get(`${process.env.REACT_APP_API_URL}/board/delete/${boardNo}`)
+      axiosInstance.delete(`${process.env.REACT_APP_API_URL}/board/delete/${boardNo}`)
         .then(() => navigate('/list'))
         .catch(error => console.error('삭제 오류', error));
     }

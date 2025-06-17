@@ -36,6 +36,7 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
     const payload = {
       content,
       userId: userData?.userId,
+      userNick: userData?.userNick, 
       parentId
     };
 
@@ -87,20 +88,22 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
       <div className="commentHeader">
         <div className="leftBox">
           <span className="commentUser">
-            {comment.userStatus === 'DELETED' ? '탈퇴한 사용자입니다' : comment.userId}
+            {comment.userStatus === 'DELETED' ? '탈퇴한 사용자입니다' : comment.userNick}
           </span>
           <span className="commentDate">{formatDateTime(comment.createdDate)}</span>
         </div>
         {!comment.deleted && comment.userStatus !== 'DELETED' && (
           <div className="rightButtons">
-            {userData?.userId === comment.userId && (
+            {(userData?.userNick === comment.userNick || userData?.userId === comment.userId) && (
               <>
                 <button className="editButton" onClick={() => handleEditComment(comment.id)}>수정</button>
                 <button className="deleteIcon" onClick={() => handleDeleteComment(comment.id)}>삭제</button>
               </>
             )}
             <button className="editButton" onClick={() => toggleReplyBox(comment.id)}>답글</button>
-            <button onClick={() => setReportingCommentId(comment.id)}>신고</button>
+            {(userData?.userNick !== comment.userNick && userData?.userId !== comment.userId) && (
+              <button onClick={() => setReportingCommentId(comment.id)}>신고</button>
+            )}
 
             <ReportModal
               visible={reportingCommentId !== null}
