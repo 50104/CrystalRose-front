@@ -17,6 +17,12 @@ export default function DiaryRegister({ onSuccess }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
 
+  const normalizeRecordedAt = (value) => {
+    if (value.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/)) return value;
+    if (value.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)) return value + ':00';
+    return value;
+  };
+
   // 내 장미 목록 불러오기
   useEffect(() => {
     axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/roses/list`)
@@ -62,7 +68,7 @@ export default function DiaryRegister({ onSuccess }) {
     // 날짜 형식 변환
     const submitData = {
         ...formData,
-        recordedAt: formData.recordedAt ? new Date(formData.recordedAt).toISOString() : null
+        recordedAt: formData.recordedAt ? normalizeRecordedAt(formData.recordedAt) : null
     };
     console.log('Submitting data:', submitData);
     console.log("선택된 장미 ID:", formData.roseId);
