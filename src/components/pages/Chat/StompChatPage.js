@@ -178,13 +178,17 @@ const StompChatPage = () => {
   return (
     <div className="stompchat-container">
       <div ref={chatBoxRef} className="stompchat-box">
-        {messages.map((msg) => (
+      {messages.map((msg) => {
+        const isMine = msg.senderId?.toString() === senderId?.toString();
+        return (
           <div key={msg.id}>
-            <div className={msg.senderId?.toString() === senderId?.toString() ? 'stompchat-message-right' : 'stompchat-message-left'}>
-              <strong>{msg.senderId}: </strong> {msg.message}
+            <div className={isMine ? 'stompchat-message-right' : 'stompchat-message-left'}>
+              {!isMine && <strong>{msg.senderNick}: </strong>}
+              {msg.message}
             </div>
           </div>
-        ))}
+        );
+      })}
       </div>
       <input
         type="text"
