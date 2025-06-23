@@ -143,7 +143,9 @@ const StompChatPage = () => {
     }
     const message = { senderId: sender, message: newMessage };
     if (stompClient && stompClient.connected) {
-      stompClient.send(`/publish/${roomId}`, JSON.stringify(message));
+      stompClient.send(`/publish/${roomId}`, 
+      JSON.stringify(message), 
+      { 'Content-Type': 'application/json; charset=UTF-8' });
       setNewMessage('');
     } else {
       console.error('웹소켓 연결 안됨');
