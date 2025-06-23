@@ -179,30 +179,61 @@ const StompChatPage = () => {
 
   return (
     <div className="stompchat-container">
-      <div ref={chatBoxRef} className="stompchat-box">
-      {messages.map((msg) => {
-        const isMine = msg.senderId?.toString() === senderId?.toString();
-        return (
-          <div key={msg.id}>
-            <div className={isMine ? 'stompchat-message-right' : 'stompchat-message-left'}>
-              {!isMine && <strong>{msg.senderNick}: </strong>}
-              {msg.message}
-            </div>
-          </div>
-        );
-      })}
+      <div className="stompchat-header">
+        <h2>채팅방</h2>
       </div>
-      <input
-        type="text"
-        value={newMessage}
-        onChange={(e) => setNewMessage(e.target.value)}
-        onKeyUp={(e) => e.key === 'Enter' && sendMessage()}
-        placeholder="메시지 입력"
-        className="stompchat-input"
-      />
-      <button onClick={sendMessage} className="stompchat-button">
-        전송
-      </button>
+      
+      <div ref={chatBoxRef} className="stompchat-box">
+        {loading && <div className="stompchat-loading">이전 메시지 불러오는 중</div>}
+        {messages.map((msg) => {
+          const isMine = msg.senderId?.toString() === senderId?.toString();
+          return (
+            <div key={msg.id} className={`stompchat-message-wrapper ${isMine ? 'stompchat-message-right' : 'stompchat-message-left'}`}>
+              {!isMine && (
+                <div className="stompchat-profile-img">
+                  <img
+                    src={msg.senderProfileImg || "https://crystalrose-web.s3.ap-northeast-2.amazonaws.com/profiles/default.jpg"}
+                    alt="profile"
+                    className="stompchat-profile-img-tag"
+                  />
+                </div>
+              )}
+              <div className="stompchat-message-content">
+                {!isMine && (
+                  <div className="stompchat-sender-name">
+                    {msg.senderNick}
+                  </div>
+                )}
+                <div className="stompchat-message-bubble-wrapper">
+                  <div className="stompchat-message-bubble">
+                    {msg.message}
+                  </div>
+                  <div className="stompchat-timestamp">
+                    {new Date(msg.createdDate).toLocaleTimeString('ko-KR', { 
+                      hour: '2-digit', 
+                      minute: '2-digit' 
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      
+      <div className="stompchat-input-container">
+        <input
+          type="text"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          onKeyUp={(e) => e.key === 'Enter' && sendMessage()}
+          placeholder="메시지를 입력하세요"
+          className="stompchat-input"
+        />
+        <button onClick={sendMessage} className="stompchat-button">
+          전송
+        </button>
+      </div>
     </div>
   );
 };

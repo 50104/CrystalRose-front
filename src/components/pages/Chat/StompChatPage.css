@@ -1,42 +1,266 @@
 .stompchat-container {
-  padding: 20px;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 80vh;
+  max-width: 600px;
+  margin: 20px auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.stompchat-header {
+  background: #ffffff;
+  padding: 12px 16px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.stompchat-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 500;
 }
 
 .stompchat-box {
-  height: 300px;
+  flex: 1;
   overflow-y: auto;
-  border: 1px solid #ddd;
-  margin-bottom: 10px;
-  padding: 10px;
-  width: 100%;
-  box-sizing: border-box;
+  padding: 10px 12px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+}
+
+.stompchat-box::-webkit-scrollbar {
+  width: 4px;
+}
+
+.stompchat-box::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.stompchat-box::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+.stompchat-message-wrapper {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 6px;
+  gap: 6px;
 }
 
 .stompchat-message-right {
-  text-align: right;
+  justify-content: flex-end;
 }
 
 .stompchat-message-left {
-  text-align: left;
+  justify-content: flex-start;
+}
+
+.stompchat-profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-bottom: auto;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stompchat-profile-img-tag {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.stompchat-profile-fallback {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stompchat-message-content {
+  display: flex;
+  flex-direction: column;
+  max-width: 70%;
+}
+
+.stompchat-message-right .stompchat-message-content {
+  align-items: flex-end;
+}
+
+.stompchat-message-left .stompchat-message-content {
+  align-items: flex-start;
+}
+
+.stompchat-sender-name {
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-bottom: 3px;
+  color: #333;
+}
+
+.stompchat-message-bubble-wrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.stompchat-message-right .stompchat-message-bubble-wrapper {
+  flex-direction: row-reverse;
+}
+
+.stompchat-message-bubble {
+  padding: 8px 12px;
+  border-radius: 16px;
+  word-wrap: break-word;
+  position: relative;
+  animation: fadeInUp 0.2s ease;
+  font-size: 0.85rem;
+  line-height: 1.3;
+}
+
+.stompchat-message-right .stompchat-message-bubble {
+  background: #f2dffe;
+  color: #333;
+  border-bottom-right-radius: 3px;
+}
+
+.stompchat-message-left .stompchat-message-bubble {
+  background: #ffffff;
+  color: #333;
+  border-bottom-left-radius: 3px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.stompchat-timestamp {
+  font-size: 0.6rem;
+  color: #666;
+  white-space: nowrap;
+  align-self: flex-end;
+}
+
+.stompchat-input-container {
+  display: flex;
+  padding: 10px 12px;
+  background: #ffffff;
+  gap: 6px;
+  align-items: center;
+  border-top: 1px solid #e5e5e5;
 }
 
 .stompchat-input {
-  padding: 10px;
-  margin-bottom: 10px;
+  flex: 1;
+  padding: 8px 12px;
   border: 1px solid #ddd;
-  width: 100%;
-  box-sizing: border-box;
+  border-radius: 18px;
+  font-size: 0.85rem;
+  background: #f8f9fa;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.stompchat-input:focus {
+  border-color: #f2dffe;
+  background: #ffffff;
 }
 
 .stompchat-button {
-  padding: 10px;
-  background-color: rgb(212, 194, 255);
-  color: black;
+  padding: 8px 14px;
+  background: #f2dffe;
+  color: #333;
   border: none;
-  width: 100%;
-  box-sizing: border-box;
+  border-radius: 16px;
   cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  min-width: 50px;
+}
+
+.stompchat-button:hover {
+  background: #eed2ff;
+}
+
+.stompchat-button:active {
+  transform: scale(0.98);
+}
+
+.stompchat-loading {
+  text-align: center;
+  padding: 8px;
+  color: #666;
+  font-size: 0.75rem;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+  .stompchat-container {
+    height: 90vh;
+    max-width: 95%;
+    margin: 10px auto;
+  }
+  
+  .stompchat-header {
+    padding: 10px 12px;
+  }
+  
+  .stompchat-box {
+    padding: 8px 10px;
+  }
+  
+  .stompchat-input-container {
+    padding: 8px 10px;
+  }
+  
+  .stompchat-message-content {
+    max-width: 80%;
+  }
+  
+  .stompchat-profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    margin-bottom: auto;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .stompchat-profile-img-tag {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
 }
