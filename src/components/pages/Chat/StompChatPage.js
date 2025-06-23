@@ -15,6 +15,8 @@ const StompChatPage = () => {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [roomInfo, setRoomInfo] = useState(null);
+  const [roomTitle, setRoomTitle] = useState('채팅방');
   const chatBoxRef = useRef(null);
   const token = localStorage.getItem('access');
 
@@ -23,6 +25,7 @@ const StompChatPage = () => {
       const decoded = jwtDecode(token);
       setSenderId(decoded.userId);
     }
+    fetchRoomInfo();
     fetchMessageHistory();
     return () => {
       disconnectWebSocket();
@@ -35,6 +38,27 @@ const StompChatPage = () => {
       setIsInitialLoad(false);
     }
   }, [messages]);
+
+  const fetchRoomInfo = async () => {
+    try {
+      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/chat/room/${roomId}/info`);
+      const roomData = response.data;
+      setRoomInfo(roomData);
+      
+      // 채팅방 이름 설정
+      if (roomData.isGroupChat === 'Y') {
+        setRoomTitle(roomData.roomName || '그룹채팅방');
+      } else {
+        // 1대1 채팅방 : 방이름 상대방 닉네임 
+        const currentUserId = senderId || (token ? jwtDecode(token).userId : null);
+        const otherParticipant = roomData.participants?.find(p => p.userId !== currentUserId);
+        setRoomTitle(otherParticipant?.userNick || '채팅방');
+      }
+    } catch (error) {
+      console.error('채팅방 정보 불러오기 실패:', error);
+      setRoomTitle('채팅방');
+    }
+  };
 
   const fetchMessageHistory = async () => {
     try {
@@ -54,9 +78,6 @@ const StompChatPage = () => {
     const scrollHeightBefore = box?.scrollHeight;
     const oldest = messages[0];
     const cursor = oldest?.createdDate;
-
-    console.log('oldest message:', oldest);
-    console.log('cursor:', cursor);
 
     try {
       const res = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/chat/history/${roomId}`, {
@@ -90,7 +111,7 @@ const StompChatPage = () => {
   const handleScroll = () => {
     const box = chatBoxRef.current;
     if (!box || loading || !hasMore) return;
-    if (box.scrollTop <= 20) { // 여유 buffer
+    if (box.scrollTop <= 20) {
       fetchOlderMessages();
     }
   };
@@ -180,7 +201,7 @@ const StompChatPage = () => {
   return (
     <div className="stompchat-container">
       <div className="stompchat-header">
-        <h2>채팅방</h2>
+        <h2>{roomTitle}</h2>
       </div>
       
       <div ref={chatBoxRef} className="stompchat-box">
