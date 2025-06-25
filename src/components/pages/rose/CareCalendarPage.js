@@ -25,13 +25,45 @@ const CustomCalendar = () => {
 
     initialMonths.forEach(month => loadMonthData(month));
 
-    // 초기 스크롤 위치 현재 달로 이동
+    // 렌더 이후 정확한 스크롤 위치 설정
     setTimeout(() => {
-      if (containerRef.current) {
-        containerRef.current.scrollTop = containerRef.current.scrollHeight / 3;
+      scrollToToday();
+      const todayMonthIndex = initialMonths.findIndex(
+        m => m.getFullYear() === today.getFullYear() && m.getMonth() === today.getMonth()
+      );
+
+      const targetEl = monthRefs.current[todayMonthIndex];
+      const containerEl = containerRef.current;
+
+      if (targetEl && containerEl) {
+        const containerTop = containerEl.getBoundingClientRect().top;
+        const targetTop = targetEl.getBoundingClientRect().top;
+        const offset = targetTop - containerTop;
+
+        containerEl.scrollTop = containerEl.scrollTop + offset;
       }
-    }, 0);
+    }, 30); // DOM 렌더 보장
   }, []);
+
+  const scrollToToday = () => {
+    const today = new Date();
+    const todayMonthIndex = months.findIndex(
+      (m) => m.getFullYear() === today.getFullYear() && m.getMonth() === today.getMonth()
+    );
+
+    if (todayMonthIndex !== -1 && monthRefs.current[todayMonthIndex] && containerRef.current) {
+      const containerTop = containerRef.current.getBoundingClientRect().top;
+      const targetTop = monthRefs.current[todayMonthIndex].getBoundingClientRect().top;
+      const offset = targetTop - containerTop;
+
+      containerRef.current.scrollTo({
+        top: containerRef.current.scrollTop + offset,
+        behavior: 'smooth'
+      });
+    } else {
+      console.warn('오늘의 달이 렌더링되지 않았습니다. monthRefs 확인 요망.');
+    }
+  };
 
   const loadMonthData = async (month) => {
     const monthKey = `${month.getFullYear()}-${month.getMonth()}`;
@@ -114,19 +146,31 @@ const CustomCalendar = () => {
   const generateCalendarDays = (month) => {
     const year = month.getFullYear();
     const monthNum = month.getMonth();
+
     const firstDay = new Date(year, monthNum, 1);
+    const lastDay = new Date(year, monthNum + 1, 0);
+
     const startDate = new Date(firstDay);
-    startDate.setDate(startDate.getDate() - firstDay.getDay()); // 주의 시작일
-    
+    startDate.setDate(startDate.getDate() - firstDay.getDay()); // 일요일 시작
+
+    const endDate = new Date(lastDay);
+    endDate.setDate(endDate.getDate() + (6 - lastDay.getDay())); // 토요일 끝
+
+    // 주 수 계산
+    const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24) + 1;
+    const weekCount = totalDays / 7;
+
+    // 5주인 경우에만 35일, 6주인 경우 42일
+    const daysToRender = weekCount <= 5 ? 35 : 42;
+
     const days = [];
     const current = new Date(startDate);
-    
-    // 6주 생성 (42일)
-    for (let i = 0; i < 42; i++) {
+
+    for (let i = 0; i < daysToRender; i++) {
       days.push(new Date(current));
       current.setDate(current.getDate() + 1);
     }
-    
+
     return days;
   };
 
@@ -148,9 +192,12 @@ const CustomCalendar = () => {
 
   return (
     <>
+      <div className="calendar-toolbar">
+        <button className="today-button" onClick={scrollToToday}>오늘로 이동</button>
+      </div>
       <div className="custom-calendar-container" ref={containerRef}>
         {months.map((month, monthIndex) => (
-          <div key={`${month.getFullYear()}-${month.getMonth()}`} className="calendar-month">
+          <div key={`${month.getFullYear()}-${month.getMonth()}`} className="calendar-month" ref={(el) => (monthRefs.current[monthIndex] = el)}>
             <div className="month-header">
               <h2>{month.getFullYear()}년 {month.getMonth() + 1}월</h2>
             </div>
@@ -166,18 +213,18 @@ const CustomCalendar = () => {
                 const dayData = getDayData(date);
                 const isCurrentMonth = date.getMonth() === month.getMonth();
                 const isToday = getDateKey(date) === getDateKey(new Date());
-                
+
                 return (
                   <div
                     key={`${getDateKey(date)}-${monthIndex}`}
-                    className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isToday ? 'today' : ''} ${dayData.diary?.imageUrl ? 'has-image' : ''}`}
+                    className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isToday ? 'today' : ''} ${isCurrentMonth && dayData.diary?.imageUrl ? 'has-image' : ''}`}
                     style={{
-                      backgroundImage: dayData.diary?.imageUrl ? `url(${dayData.diary.imageUrl})` : 'none'
+                      backgroundImage: isCurrentMonth && dayData.diary?.imageUrl ? `url(${dayData.diary.imageUrl})` : 'none'
                     }}
-                    onClick={() => dayData.logs.length > 0 && setSelected(dayData.logs[0])}
+                    onClick={() => isCurrentMonth && dayData.logs.length > 0 && setSelected(dayData.logs[0])}
                   >
                     <div className="day-number">{date.getDate()}</div>
-                    {dayData.logs.length > 0 && (
+                    {isCurrentMonth && dayData.logs.length > 0 && (
                       <div className="day-event">🌹 관리</div>
                     )}
                   </div>
