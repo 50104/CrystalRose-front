@@ -21,9 +21,15 @@ const CustomCalendar = () => {
       new Date(today.getFullYear(), today.getMonth() + 1, 1)
     ];
     setMonths(initialMonths);
-    
-    // 초기 데이터 로드
+
     initialMonths.forEach(month => loadMonthData(month));
+
+    // 초기 스크롤 위치 현재 달로 이동
+    setTimeout(() => {
+      if (containerRef.current) {
+        containerRef.current.scrollTop = containerRef.current.scrollHeight / 3;
+      }
+    }, 0);
   }, []);
 
   const loadMonthData = async (month) => {
