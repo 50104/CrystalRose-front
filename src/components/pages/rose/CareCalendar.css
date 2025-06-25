@@ -72,6 +72,9 @@
   font-weight: 600;
   color: #374151;
   font-size: 0.9rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .calendar-grid {
@@ -181,22 +184,22 @@
     margin: 0.5rem auto;
     padding: 0.5rem;
   }
-  
+
   .calendar-day {
     min-height: 100px;
     padding: 0.25rem;
   }
-  
+
   .day-number {
     width: 20px;
     height: 20px;
     font-size: 0.8rem;
   }
-  
+
   .month-header h2 {
     font-size: 1.2rem;
   }
-  
+
   .day-event {
     font-size: 0.7rem;
     padding: 0.125rem 0.25rem;
@@ -207,6 +210,7 @@
   display: flex;
   justify-content: flex-end;
   margin-bottom: 1rem;
+  gap: 0.5rem;
 }
 
 .today-button {
@@ -223,3 +227,86 @@
 .today-button:hover {
   background-color: #4c1d95;
 }
+
+.year-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.mini-month {
+  background: #ffffff;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 0 5px rgba(0,0,0,0.05);
+}
+
+.mini-month h4 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.mini-weekdays,
+.mini-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  text-align: center;
+  margin-bottom: 7px;
+}
+
+.mini-weekdays span {
+  font-weight: 600;
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mini-day {
+  aspect-ratio: 1 / 1;
+  font-size: 0.75rem;
+  text-align: center;
+  border-radius: 4px;
+  position: relative;
+  background-color: white;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.mini-day.today {
+  border: 2px solid #9f38ff;
+}
+
+.mini-day.dimmed {
+  opacity: 0.2;
+}
+
+.date-text {
+  background: rgba(255, 255, 255, 0.7);
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-weight: 500;
+  z-index: 1;
+}
+
+.white-text {
+  color: white;
+  background: transparent !important;
+}
+
+.mini-day.has-image .date-text {
+  color: white;
+  background: transparent;
+}
+
+.mini-day.dimmed.has-image {
+  background-image: none !important;
+}
+
+
