@@ -75,8 +75,13 @@ export default function RoseListPage() {
 
   return (
     <div className="rose-list-container">
-      <h1 className="rose-list-title">내 장미 목록</h1>
-      
+      <div className="rose-list-header">
+        <h1 className="rose-list-title">내 장미 목록</h1>
+        <Link to="/rose/register" className="rose-register-button">
+          + 장미 등록
+        </Link>
+      </div>
+
       {!roses || roses.length === 0 ? (
         <div className="rose-list-no-entries">
           등록된 장미가 없습니다.
@@ -97,16 +102,18 @@ export default function RoseListPage() {
                 />
               )}
               <div className="rose-entry-content">
-                <h2 className="rose-entry-nickname">{rose.nickname || '이름 없음'}</h2>
-                <p className="rose-entry-variety">{rose.varietyName || '품종 정보 없음'}</p>
+                <div className="rose-entry-details">
+                  <h2 className="rose-entry-nickname">{rose.nickname || '이름 없음'}</h2>
+                  <p className="rose-entry-variety">{rose.varietyName || '품종 정보 없음'}</p>
+                </div>
                 
                 <div className="rose-entry-acquired-date">
-                  입양일: {formatDate(rose.acquiredDate)}
+                  입양일 : {formatDate(rose.acquiredDate)}
                 </div>
                 
                 {rose.locationNote && (
                   <div className="rose-entry-location">
-                    위치: {rose.locationNote}
+                    메모 : {rose.locationNote}
                   </div>
                 )}
                 
@@ -115,7 +122,7 @@ export default function RoseListPage() {
                     to={`/diaries/register`} 
                     className="rose-entry-action-link"
                   >
-                    성장 기록 추가
+                    기록 추가
                   </Link>
                   <Link 
                     to={`/diaries/${rose.id}/timeline`} 

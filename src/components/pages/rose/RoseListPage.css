@@ -5,12 +5,35 @@
   font-family: sans-serif;
 }
 
+.rose-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
 .rose-list-title {
   font-size: 2rem;
   font-weight: 700;
-  text-align: center;
-  margin-bottom: 2rem;
   color: #111827;
+  margin: 0;
+}
+
+.rose-register-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #ec4899;
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.rose-register-button:hover {
+  background-color: #db2777;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .rose-list-loading-container,
@@ -59,8 +82,33 @@
 
 .rose-entries-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 1024px) {
+  .rose-entries-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .rose-entries-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .rose-entries-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .rose-list-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
 }
 
 .rose-entry-card {
@@ -78,7 +126,7 @@
 
 .rose-entry-image {
   width: 100%;
-  height: 200px;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   border-bottom: 1px solid #e5e7eb;
 }
@@ -95,7 +143,7 @@
 }
 
 .rose-entry-variety {
-  font-size: 0.875rem;
+  font-size: 0.7rem;
   color: #ec4899;
   background-color: #fce7f3;
   padding: 0.25rem 0.5rem;
@@ -105,10 +153,11 @@
 }
 
 .rose-entry-details {
-  font-size: 0.875rem;
+  display: flex;
+  gap: 0.5rem; 
   color: #4b5563;
   line-height: 1.5;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .rose-entry-acquired-date {
