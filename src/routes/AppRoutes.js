@@ -37,6 +37,7 @@ import TimelinePage from '../components/pages/rose/TimelinePage';
 import TimelapsePage from '../components/pages/rose/TimelapsePage';
 import CareLogRegister from '../components/pages/rose/CareLogRegister';
 import CareLogCalendarPage from '../components/pages/rose/CareCalendarPage';
+import AdminPage from '../components/pages/admin/AdminPage';
 
 function AppRoutes() {
   return (
@@ -49,6 +50,7 @@ function AppRoutes() {
         <Route path="/myPage" element={<MyPage />} />
         <Route path="/checkUserPwd" element={<CheckUserPwd />} />
         <Route path="/modifyUser" element={<UserUpdate />} />
+        <Route path="/admin" element={<AdminPage />} />
 
         {/* 로그인,회원가입 */}
         <Route path="/login" element={<SignIn />} />
