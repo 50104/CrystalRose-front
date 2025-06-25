@@ -1,5 +1,5 @@
 import React from 'react';
-import Test from '../../Test';
+import CareCalendar from '../rose/CareCalendarPage.js';
 import RoseRanking from './RoseRanking';
 import RoseReview from './RoseReview.js';
 import RoseToday from './RoseToday';
@@ -7,7 +7,7 @@ import RoseToday from './RoseToday';
 function Home() {
   return (
     <div>
-      <Test />
+      <CareCalendar />
       {/*  */}
       {/* <RoseRanking />
       <RoseReview />

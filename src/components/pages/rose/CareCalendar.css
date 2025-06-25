@@ -13,7 +13,7 @@
 }
 
 .custom-calendar-container::-webkit-scrollbar {
-  width: 8px;
+  width: 5px;
 }
 
 .custom-calendar-container::-webkit-scrollbar-track {
@@ -31,9 +31,9 @@
 }
 
 .calendar-month {
-  margin-bottom: 1rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid #f0f0f0;
+  padding-top: 2rem;
+  margin-top: 0;
+  border-top: 1px solid #f0f0f0;
 }
 
 .calendar-month:last-child {
@@ -103,7 +103,7 @@
 }
 
 .calendar-day.other-month {
-  opacity: 0.3;
+  opacity: 0.7;
 }
 
 .calendar-day.today {

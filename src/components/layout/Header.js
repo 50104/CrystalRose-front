@@ -1,7 +1,3 @@
-import React from 'react';
-import { FaSearch, FaUser } from 'react-icons/fa';
-import { IoChatbubbleEllipses } from 'react-icons/io5';
-import { AiFillLike } from 'react-icons/ai';
 import logo from '@assets/images/branding/50104.png';
 import { logoutFunction } from '@utils/api/token';
 import { GetUser } from '@utils/api/user';
@@ -9,7 +5,7 @@ import { GetUser } from '@utils/api/user';
 import './Header.css';
 
 const Header = () => {
-  const { isLogin, userId, userRole, userNick } = GetUser();
+  const { isLogin, userRole, userNick } = GetUser();
 
   return (
     <div className="header_div">
@@ -27,9 +23,6 @@ const Header = () => {
             {userRole === 'ROLE_ADMIN' && (
               <div className="nav_userInfo"><a href="/admin"><ul>{userNick}님 관리자 페이지</ul></a></div>
             )}
-            {userRole === 'ROLE_WRITER' && (
-              <div className="nav_userInfo"><a href="/writer"><ul>{userNick}님 평론가 페이지</ul></a></div>
-            )}
             {userRole !== 'ROLE_ADMIN' && userRole !== 'ROLE_WRITER' && (
               <div className="nav_userInfo"><a href="/mypage"><ul>{userNick}님 마이페이지</ul></a></div>
             )}
@@ -41,36 +34,11 @@ const Header = () => {
 
       {/* Nav 영역 */}
       <div className="nav_box">
-        <div>
-          <a href="/">
-            <img src={logo} alt="50104" className="nav_log" />
-          </a>
-        </div>
+        <div><a href="/"><img src={logo} alt="50104" className="nav_log" /></a></div>
         <div className="nav_menu">
-          <ul>
-            <a href="/search">
-              {/* <FaSearch size="25" color="black" /> */}
-              검색
-            </a>
-          </ul>
-          {/* <ul>
-            <a href="/recommend">
-              <AiFillLike size="25" color="black" />
-              즐겨찾기
-            </a>
-          </ul> */}
-          <ul>
-            <a href="/community">
-              {/* <IoChatbubbleEllipses size="25" color="black" /> */}
-              커뮤니티
-            </a>
-          </ul>
-          <ul>
-            <a href="/myPage">
-              {/* <FaUser size="25" color="black" /> */}
-              마이페이지
-            </a>
-          </ul>
+          <ul><a href="/search">검색</a></ul>
+          <ul><a href="/wiki/list">도감</a></ul>
+          <ul><a href="/roses/list">내 장미</a></ul>
           <ul><a href="/list">리스트</a></ul>
           <ul><a href="/editor">에디터</a></ul>
 

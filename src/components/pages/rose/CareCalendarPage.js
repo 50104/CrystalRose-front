@@ -11,6 +11,7 @@ const CustomCalendar = () => {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
   const containerRef = useRef(null);
+  const monthRefs = useRef([]);
 
   // 초기 3개월 생성 (이전달, 현재달, 다음달)
   useEffect(() => {
@@ -89,8 +90,14 @@ const CustomCalendar = () => {
       
       // 스크롤 위치 조정 (새로 추가된 달 높이만큼)
       setTimeout(() => {
-        if (containerRef.current) {
-          containerRef.current.scrollTop = scrollTop + 400; // 대략적인 달 높이
+        const currentMonthIndex = 1; // 현재달은 항상 두 번째
+        const currentEl = monthRefs.current[currentMonthIndex];
+        const containerEl = containerRef.current;
+
+        if (containerEl && currentEl) {
+          const top = currentEl.offsetTop - containerEl.offsetTop;
+
+          containerEl.scrollTop = top - 16;
         }
       }, 0);
     }

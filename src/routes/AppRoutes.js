@@ -3,8 +3,6 @@ import { Routes, Route } from 'react-router-dom';
 import './AppRoutes.css';
 import Home from '@components/pages/Home/Home';
 import Search from '@components/pages/Search/Search';
-import Community from '@components/pages/Board/Community';
-import Recommend from '@components/pages/Recommend/Recommend';
 import NotFound from '@components/pages/Error/NotFound';
 import ReviewWrite from '@components/pages/Review/ReviewWrite';
 import RoseInfo from '@components/pages/Review/RoseInfo';
@@ -44,8 +42,6 @@ function AppRoutes() {
   return (
     <div className="main_div">
       <Routes>
-        {/* <Test /> */}
-
         {/* 메인 */}
         <Route path="/" element={<Home />} />
 
@@ -64,11 +60,7 @@ function AppRoutes() {
         {/* 장미 검색 */}
         <Route path="/search" element={<Search />} />
 
-        {/* 사용자 영화 추천 */}
-        <Route path="/recommend" element={<Recommend />} />
-
         {/* 장미 커뮤니티 */}
-        <Route path="/community" element={<Community />} />
         <Route path="/board" element={<Board />} />
         <Route path="/content" element={<Content />} />
         <Route path="/content/:boardNo" element={<Content />} />
@@ -99,7 +91,7 @@ function AppRoutes() {
         {/* 관리 기록 등록 */}
         <Route path="/carelogs/register" element={<CareLogRegister />} />
 
-        {/* 관리 기록 전체 달력 보기 */}
+        {/* 전체 달력 */}
         <Route path="/carelogs/calendar" element={<CareLogCalendarPage />} />
 
         {/* 채팅 관련 */}
