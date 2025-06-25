@@ -77,9 +77,14 @@ export default function RoseListPage() {
     <div className="rose-list-container">
       <div className="rose-list-header">
         <h1 className="rose-list-title">내 장미 목록</h1>
-        <Link to="/rose/register" className="rose-register-button">
-          + 장미 등록
-        </Link>
+        <div className="rose-list-buttons">
+          <Link to="/diaries/list" className="rose-diary-button">
+            성장기록
+          </Link>
+          <Link to="/rose/register" className="rose-register-button">
+            + 장미 등록
+          </Link>
+        </div>
       </div>
 
       {!roses || roses.length === 0 ? (

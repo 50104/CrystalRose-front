@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
 import './DiaryList.css';
 
@@ -37,7 +38,18 @@ export default function DiaryListPage() {
 
   return (
     <div className="diary-list-container">
-      <h1 className="diary-list-title">성장 기록</h1>
+      <div className="diary-list-header">
+        <h1 className="diary-list-title">성장 기록</h1>
+        <div className="diary-list-buttons">
+          <Link to="/roses/list" className="diary-roses-button">
+            내 장미
+          </Link>
+          <Link to="/diaries/register" className="diary-register-button">
+            + 기록 등록
+          </Link>
+        </div>
+      </div>
+      
       {diaries.length === 0 ? (
         <div className="diary-list-empty">등록된 성장 기록이 없습니다.</div>
       ) : (
@@ -53,11 +65,11 @@ export default function DiaryListPage() {
                 )}
                 <div className="diary-info">
                   <p className="diary-date">
-                    📅 {new Date(diary.recordedAt).toLocaleDateString('ko-KR')}
+                    {new Date(diary.recordedAt).toLocaleDateString('ko-KR')}
                     {isCare && <span className="care-dot">🌹</span>}
                   </p>
                   <p className="diary-note">
-                    📝 {diary.note || '메모 없음'}
+                    {diary.note || '메모 없음'}
                   </p>
                 </div>
               </div>
