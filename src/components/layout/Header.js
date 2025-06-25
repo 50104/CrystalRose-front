@@ -36,7 +36,6 @@ const Header = () => {
       <div className="nav_box">
         <div><a href="/"><img src={logo} alt="50104" className="nav_log" /></a></div>
         <div className="nav_menu">
-          <ul><a href="/search">검색</a></ul>
           <ul><a href="/wiki/list">도감</a></ul>
           <ul><a href="/roses/list">내 장미</a></ul>
           <ul><a href="/list">리스트</a></ul>

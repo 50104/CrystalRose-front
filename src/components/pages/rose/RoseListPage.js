@@ -124,7 +124,7 @@ export default function RoseListPage() {
                 
                 <div className="rose-entry-actions">
                   <Link 
-                    to={`/diaries/register`} 
+                    to={`/diaries/register/${rose.id}`} 
                     className="rose-entry-action-link"
                   >
                     기록 추가

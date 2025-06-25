@@ -23,6 +23,30 @@ export default function DiaryRegister({ onSuccess }) {
     return value;
   };
 
+  // 필수 필드 검증 함수
+  const validateForm = () => {
+    const requiredFields = [
+      { field: 'roseId', name: '장미 선택' },
+      { field: 'note', name: '기록 내용' },
+      { field: 'recordedAt', name: '기록 날짜' },
+      { field: 'imageUrl', name: '사진' }
+    ];
+
+    const missingFields = requiredFields.filter(({ field }) => !formData[field]);
+    
+    if (missingFields.length > 0) {
+      const missingFieldNames = missingFields.map(({ name }) => name).join(', ');
+      alert(`다음 필수 항목을 입력해주세요: ${missingFieldNames}`);
+      return false;
+    }
+    return true;
+  };
+
+  // 모든 필수 필드가 채워졌는지 확인
+  const isFormValid = () => {
+    return formData.roseId && formData.note && formData.recordedAt && formData.imageUrl;
+  };
+
   // 내 장미 목록 불러오기
   useEffect(() => {
     axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/roses/list`)
@@ -63,6 +87,12 @@ export default function DiaryRegister({ onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // 폼 검증
+    if (!validateForm()) {
+      return;
+    }
+
     setIsSubmitting(true);
     
     // 날짜 형식 변환
@@ -100,7 +130,7 @@ export default function DiaryRegister({ onSuccess }) {
 
   return (
     <div className="diary-form-container">
-      <h3>성장 기록 추가</h3>
+      <h1 className="diary-form-title">성장 기록 추가</h1>
       
       {message && (
         <div className={`diary-message ${message.type}`}>
@@ -108,66 +138,100 @@ export default function DiaryRegister({ onSuccess }) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="diary-form">
-        <label>장미 선택</label>
-        <select 
-          name="roseId" 
-          value={formData.roseId} 
-          onChange={handleChange} 
-          required
-        >
-          <option value="">장미를 선택하세요</option>
-          {roseList.map(rose => (
-            <option key={rose.id} value={rose.id}>
-              {rose.nickname} ({rose.varietyName || '품종 정보 없음'})
-            </option>
-          ))}
-        </select>
+      <div className="diary-form-content">
+        <div className="diary-top-section">
+          <div className="diary-image-upload-section">
+            <div className="diary-image-upload-container">
+              {imagePreview ? (
+                <img 
+                  src={imagePreview} 
+                  alt="preview" 
+                  className="diary-image-preview"
+                  onClick={() => document.getElementById('diary-image-input').click()}
+                />
+              ) : (
+                <div 
+                  className="diary-image-placeholder"
+                  onClick={() => document.getElementById('diary-image-input').click()}
+                >
+                  <div className="diary-upload-icon">📷</div>
+                  <p>클릭하여 이미지 업로드</p>
+                </div>
+              )}
+              <input
+                id="diary-image-input"
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={uploading}
+                style={{ display: 'none' }}
+              />
+              {uploading && <p className="diary-upload-status">업로드 중...</p>}
+            </div>
+          </div>
 
-        <label>기록 내용</label>
-        <textarea 
-          name="note" 
-          value={formData.note} 
-          onChange={handleChange} 
-          placeholder="오늘의 성장 기록을 작성해주세요"
-          required 
-        />
+          <div className="diary-basic-info-section">
+            <div className="diary-form-group">
+              <label className="diary-form-label">
+                장미 선택 <span className="diary-required">*</span>
+              </label>
+              <select 
+                name="roseId" 
+                value={formData.roseId} 
+                onChange={handleChange} 
+                required
+                disabled={!!roseId}
+                className="diary-form-select"
+              >
+                <option value="">장미를 선택하세요</option>
+                {roseList.map(rose => (
+                  <option key={rose.id} value={rose.id}>
+                    {rose.nickname} ({rose.varietyName || '품종 정보 없음'})
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        <label>기록 날짜</label>
-        <input 
-          type="datetime-local" 
-          name="recordedAt" 
-          value={formData.recordedAt} 
-          onChange={handleChange} 
-          required 
-        />
+            <div className="diary-form-group">
+              <label className="diary-form-label">
+                기록 내용 <span className="diary-required">*</span>
+              </label>
+              <textarea 
+                name="note" 
+                value={formData.note} 
+                onChange={handleChange} 
+                placeholder="오늘의 성장 기록을 작성해주세요"
+                required 
+                className="diary-form-textarea"
+              />
+            </div>
 
-        <label>이미지</label>
-        <input 
-          type="file" 
-          accept="image/*" 
-          onChange={handleImageUpload} 
-          disabled={uploading} 
-        />
-        
-        {uploading && <p className="upload-status">업로드 중</p>}
-        
-        {imagePreview && (
-          <img 
-            src={imagePreview} 
-            alt="preview" 
-            className="image-preview"
-          />
-        )}
+            <div className="diary-form-group">
+              <label className="diary-form-label">
+                기록 날짜 <span className="diary-required">*</span>
+              </label>
+              <input 
+                type="datetime-local" 
+                name="recordedAt" 
+                value={formData.recordedAt} 
+                onChange={handleChange} 
+                required 
+                className="diary-form-input"
+              />
+            </div>
+          </div>
+        </div>
 
-        <button 
-          type="submit" 
-          className="diary-submit-btn"
-          disabled={isSubmitting || uploading || !formData.roseId}
-        >
-          {isSubmitting ? '등록 중' : '등록하기'}
-        </button>
-      </form>
+        <div className="diary-form-actions">
+          <button 
+            onClick={handleSubmit}
+            className="diary-submit-button"
+            disabled={isSubmitting || uploading || !isFormValid()}
+          >
+            {isSubmitting ? '등록 중...' : '기록 등록하기'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

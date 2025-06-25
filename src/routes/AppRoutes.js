@@ -2,10 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './AppRoutes.css';
 import Home from '@components/pages/Home/Home';
-import Search from '@components/pages/Search/Search';
 import NotFound from '@components/pages/Error/NotFound';
-import ReviewWrite from '@components/pages/Review/ReviewWrite';
-import RoseInfo from '@components/pages/Review/RoseInfo';
 import SignUp from '@components/pages/Auth/SignUp';
 import SignIn from '@components/pages/Auth/SignIn';
 import MyPage from '@components/pages/MyPage/MyPage';
@@ -59,9 +56,6 @@ function AppRoutes() {
         <Route path="/findId" element={<FindId />} />
         <Route path="/findPwd" element={<FindPwd />} />
 
-        {/* 장미 검색 */}
-        <Route path="/search" element={<Search />} />
-
         {/* 장미 커뮤니티 */}
         <Route path="/board" element={<Board />} />
         <Route path="/content" element={<Content />} />
@@ -69,10 +63,6 @@ function AppRoutes() {
         <Route path="/list" element={<List />} />
         <Route path="/editor" element={<Editor />} />
         <Route path="/editor/:boardNo" element={<Editor />} />
-
-        {/* 장미정보 및 리뷰 */}
-        <Route path="/review/:roseId" element={<RoseInfo />} />
-        <Route path="/review/write/:roseId" element={<ReviewWrite />} />
 
         {/* 장미 위키 */}
         <Route path="/admin/wiki" element={<WikiApprove />} />
@@ -86,6 +76,7 @@ function AppRoutes() {
 
         {/* 성장 기록 */}
         <Route path="/diaries/register" element={<DiaryRegister />} />
+        <Route path="/diaries/register/:roseId" element={<DiaryRegister />} />
         <Route path="/diaries/list" element={<DiaryList />} />
         <Route path="/diaries/:roseId/timeline" element={<TimelinePage />} />
         <Route path="/diaries/:roseId/timelapse" element={<TimelapsePage />} />
