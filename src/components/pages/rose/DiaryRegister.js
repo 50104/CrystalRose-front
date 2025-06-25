@@ -194,20 +194,6 @@ export default function DiaryRegister({ onSuccess }) {
 
             <div className="diary-form-group">
               <label className="diary-form-label">
-                기록 내용 <span className="diary-required">*</span>
-              </label>
-              <textarea 
-                name="note" 
-                value={formData.note} 
-                onChange={handleChange} 
-                placeholder="오늘의 성장 기록을 작성해주세요"
-                required 
-                className="diary-form-textarea"
-              />
-            </div>
-
-            <div className="diary-form-group">
-              <label className="diary-form-label">
                 기록 날짜 <span className="diary-required">*</span>
               </label>
               <input 
@@ -217,6 +203,20 @@ export default function DiaryRegister({ onSuccess }) {
                 onChange={handleChange} 
                 required 
                 className="diary-form-input"
+              />
+            </div>
+
+            <div className="diary-form-group">
+              <label className="diary-form-label">
+                기록 내용 <span className="diary-required">*</span>
+              </label>
+              <textarea 
+                name="note" 
+                value={formData.note} 
+                onChange={handleChange} 
+                placeholder="오늘의 성장 기록을 작성해주세요"
+                required 
+                className="diary-form-textarea"
               />
             </div>
           </div>
