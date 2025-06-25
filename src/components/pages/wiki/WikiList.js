@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Link import 추가
+import { Link } from 'react-router-dom';
 import './WikiList.css';
-import { axiosInstance } from '@utils/axios'; // axiosInstance 경로 확인 필요
+import { axiosInstance } from '@utils/axios';
 
 export default function WikiListPage() {
   const [wikiEntries, setWikiEntries] = useState([]);
@@ -16,7 +16,6 @@ export default function WikiListPage() {
     setLoading(true);
     setError(null);
     try {
-      // API 엔드포인트는 실제 API에 맞게 수정해야 합니다.
       const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/v1/wiki/list`);
       setWikiEntries(response.data);
     } catch (err) {
@@ -48,7 +47,12 @@ export default function WikiListPage() {
 
   return (
     <div className="wiki-list-container">
-      <h1 className="wiki-list-title">장미 도감 목록</h1>
+      <div className="wiki-list-header">
+        <h1 className="wiki-list-title">장미 도감 목록</h1>
+        <Link to="/wiki/register" className="wiki-register-button">
+          + 도감 등록
+        </Link>
+      </div>
       
       {wikiEntries.length === 0 ? (
         <div className="wiki-list-no-entries">
