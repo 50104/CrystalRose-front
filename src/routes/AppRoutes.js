@@ -11,7 +11,6 @@ import FindPwd from '@components/pages/Auth/FindPwd';
 import CheckUserPwd from '@components/pages/MyPage/CheckUserPwd';
 import UserUpdate from '@components/pages/MyPage/UserUpdate';
 import { GetAccess } from '@utils/api/token';
-import Board from '@components/pages/Board/Board';
 import Content from '@components/pages/Board/Content';
 import List from '@components/pages/Board/List';
 import Editor from '@components/pages/Board/Editor';
@@ -57,7 +56,6 @@ function AppRoutes() {
         <Route path="/findPwd" element={<FindPwd />} />
 
         {/* 장미 커뮤니티 */}
-        <Route path="/board" element={<Board />} />
         <Route path="/content" element={<Content />} />
         <Route path="/content/:boardNo" element={<Content />} />
         <Route path="/list" element={<List />} />

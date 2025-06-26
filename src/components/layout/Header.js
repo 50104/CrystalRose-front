@@ -39,7 +39,6 @@ const Header = () => {
           <ul><a href="/wiki/list">도감</a></ul>
           <ul><a href="/roses/list">내 장미</a></ul>
           <ul><a href="/list">리스트</a></ul>
-          <ul><a href="/editor">에디터</a></ul>
 
           <ul><a href="/groupchatting/list">채팅방목록</a></ul>
           <ul><a href="/my/chat/page">MyChatPage</a></ul>

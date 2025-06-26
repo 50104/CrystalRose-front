@@ -7,40 +7,186 @@
 .list-title {
     font-size: 2rem;
     margin-bottom: 1.5rem;
+    color: #333;
+    text-align: center;
+    font-weight: 600;
 }
 
-.card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 20px;
+.board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0 0.5rem;
 }
 
-.card {
-    display: block;
-    padding: 16px;
-    background-color: white;
-    border: 1px solid #eaeaea;
-    border-radius: 10px;
-    transition: all 0.2s ease-in-out;
-    text-decoration: none;
-    color: black;
-}
-
-.card:hover {
-    border-color: #d2b6ff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.card-title {
-    font-size: 1.1rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.card-author {
+.board-stats {
     font-size: 0.9rem;
     color: #666;
+    font-weight: 500;
+}
+
+.write-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.write-btn:hover {
+    background-color: #0056b3;
+}
+
+.board-table {
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 100px 1fr 120px 120px 80px 80px;
+    background-color: #f8f9fa;
+    color: #333;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0;
+}
+
+.table-header > div {
+    padding: 16px 12px;
+    text-align: center;
+}
+
+.table-header > div:last-child {
+    border-right: none;
+}
+
+.table-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 120px 120px 80px 80px;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.2s ease;
+    background-color: white;
+}
+
+.table-row:hover {
+    background-color: #f8f9ff;
+}
+
+.table-row > div {
+    padding: 16px 12px;
+    display: flex;
+    align-items: center;
+}
+
+.table-row > div:last-child {
+    border-right: none;
+}
+
+.col-no {
+    justify-content: center;
+    font-weight: 600;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.col-category {
+    justify-content: center;
+    font-weight: 600;
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.category-tag {
+    background-color: transparent;
+    color: #495057;
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.col-title {
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.title-text {
+    font-weight: 500;
+    color: #333;
+}
+
+.comment-count {
+    color: #ff6b9d;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.col-author {
+    justify-content: center;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.col-date {
+    justify-content: center;
+    font-size: 0.85rem;
+    color: #999;
+}
+
+.col-views {
+    justify-content: center;
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.col-likes {
+    justify-content: center;
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .list-container {
+        padding: 1rem;
+    }
+    
+    .table-header,
+    .table-row {
+        grid-template-columns: 80px 1fr 100px;
+    }
+    
+    .col-date,
+    .col-views,
+    .col-likes {
+        display: none;
+    }
+    
+    .board-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .write-btn {
+        align-self: flex-end;
+    }
 }
