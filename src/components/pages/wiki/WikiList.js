@@ -67,8 +67,10 @@ export default function WikiListPage() {
                   <img src={entry.imageUrl} alt={entry.name} className="wiki-entry-image" />
                 )}
                 <div className="wiki-entry-content">
-                  <h2 className="wiki-entry-name">{entry.name}</h2>
-                  <p className="wiki-entry-category">{entry.category}</p>
+                  <div className="wiki-entry-header">
+                    <h2 className="wiki-entry-name">{entry.name}</h2>
+                    <p className="wiki-entry-category">{entry.category}</p>
+                  </div>
                   <p className="wiki-entry-description">{entry.description?.substring(0, 100)}{entry.description?.length > 100 ? '...' : ''}</p>
                 </div>
               </div>
