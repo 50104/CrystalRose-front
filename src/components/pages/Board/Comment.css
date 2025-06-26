@@ -1,0 +1,298 @@
+/* 댓글 영역 전체 */
+.commentSection {
+  margin-top: 40px;
+  padding: 40px;
+  max-width: 127vh;
+  margin: 40px auto 0;
+  background: white;
+  border-top: 2px solid #f1f5f9;
+}
+
+.commentSection h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+/* 댓글 입력 박스 */
+.commentInputBox {
+  margin-bottom: 32px;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.commentInputBox textarea {
+  width: 100%;
+  height: 100px;
+  resize: vertical;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.5;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+  background: white;
+}
+
+.commentInputBox textarea:focus {
+  outline: none;
+  border-color: #805ad5;
+  box-shadow: 0 0 0 1px #805ad5;
+}
+
+/* 댓글 리스트 */
+.commentList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 댓글 항목 */
+.commentItem {
+  padding: 24px 0;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 0;
+}
+
+.commentItem:last-child {
+  border-bottom: none;
+}
+
+/* 작성자 이름 */
+.commentUser {
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+/* 상단: 작성자 + 시간 */
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  margin-bottom: 12px;
+  position: relative;
+  min-height: 32px;
+}
+
+.leftBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rightButtons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.rightButtons button {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  color: #718096;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.rightButtons button:hover {
+  background: #f7fafc;
+  color: #4a5568;
+}
+
+.rightButtons .deleteIcon {
+  color: #e53e3e;
+  background: none;
+}
+
+.rightButtons .deleteIcon:hover {
+  background: #fef5f5;
+  color: #c53030;
+}
+
+/* 본문: 댓글 + 버튼 */
+.commentBody {
+  display: block;
+}
+
+/* 댓글 내용 */
+.commentContent {
+  margin-bottom: 8px;
+  font-size: 15px;
+  line-height: 1.6;
+  word-break: break-word;
+  color: #2d3748;
+}
+
+/* 댓글 시간 */
+.commentDate {
+  color: #a0aec0;
+  font-size: 12px;
+}
+
+/* 댓글 입력 버튼 */
+.commentButtonBox {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.commentButtonBox .contentButton {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #805ad5;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.commentButtonBox .contentButton:hover {
+  background: #6b46c1;
+}
+
+/* 대댓글 입력 박스 */
+.nestedReplyBox {
+  margin-top: 16px;
+  background: white;
+  border-radius: 6px;
+  padding: 16px;
+}
+
+/* 대댓글 리스트 */
+.nestedCommentList {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 16px;
+}
+
+.nestedCommentList .commentItem {
+  margin-left: 24px;
+  margin-bottom: 0;
+  padding: 16px 0 16px 20px;
+  border-radius: 6px;
+  border-bottom: none;
+  position: relative;
+}
+
+.nestedCommentList .commentItem .commentHeader {
+  min-height: 32px;
+  position: relative;
+}
+
+.nestedCommentList .commentItem::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 24px;
+  width: 2px;
+  height: 20px;
+  background: #cbd5e0;
+}
+
+/* 대댓글의 버튼들도 일정하게 정렬 */
+.nestedCommentList .rightButtons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+/* @부모닉네임 */
+.replyTo {
+  font-weight: 600;
+  color: #805ad5;
+  background: #e8deff;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  margin-right: 6px;
+  display: inline-block;
+}
+
+/* 수정 버튼 */
+.editButton {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: #718096;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.editButton:hover {
+  background: #f7fafc;
+  color: #4a5568;
+}
+
+/* 삭제 아이콘 */
+.deleteIcon {
+  background: none;
+  border: none;
+  color: #e53e3e;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.deleteIcon:hover {
+  background: #fef5f5;
+  color: #c53030;
+}
+
+.commentEditBox {
+  margin-top: 12px;
+}
+
+/* 수정 중 textarea */
+.commentEditBox textarea {
+  width: 100%;
+  height: 80px;
+  resize: vertical;
+  font-size: 14px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-family: inherit;
+  line-height: 1.5;
+  background: white;
+  transition: border-color 0.2s ease;
+}
+
+.commentEditBox textarea:focus {
+  outline: none;
+  border-color: #805ad5;
+  box-shadow: 0 0 0 1px #805ad5;
+}
+
+/* 삭제된 댓글 스타일 */
+.deletedComment {
+  color: #a0aec0;
+  font-style: italic;
+  font-size: 14px;
+}

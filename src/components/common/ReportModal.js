@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./ReportModal.css";
 
 const ReportModal = ({ visible, onClose, onSubmit, targetId, title = "신고" }) => {
   const [reason, setReason] = useState("");

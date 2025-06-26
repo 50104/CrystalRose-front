@@ -93,6 +93,7 @@
     padding: 16px 12px;
     display: flex;
     align-items: center;
+    min-height: 52px;
 }
 
 .table-row > div:last-child {
@@ -123,18 +124,25 @@
 
 .col-title {
     justify-content: flex-start;
+    align-items: center;
     gap: 8px;
 }
 
 .title-text {
     font-weight: 500;
     color: #333;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .comment-count {
     color: #ff6b9d;
     font-weight: 600;
     font-size: 0.85rem;
+    flex-shrink: 0;
 }
 
 .col-author {

@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import parse from 'html-react-parser';
 import { useUserData } from '@utils/api/user';
 import './Content.css';
+import './Comment.css';
 import styles from './CKEditor.module.css';
 import CommentList from './CommentList';
 import ReportModal from '../../common/ReportModal';
@@ -153,34 +154,38 @@ function Content() {
           <div className='headerBox'>
             <div className='titleBox'>{content.boardTitle}</div>
             <div className='authorBox'>
-              작성자 : {content.writer
-                ? (content.writer.userStatus === 'DELETED' ? '탈퇴한 사용자입니다' : content.writer.userNick)
-                : '알 수 없는 사용자'}
+              <div className='authorInfo'>
+                <span className='authorName'>
+                  {content.writer
+                    ? (content.writer.userStatus === 'DELETED' ? '탈퇴한 사용자입니다' : content.writer.userNick)
+                    : '알 수 없는 사용자'}
+                </span>
+                {!loading && userData && content.writer 
+                && content.writer.userStatus !== 'DELETED' 
+                && userData.userNo !== content.writer.userNo && (
+                  <>
+                    <button className="contentButton" onClick={async () => {
+                      try {
+                        await blockUser(content.writer.userNo);
+                        alert("차단 완료");
+                      } catch (err) {
+                        alert('차단 실패: ' + err.response?.data?.message || '오류 발생');
+                      }
+                    }}>차단</button>
+                    <button className="contentButton" onClick={async () => {
+                      const alreadyReported = await checkAlreadyReported();
+                      if (alreadyReported) {
+                        alert("이미 신고한 게시글입니다.");
+                        return;
+                      }
+                      setReportingPostId(content.boardNo);
+                    }}>신고</button>
+                  </>
+                )}
+              </div>
+              <div className='postDate'>{formatDateTime(content.createdDate)}</div>
             </div>
-            {!loading && userData && content.writer 
-            && content.writer.userStatus !== 'DELETED' 
-            && userData.userNo !== content.writer.userNo && (
-              <>
-                <button className="contentButton" onClick={async () => {
-                  try {
-                    await blockUser(content.writer.userNo);
-                    alert("차단 완료");
-                  } catch (err) {
-                    alert('차단 실패: ' + err.response?.data?.message || '오류 발생');
-                  }
-                }}>차단</button>
-                <button className="contentButton" onClick={async () => {
-                  const alreadyReported = await checkAlreadyReported();
-                  if (alreadyReported) {
-                    alert("이미 신고한 게시글입니다.");
-                    return;
-                  }
-                  setReportingPostId(content.boardNo);
-                }}>신고</button>
-              </>
-            )}
           </div>
-          <div className='contentDivider'></div>
           <div className='boardContent'>{parse(content.boardContent)}          </div>
         </div>
       </div>

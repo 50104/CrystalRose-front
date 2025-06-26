@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { axiosInstance } from "@utils/axios";
 import "./Content.css";
+import "./Comment.css";
 import ReportModal from '../../common/ReportModal';
 import { reportComment } from "@utils/api/report";
 
