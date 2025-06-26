@@ -102,7 +102,7 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
             )}
             <button className="editButton" onClick={() => toggleReplyBox(comment.id)}>답글</button>
             {(userData?.userNick !== comment.userNick && userData?.userId !== comment.userId) && (
-              <button onClick={() => setReportingCommentId(comment.id)}>신고</button>
+              <button className="editButton reportButton" onClick={() => setReportingCommentId(comment.id)}>신고</button>
             )}
 
             <ReportModal
@@ -110,6 +110,7 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
               onClose={() => setReportingCommentId(null)}
               onSubmit={handleCommentReport}
               targetId={reportingCommentId}
+              title="댓글 신고"
             />
           </div>
         )}

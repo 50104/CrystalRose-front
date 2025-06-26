@@ -6,6 +6,7 @@ import { useUserData } from '@utils/api/user';
 import './Content.css';
 import styles from './CKEditor.module.css';
 import CommentList from './CommentList';
+import ReportModal from '../../common/ReportModal';
 import { reportPost, blockUser } from '@utils/api/report';
 
 function Content() {
@@ -15,8 +16,7 @@ function Content() {
   const navigate = useNavigate();
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
-  const [showReport, setShowReport] = useState(false);
-  const [reason, setReason] = useState('');
+  const [reportingPostId, setReportingPostId] = useState(null);
 
   function decodeHtml(html) {
     const txt = document.createElement("textarea");
@@ -111,16 +111,10 @@ function Content() {
 
   const handleEdit = () => navigate(`/editor/${boardNo}`);
 
-  const handleReportSubmit = async () => {
-    if (!reason.trim()) {
-      alert("신고 사유를 입력하세요.");
-      return;
-    }
+  const handlePostReport = async (postId, reason) => {
     try {
-      await reportPost(content.boardNo, reason);
+      await reportPost(postId, reason);
       alert("신고 완료");
-      setShowReport(false);
-      setReason('');
     } catch (err) {
       alert('신고 실패: ' + err.response?.data?.message || '오류 발생');
     }
@@ -169,21 +163,24 @@ function Content() {
                     alert("이미 신고한 게시글입니다.");
                     return;
                   }
-                  setShowReport(prev => !prev);
-                }}>{showReport ? '신고 닫기' : '신고'}</button>
-                {showReport && (
-                  <div className="reportForm">
-                    <textarea value={reason} onChange={(e) => setReason(e.target.value)} />
-                    <button onClick={handleReportSubmit}>신고 제출</button>
-                  </div>
-                )}
+                  setReportingPostId(content.boardNo);
+                }}>신고</button>
               </>
             )}
           </div>
           <div className='contentDivider'></div>
-          <div className='boardContent'>{parse(content.boardContent)}</div>
+          <div className='boardContent'>{parse(content.boardContent)}          </div>
         </div>
       </div>
+
+      <ReportModal
+        visible={reportingPostId !== null}
+        onClose={() => setReportingPostId(null)}
+        onSubmit={handlePostReport}
+        targetId={reportingPostId}
+        title="게시글 신고"
+      />
+
       <div className='contentButtonBox'>
         {userData && content.writer && userData.userNo === content.writer.userNo && (
           <>
