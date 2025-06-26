@@ -132,6 +132,18 @@ function Content() {
     }
   };
 
+  const checkAlreadyReportedComment = async (commentId) => {
+    try {
+      const res = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/comment-reports/check`, {
+        params: { commentId }
+      });
+      return res.data.alreadyReported;
+    } catch (err) {
+      console.error("댓글 신고 여부 확인 실패", err);
+      return false;
+    }
+  };
+
   if (!content) return <div>Loading...</div>;
 
   return (
@@ -198,6 +210,7 @@ function Content() {
           formatDateTime={formatDateTime}
           handleDeleteComment={handleDeleteComment}
           onRefresh={fetchComments}
+          checkAlreadyReportedComment={checkAlreadyReportedComment}
         />
         <div className="commentInputBox">
           <textarea

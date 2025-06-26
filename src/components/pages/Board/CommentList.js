@@ -4,7 +4,7 @@ import "./Content.css";
 import ReportModal from '../../common/ReportModal';
 import { reportComment } from "@utils/api/report";
 
-function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateTime, handleDeleteComment }) {
+function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateTime, handleDeleteComment, checkAlreadyReportedComment }) {
   const [replyBoxOpen, setReplyBoxOpen] = useState(null);
   const [replyContents, setReplyContents] = useState({});
   const [editingCommentId, setEditingCommentId] = useState(null);
@@ -79,7 +79,10 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
       await reportComment(commentId, reason);
       alert("댓글 신고 완료");
     } catch (err) {
-      alert("신고 실패: " + err.response?.data?.message);
+      const errorMsg = err?.response?.data?.message || "신고 실패";
+      alert(errorMsg);
+    } finally {
+      setReportingCommentId(null);
     }
   };
 
@@ -102,16 +105,15 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
             )}
             <button className="editButton" onClick={() => toggleReplyBox(comment.id)}>답글</button>
             {(userData?.userNick !== comment.userNick && userData?.userId !== comment.userId) && (
-              <button className="editButton reportButton" onClick={() => setReportingCommentId(comment.id)}>신고</button>
+              <button className="editButton reportButton" onClick={async () => {
+                const alreadyReported = await checkAlreadyReportedComment(comment.id);
+                if (alreadyReported) {
+                  alert("이미 신고한 댓글입니다.");
+                  return;
+                }
+                setReportingCommentId(comment.id);
+              }}>신고</button>
             )}
-
-            <ReportModal
-              visible={reportingCommentId !== null}
-              onClose={() => setReportingCommentId(null)}
-              onSubmit={handleCommentReport}
-              targetId={reportingCommentId}
-              title="댓글 신고"
-            />
           </div>
         )}
       </div>
@@ -166,9 +168,18 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
   );
   
   return (
-    <ul className="commentList">
-      {nestedComments.map(comment => renderComment(comment))}
-    </ul>
+    <>
+      <ul className="commentList">
+        {nestedComments.map(comment => renderComment(comment))}
+      </ul>
+      <ReportModal
+        visible={reportingCommentId !== null}
+        onClose={() => setReportingCommentId(null)}
+        onSubmit={handleCommentReport}
+        targetId={reportingCommentId}
+        title="댓글 신고"
+      />
+    </>
   );
 }
 
