@@ -185,6 +185,21 @@
     padding: 0.5rem;
   }
 
+  .calendar-toolbar {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .view-buttons {
+    justify-content: center;
+  }
+
+  .today-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
   .calendar-day {
     min-height: 100px;
     padding: 0.25rem;
@@ -208,9 +223,19 @@
 
 .calendar-toolbar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1rem;
   gap: 0.5rem;
+}
+
+.view-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.register-button:hover {
+  background-color: #4c1d95;
 }
 
 .today-button {
@@ -307,6 +332,20 @@
 
 .mini-day.dimmed.has-image {
   background-image: none !important;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 0.5rem;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-content .care-form-container {
+  margin: 0;
+  box-shadow: none;
+  border-radius: 0;
 }
 
 

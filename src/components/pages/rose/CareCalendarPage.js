@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { axiosInstance } from '@utils/axios';
 import CareLogModal from './CareLogModal';
+import CareLogRegister from './CareLogRegister';
 import './CareCalendar.css';
 
 const CustomCalendar = () => {
@@ -9,6 +10,9 @@ const CustomCalendar = () => {
   const [logs, setLogs] = useState({});
   const [diaries, setDiaries] = useState({});
   const [selected, setSelected] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const containerRef = useRef(null);
   const monthRefs = useRef([]);
@@ -197,40 +201,92 @@ const CustomCalendar = () => {
     return days;
   };
 
-  const getDateKey = (date) => date.toISOString().split('T')[0];
+  const getDateKey = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
   const getMonthKey = (date) => `${date.getFullYear()}-${date.getMonth()}`;
 
   const getDayData = (date) => {
     const monthKey = getMonthKey(date);
     const dateKey = getDateKey(date);
     const dayLogs = logs[monthKey]?.filter(log => log.careDate === dateKey) || [];
-    const dayDiary = diaries[monthKey]?.find(diary => new Date(diary.recordedAt).toISOString().split('T')[0] === dateKey);
+    const dayDiary = diaries[monthKey]?.find(diary => {
+      const diaryDate = new Date(diary.recordedAt);
+      const year = diaryDate.getFullYear();
+      const month = String(diaryDate.getMonth() + 1).padStart(2, '0');
+      const day = String(diaryDate.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}` === dateKey;
+    });
     return { logs: dayLogs, diary: dayDiary };
+  };
+
+  const handleDateClick = (date, dayData) => {
+    if (dayData.logs.length > 0) {
+      // 관리 기록이 있는 경우 - 기록 보기 모달
+      setSelected(dayData.logs[0]);
+    } else {
+      // 관리 기록이 없는 경우 - 등록 모달
+      setSelectedDate(date);
+      setShowRegisterModal(true);
+    }
+  };
+
+  const handleRegisterSuccess = () => {
+    setShowRegisterModal(false);
+    setShowEditModal(false);
+    setSelectedDate(null);
+    setSelected(null);
+    // 현재 월 데이터 다시 로딩
+    if (selectedDate) {
+      const monthKey = getMonthKey(selectedDate);
+      delete logs[monthKey];
+      loadMonthData(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1));
+    }
+    if (selected) {
+      const date = new Date(selected.careDate);
+      const monthKey = getMonthKey(date);
+      delete logs[monthKey];
+      loadMonthData(new Date(date.getFullYear(), date.getMonth(), 1));
+    }
+  };
+
+  const handleEdit = () => {
+    setShowEditModal(true);
   };
 
   const diaryMap = {};
   Object.values(diaries).flat().forEach(d => {
-    const key = new Date(d.recordedAt).toISOString().split('T')[0];
+    const date = new Date(d.recordedAt);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const key = `${year}-${month}-${day}`;
     diaryMap[key] = d.imageUrl;
   });
 
   return (
     <>
       <div className="calendar-toolbar">
-        <button className="today-button" onClick={scrollToToday}>오늘로 이동</button>
-        <button
-          className="today-button"
-          onClick={() => {
-            if (isYearView) {
-              setIsYearView(false);
-              setTimeout(() => scrollToToday(), 0);
-            } else {
-              setIsYearView(true);
-            }
-          }}
-        >
-          {isYearView ? '월간 보기' : '연간 보기'}
-        </button>
+        <div></div>
+        <div className="view-buttons">
+          <button className="today-button" onClick={scrollToToday}>오늘로 이동</button>
+          <button
+            className="today-button"
+            onClick={() => {
+              if (isYearView) {
+                setIsYearView(false);
+                setTimeout(() => scrollToToday(), 0);
+              } else {
+                setIsYearView(true);
+              }
+            }}
+          >
+            {isYearView ? '월간 보기' : '연간 보기'}
+          </button>
+        </div>
       </div>
 
       {isYearView ? (
@@ -294,7 +350,7 @@ const CustomCalendar = () => {
                       style={{
                         backgroundImage: isCurrentMonth && dayData.diary?.imageUrl ? `url(${dayData.diary.imageUrl})` : 'none'
                       }}
-                      onClick={() => isCurrentMonth && dayData.logs.length > 0 && setSelected(dayData.logs[0])}
+                      onClick={() => isCurrentMonth && handleDateClick(date, dayData)}
                     >
                       <div className="day-number">{date.getDate()}</div>
                       {isCurrentMonth && dayData.logs.length > 0 && (
@@ -313,7 +369,30 @@ const CustomCalendar = () => {
           )}
         </div>
       )}
-      {selected && <CareLogModal log={selected} onClose={() => setSelected(null)} />}
+      {selected && <CareLogModal log={selected} onClose={() => setSelected(null)} onEdit={handleEdit} />}
+      {showRegisterModal && selectedDate && (
+        <div className="modal-backdrop" onClick={() => setShowRegisterModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <CareLogRegister 
+              selectedDate={selectedDate}
+              onSuccess={handleRegisterSuccess} 
+              onCancel={() => setShowRegisterModal(false)}
+            />
+          </div>
+        </div>
+      )}
+      {showEditModal && selected && (
+        <div className="modal-backdrop" onClick={() => setShowEditModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <CareLogRegister 
+              selectedDate={new Date(selected.careDate)}
+              editData={selected}
+              onSuccess={handleRegisterSuccess} 
+              onCancel={() => setShowEditModal(false)}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 };
