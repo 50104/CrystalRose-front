@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { axiosInstance } from '@utils/axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import parse from 'html-react-parser';
@@ -31,7 +31,7 @@ function Content() {
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
   };
 
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     try {
       const res = await axiosInstance.get(`/board/${boardNo}/comments`);
       setComments(Array.isArray(res.data) ? res.data : []);
@@ -39,7 +39,7 @@ function Content() {
       console.error("댓글 불러오기 오류:", err);
       setComments([]);
     }
-  };
+  }, [boardNo]);
 
   useEffect(() => {
     if (boardNo) {
@@ -60,7 +60,7 @@ function Content() {
       getContent();
       fetchComments();
     }
-  }, [boardNo]);
+  }, [boardNo, fetchComments]);
 
   const handleAddComment = () => {
     if (!newComment.trim()) return;

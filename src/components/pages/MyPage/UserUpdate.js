@@ -162,11 +162,11 @@ const UserUpdate = () => {
 
     // 인증번호 확인
     const onCertificationNumberButtonClickHandler = async () => {
-        // if (!isCertificationCheck) {
-        //     setCertificationNumberError(true);
-        //     alert('이메일 인증은 필수입니다.');
-        //     return;
-        // }
+        if (!isCertificationCheck) {
+            setCertificationNumberError(true);
+            alert('이메일 인증은 필수입니다.');
+            return;
+        }
         if (!userInfo.userEmail || !userInfo.certificationNumber) return;
         console.log('certificationNumber:', userInfo.certificationNumber);
         try {

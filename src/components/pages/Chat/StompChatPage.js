@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import SockJS from 'sockjs-client';
 import Stomp from 'webstomp-client';
 import { useParams } from 'react-router-dom';
@@ -21,25 +21,13 @@ const StompChatPage = () => {
   const token = localStorage.getItem('access');
 
   useEffect(() => {
-    if (token) {
-      const decoded = jwtDecode(token);
-      setSenderId(decoded.userId);
-    }
-    fetchRoomInfo();
-    fetchMessageHistory();
-    return () => {
-      disconnectWebSocket();
-    };
-  }, [roomId]);
-
-  useEffect(() => {
     if (isInitialLoad && messages.length > 0) {
       scrollToBottom();
       setIsInitialLoad(false);
     }
-  }, [messages]);
+  }, [messages, isInitialLoad]);
 
-  const fetchRoomInfo = async () => {
+  const fetchRoomInfo = useCallback(async () => {
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/chat/room/${roomId}/info`);
       const roomData = response.data;
@@ -58,65 +46,9 @@ const StompChatPage = () => {
       console.error('채팅방 정보 불러오기 실패:', error);
       setRoomTitle('채팅방');
     }
-  };
+  }, [roomId, senderId, token]); 
 
-  const fetchMessageHistory = async () => {
-    try {
-      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/chat/history/${roomId}`);
-      setMessages(response.data);
-      connectWebSocket();
-    } catch (error) {
-      console.error('초기 메시지 불러오기 실패:', error);
-    }
-  };
-
-  const fetchOlderMessages = async () => {
-    if (!hasMore || loading) return;
-    setLoading(true);
-
-    const box = chatBoxRef.current;
-    const scrollHeightBefore = box?.scrollHeight;
-    const oldest = messages[0];
-    const cursor = oldest?.createdDate;
-
-    try {
-      const res = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/chat/history/${roomId}`, {
-        params: { cursor }
-      });
-
-      const existingIds = new Set(messages.map((m) => m.id));
-      const newUniqueMessages = res.data.filter((m) => !existingIds.has(m.id));
-
-      if (res.data.length === 0) {
-        setHasMore(false);
-      }
-
-      if (newUniqueMessages.length > 0) {
-        setMessages((prev) => [...newUniqueMessages, ...prev]);
-        setTimeout(() => {
-          const scrollHeightAfter = box?.scrollHeight;
-          if (box) {
-            const offset = scrollHeightAfter - scrollHeightBefore;
-            box.scrollTop = offset > 0 ? offset : 1;
-          }
-        }, 0);
-      }
-    } catch (error) {
-      console.error('이전 메시지 로딩 실패:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleScroll = () => {
-    const box = chatBoxRef.current;
-    if (!box || loading || !hasMore) return;
-    if (box.scrollTop <= 20) {
-      fetchOlderMessages();
-    }
-  };
-
-  const connectWebSocket = async () => {
+  const connectWebSocket = useCallback(async () => {
     if (stompClient && stompClient.connected) return;
 
     try {
@@ -152,7 +84,87 @@ const StompChatPage = () => {
     } catch (error) {
       console.error("WebSocket 연결 전 토큰 재발급 실패:", error);
     }
-  };
+  }, [stompClient, roomId]);
+
+  const disconnectWebSocket = useCallback(async () => {
+    try {
+      await axiosInstance.post(`${process.env.REACT_APP_API_URL}/chat/room/${roomId}/read`);
+      if (stompClient && stompClient.connected) {
+        stompClient.unsubscribe(`/topic/${roomId}`);
+        stompClient.disconnect();
+      }
+    } catch (error) {
+      console.error('웹소켓 종료 실패:', error);
+    }
+  }, [roomId, stompClient]);
+
+  const fetchMessageHistory = useCallback(async () => {
+    try {
+      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/chat/history/${roomId}`);
+      setMessages(response.data);
+      connectWebSocket();
+    } catch (error) {
+      console.error('초기 메시지 불러오기 실패:', error);
+    }
+  }, [roomId, connectWebSocket]);
+
+  useEffect(() => {
+    if (token) {
+      const decoded = jwtDecode(token);
+      setSenderId(decoded.userId);
+    }
+    fetchRoomInfo();
+    fetchMessageHistory();
+    return () => {
+      disconnectWebSocket();
+    };
+  }, [roomId, token, fetchRoomInfo, fetchMessageHistory, disconnectWebSocket]);
+
+  const fetchOlderMessages = useCallback(async () => {
+    if (!hasMore || loading) return;
+    setLoading(true);
+
+    const box = chatBoxRef.current;
+    const scrollHeightBefore = box?.scrollHeight;
+    const oldest = messages[0];
+    const cursor = oldest?.createdDate;
+
+    try {
+      const res = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/chat/history/${roomId}`, {
+        params: { cursor }
+      });
+
+      const existingIds = new Set(messages.map((m) => m.id));
+      const newUniqueMessages = res.data.filter((m) => !existingIds.has(m.id));
+
+      if (res.data.length === 0) {
+        setHasMore(false);
+      }
+
+      if (newUniqueMessages.length > 0) {
+        setMessages((prev) => [...newUniqueMessages, ...prev]);
+        setTimeout(() => {
+          const scrollHeightAfter = box?.scrollHeight;
+          if (box) {
+            const offset = scrollHeightAfter - scrollHeightBefore;
+            box.scrollTop = offset > 0 ? offset : 1;
+          }
+        }, 0);
+      }
+    } catch (error) {
+      console.error('이전 메시지 로딩 실패:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [roomId, messages, hasMore, loading]);
+
+  const handleScroll = useCallback(() => {
+    const box = chatBoxRef.current;
+    if (!box || loading || !hasMore) return;
+    if (box.scrollTop <= 20) {
+      fetchOlderMessages();
+    }
+  }, [loading, hasMore, fetchOlderMessages]);
 
   const sendMessage = () => {
     if (newMessage.trim() === '') return;
@@ -179,29 +191,22 @@ const StompChatPage = () => {
     }
   };
 
-  const disconnectWebSocket = async () => {
-    try {
-      await axiosInstance.post(`${process.env.REACT_APP_API_URL}/chat/room/${roomId}/read`);
-      if (stompClient && stompClient.connected) {
-        stompClient.unsubscribe(`/topic/${roomId}`);
-        stompClient.disconnect();
-      }
-    } catch (error) {
-      console.error('웹소켓 종료 실패:', error);
-    }
-  };
-
   useEffect(() => {
     const box = chatBoxRef.current;
     if (!box) return;
     box.addEventListener('scroll', handleScroll);
     return () => box.removeEventListener('scroll', handleScroll);
-  }, [messages, loading]);
+  }, [messages, loading, handleScroll]);
 
   return (
     <div className="stompchat-container">
       <div className="stompchat-header">
-        <h2>{roomTitle}</h2>
+        <h2>
+          {roomTitle}
+          {roomInfo?.participants?.length > 0 && (
+            <> ({roomInfo.participants.length})</>
+          )}
+        </h2>
       </div>
       
       <div ref={chatBoxRef} className="stompchat-box">

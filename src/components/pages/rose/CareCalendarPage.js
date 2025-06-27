@@ -18,36 +18,6 @@ const CustomCalendar = () => {
   const monthRefs = useRef([]);
   const [isYearView, setIsYearView] = useState(false);
 
-  useEffect(() => { // 초기 3개월 로딩
-    const today = new Date();
-    const initialMonths = [
-      new Date(today.getFullYear(), today.getMonth() - 1, 1),
-      new Date(today.getFullYear(), today.getMonth(), 1),
-      new Date(today.getFullYear(), today.getMonth() + 1, 1)
-    ];
-    setMonths(initialMonths);
-
-    initialMonths.forEach(month => loadMonthData(month));
-
-    setTimeout(() => {
-      scrollToToday();
-      const todayMonthIndex = initialMonths.findIndex(
-        m => m.getFullYear() === today.getFullYear() && m.getMonth() === today.getMonth()
-      );
-
-      const targetEl = monthRefs.current[todayMonthIndex];
-      const containerEl = containerRef.current;
-
-      if (targetEl && containerEl) {
-        const containerTop = containerEl.getBoundingClientRect().top;
-        const targetTop = targetEl.getBoundingClientRect().top;
-        const offset = targetTop - containerTop;
-
-        containerEl.scrollTop = containerEl.scrollTop + offset;
-      }
-    }, 30);
-  }, []);
-
   const scrollToToday = useCallback(() => {
     const today = new Date();
     const todayMonthIndex = months.findIndex(
@@ -66,37 +36,7 @@ const CustomCalendar = () => {
     }
   }, [months]);
 
-  const handleJumpToMonth = (monthIdx) => {
-    const targetMonth = new Date(new Date().getFullYear(), monthIdx, 1);
-    const existingIndex = months.findIndex(
-      m => m.getFullYear() === targetMonth.getFullYear() && m.getMonth() === targetMonth.getMonth()
-    );
-
-    if (existingIndex !== -1) {
-      const targetEl = monthRefs.current[existingIndex];
-      const containerEl = containerRef.current;
-      if (containerEl && targetEl) {
-        const containerTop = containerEl.getBoundingClientRect().top;
-        const targetTop = targetEl.getBoundingClientRect().top;
-        containerEl.scrollTop += targetTop - containerTop;
-        setIsYearView(false);
-      }
-    } else {
-      setMonths(prev => [...prev, targetMonth]);
-      loadMonthData(targetMonth);
-      setTimeout(() => {
-        const index = months.length;
-        const el = monthRefs.current[index];
-        if (el && containerRef.current) {
-          const offset = el.getBoundingClientRect().top - containerRef.current.getBoundingClientRect().top;
-          containerRef.current.scrollTop += offset;
-          setIsYearView(false);
-        }
-      }, 50);
-    }
-  };
-
-  const loadMonthData = async (month) => {
+  const loadMonthData = useCallback(async (month) => {
     const monthKey = `${month.getFullYear()}-${month.getMonth()}`;
     if (logs[monthKey]) return;
 
@@ -126,6 +66,66 @@ const CustomCalendar = () => {
       console.error('월 데이터 로딩 실패:', error);
     } finally {
       setLoading(false);
+    }
+  }, [logs]);
+
+  useEffect(() => { // 초기 3개월 로딩
+    const today = new Date();
+    const initialMonths = [
+      new Date(today.getFullYear(), today.getMonth() - 1, 1),
+      new Date(today.getFullYear(), today.getMonth(), 1),
+      new Date(today.getFullYear(), today.getMonth() + 1, 1)
+    ];
+    setMonths(initialMonths);
+
+    initialMonths.forEach(month => loadMonthData(month));
+
+    setTimeout(() => {
+      scrollToToday();
+      const todayMonthIndex = initialMonths.findIndex(
+        m => m.getFullYear() === today.getFullYear() && m.getMonth() === today.getMonth()
+      );
+
+      const targetEl = monthRefs.current[todayMonthIndex];
+      const containerEl = containerRef.current;
+
+      if (targetEl && containerEl) {
+        const containerTop = containerEl.getBoundingClientRect().top;
+        const targetTop = targetEl.getBoundingClientRect().top;
+        const offset = targetTop - containerTop;
+
+        containerEl.scrollTop = containerEl.scrollTop + offset;
+      }
+    }, 30);
+  }, [scrollToToday, loadMonthData]);
+
+  const handleJumpToMonth = (monthIdx) => {
+    const targetMonth = new Date(new Date().getFullYear(), monthIdx, 1);
+    const existingIndex = months.findIndex(
+      m => m.getFullYear() === targetMonth.getFullYear() && m.getMonth() === targetMonth.getMonth()
+    );
+
+    if (existingIndex !== -1) {
+      const targetEl = monthRefs.current[existingIndex];
+      const containerEl = containerRef.current;
+      if (containerEl && targetEl) {
+        const containerTop = containerEl.getBoundingClientRect().top;
+        const targetTop = targetEl.getBoundingClientRect().top;
+        containerEl.scrollTop += targetTop - containerTop;
+        setIsYearView(false);
+      }
+    } else {
+      setMonths(prev => [...prev, targetMonth]);
+      loadMonthData(targetMonth);
+      setTimeout(() => {
+        const index = months.length;
+        const el = monthRefs.current[index];
+        if (el && containerRef.current) {
+          const offset = el.getBoundingClientRect().top - containerRef.current.getBoundingClientRect().top;
+          containerRef.current.scrollTop += offset;
+          setIsYearView(false);
+        }
+      }, 50);
     }
   };
 
@@ -163,7 +163,7 @@ const CustomCalendar = () => {
         }
       }, 0);
     }
-  }, [months, loading]);
+  }, [months, loading, loadMonthData]);
 
   useEffect(() => {
     const container = containerRef.current;

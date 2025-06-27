@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
 import './DiaryList.css';
@@ -9,11 +9,7 @@ export default function RoseTimelinePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchTimeline();
-  }, [roseId]);
-
-  const fetchTimeline = async () => {
+  const fetchTimeline = useCallback(async () => {
     try {
       const res = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/diaries/${roseId}/timeline`);
       setTimeline(res.data);
@@ -23,7 +19,11 @@ export default function RoseTimelinePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [roseId]);
+
+  useEffect(() => {
+    fetchTimeline();
+  }, [fetchTimeline]);
 
   if (loading) return <div className="diary-list-loading">로딩 중...</div>;
   if (error) return <div className="diary-list-error">{error}</div>;

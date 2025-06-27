@@ -25,7 +25,7 @@ function SignUp() {
     const [certificationNumber, setCertificationNumber] = useState('');
 
     const [isUserIdError, setUserIdError] = useState(false);
-    const [isUserNickError, setUserNickError] = useState(false);
+    const [isUserNickError] = useState(false);
     const [isUserPwdError, setUserPwdError] = useState(false);
     const [isUserPwdCheckError, setUserPwdCheckError] = useState(false);
     const [isUserEmailError, setUserEmailError] = useState(false);
