@@ -1,14 +1,15 @@
 .footer_div {
   border-top: 1px solid gainsboro;
-  /* background-color: #15192a; */
+  background-color: #ffffff;
   height: 20px;
   padding: 20px;
   margin-bottom: 70px;
 }
 
 .footer_info {
-  /* margin-left: 100px; */
-  /* margin-right: 100px; */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
   display: flex;
   justify-content: space-between;
 }
@@ -23,4 +24,10 @@
   color: gray;
   margin-bottom: 5px;
   font-size: 14px;
+}
+
+@media screen and (max-width: 430px) {
+  .footer_div {
+    display: none;
+  }
 }

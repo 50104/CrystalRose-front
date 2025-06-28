@@ -66,7 +66,6 @@ export const getUserData = async (navigate, setIsLogin) => {
   const token = localStorage.getItem('access');
   if (!token) {
       console.log('로그인이 필요한 서비스입니다.');
-      navigate('/login');
       return;
   }
   setIsLogin(true);

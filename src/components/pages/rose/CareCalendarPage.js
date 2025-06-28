@@ -69,7 +69,12 @@ const CustomCalendar = () => {
     }
   }, [logs]);
 
-  useEffect(() => { // 초기 3개월 로딩
+  const hasInitialized = useRef(false);
+
+  useEffect(() => {
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+
     const today = new Date();
     const initialMonths = [
       new Date(today.getFullYear(), today.getMonth() - 1, 1),
@@ -93,7 +98,6 @@ const CustomCalendar = () => {
         const containerTop = containerEl.getBoundingClientRect().top;
         const targetTop = targetEl.getBoundingClientRect().top;
         const offset = targetTop - containerTop;
-
         containerEl.scrollTop = containerEl.scrollTop + offset;
       }
     }, 30);

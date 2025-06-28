@@ -132,14 +132,38 @@ a {
   margin: 0; /* 마진 제거 */
 }
 
-/* 웹 크기 고정 */
-.web {
-  display: flex;
-  justify-content: center;
-  min-width: 1340px;
+/* 공통 */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-.web_div {
-  width: 1280px;
-  margin: 0 auto;
+.web {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content_area {
+  flex: none; 
+}
+
+.main_div {
+  background-color: #f8f8ff;
+  min-height: calc(100vh - 200px);
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 20px;
+}
+
+@media screen and (max-width: 430px) {
+  .web {
+    min-height: 100vh;
+  }
+  
+  .content_area {
+    flex: none;
+    height: calc(100vh - 120px);
+  }
 }

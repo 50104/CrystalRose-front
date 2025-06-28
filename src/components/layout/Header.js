@@ -13,35 +13,40 @@ const Header = () => {
       <div className="nav_userInfo">
         {!isLogin ? (
           <>
-            <div className="nav_userInfo"><a href="/favoriteList"><ul>즐겨찾기</ul></a></div>
-            <div className="nav_userInfo"><a href="/join"><ul>회원가입</ul></a></div>
-            <div className="nav_userInfo"><a href="/login"><ul>로그인</ul></a></div>
+            <a href="/favoriteList"><div>즐겨찾기</div></a>
+            <a href="/join"><div>회원가입</div></a>
+            <a href="/login"><div>로그인</div></a>
           </>
         ) : (
           <>
-            <div className='nav_userInfo'><a href="/memberList"><ul>회원 리스트</ul></a></div>
+            <a href="/memberList"><div>회원 리스트</div></a>
             {userRole === 'ROLE_ADMIN' && (
-              <div className="nav_userInfo"><a href="/admin"><ul>{userNick}님 관리자 페이지</ul></a></div>
+              <a href="/admin"><div>{userNick}님 관리자 페이지</div></a>
             )}
             {userRole !== 'ROLE_ADMIN' && userRole !== 'ROLE_WRITER' && (
-              <div className="nav_userInfo"><a href="/mypage"><ul>{userNick}님 마이페이지</ul></a></div>
+              <a href="/mypage"><div>{userNick}님 마이페이지</div></a>
             )}
-            <div className="nav_userInfo"><a href="/favoriteList"><ul>즐겨찾기</ul></a></div>
-            <div className="nav_userInfo cursor" onClick={logoutFunction}><ul>로그아웃</ul></div>
+            <a href="/favoriteList"><div>즐겨찾기</div></a>
+            <div onClick={logoutFunction}>로그아웃</div>
           </>
         )}
       </div>
 
       {/* Nav 영역 */}
       <div className="nav_box">
-        <div><a href="/"><img src={logo} alt="50104" className="nav_log" /></a></div>
+        <div>
+          <a href="/">
+            <img src={logo} alt="50104" className="nav_log" />
+          </a>
+        </div>
         <div className="nav_menu">
-          <ul><a href="/wiki/list">도감</a></ul>
-          <ul><a href="/roses/list">내 장미</a></ul>
-          <ul><a href="/list">리스트</a></ul>
-
-          <ul><a href="/groupchatting/list">채팅방목록</a></ul>
-          <ul><a href="/my/chat/page">MyChatPage</a></ul>
+          <ul>
+            <li><a href="/wiki/list">도감</a></li>
+            <li><a href="/roses/list">내 장미</a></li>
+            <li><a href="/list">리스트</a></li>
+            <li><a href="/groupchatting/list">그룹채팅</a></li>
+            <li><a href="/my/chat/page">내 채팅</a></li>
+          </ul>
         </div>
       </div>
     </div>

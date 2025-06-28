@@ -13,17 +13,16 @@
 }
 
 .custom-calendar-container::-webkit-scrollbar {
-  width: 5px;
+  width: 2px;
 }
 
 .custom-calendar-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .custom-calendar-container::-webkit-scrollbar-thumb {
   background: #c1c1c1;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .custom-calendar-container::-webkit-scrollbar-thumb:hover {
@@ -177,47 +176,101 @@
   font-weight: 500;
 }
 
-/* 반응형 */
-@media (max-width: 768px) {
+@media screen and (max-width: 430px) {
   .custom-calendar-container {
-    height: 95vh;
-    margin: 0.5rem auto;
-    padding: 0.5rem;
+    height: calc(100vh - 150px) !important;
+    margin: 0 !important;
+    padding: 0.25rem !important;
+    border-radius: 0 !important;
+    max-width: 100% !important;
+    margin-top: 60px !important;
   }
 
   .calendar-toolbar {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    background-color: white !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    padding: 0.75rem 1rem !important;
+    margin-bottom: 0 !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
   }
 
   .view-buttons {
-    justify-content: center;
+    justify-content: center !important;
+    gap: 0.5rem !important;
   }
 
   .today-button {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.85rem;
+    padding: 0.5rem 1rem !important;
+    font-size: 0.85rem !important;
+    white-space: nowrap !important;
+    min-width: 150px !important;
   }
 
-  .calendar-day {
-    min-height: 100px;
-    padding: 0.25rem;
+  .calendar-month {
+    padding-top: 0.5rem !important;
   }
 
-  .day-number {
-    width: 20px;
-    height: 20px;
-    font-size: 0.8rem;
+  .month-header {
+    margin-bottom: 0.5rem !important;
+    padding: 0.5rem 0 !important;
   }
 
   .month-header h2 {
-    font-size: 1.2rem;
+    font-size: 1.1rem !important;
+  }
+
+  .weekday {
+    padding: 0.4rem 0.2rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  .calendar-day {
+    min-height: 60px !important;
+    padding: 0.2rem !important;
+  }
+
+  .day-number {
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 0.75rem !important;
+    margin-bottom: 0.25rem !important;
   }
 
   .day-event {
-    font-size: 0.7rem;
-    padding: 0.125rem 0.25rem;
+    font-size: 0.65rem !important;
+    padding: 0.1rem 0.2rem !important;
+    border-radius: 0.25rem !important;
+  }
+
+  .year-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+    padding: 4rem 0.5rem 0.5rem 0.5rem !important;
+  }
+
+  .mini-month {
+    padding: 0.5rem !important;
+  }
+
+  .mini-month h4 {
+    font-size: 0.9rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .mini-weekdays span {
+    font-size: 0.7rem !important;
+  }
+
+  .mini-day {
+    font-size: 0.65rem !important;
   }
 }
 

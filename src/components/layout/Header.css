@@ -1,10 +1,22 @@
+body {
+  overflow-x: hidden;
+}
+
 .header_div {
   padding-top: 30px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e5e5;
 }
 
 .nav_box {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .nav_log {
@@ -20,32 +32,104 @@
   display: flex;
   list-style: none;
   padding: 0;
+  margin: 0;
+  gap: 30px;
 }
 
-.nav_menu ul:hover {
-color: rgb(183, 183, 183);
+.nav_menu ul li {
+  white-space: nowrap;
 }
-
-.nav_menu ul {
-  margin-right: 50px;
-  }
 
 .nav_userInfo {
   display: flex;
+  flex-wrap: wrap;
   font-size: 13px;
-  justify-content: right;
-  margin-right: 10px;
+  justify-content: flex-end;
   color: rgb(0, 0, 0);
+  gap: 15px;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
-.nav_userInfo:hover {
-  color: rgb(183, 183, 183);
-}
-
-.nav_userInfo ul {
-  margin-right: 10px;
+.nav_userInfo a {
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cursor {
   cursor: pointer;
+}
+
+@media screen and (max-width: 360px) {
+  .header_div {
+    height: 8.5vh !important;
+  }
+
+  .nav_menu ul {
+    gap: 20px !important;
+  }
+}
+
+@media screen and (max-width: 430px) {
+  .header_div {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 7vh;
+    z-index: 1000;
+    background-color: white;
+    padding: 10px 5px 5px 5px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .nav_box {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0px;
+  }
+
+  .nav_log {
+    width: 50px;
+    margin: 0;
+  }
+
+  .nav_menu {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav_menu ul {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    font-size: 14px;
+    gap: 25px;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+  }
+
+  .nav_menu ul li {
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .nav_userInfo {
+    display: none;
+  }
 }

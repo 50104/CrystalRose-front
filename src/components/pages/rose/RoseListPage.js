@@ -127,7 +127,7 @@ export default function RoseListPage() {
                     to={`/diaries/register/${rose.id}`} 
                     className="rose-entry-action-link"
                   >
-                    기록 추가
+                    + 기록
                   </Link>
                   <Link 
                     to={`/diaries/${rose.id}/timeline`} 

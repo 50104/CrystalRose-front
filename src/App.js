@@ -11,14 +11,15 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="web">
-        <div className="web_div">
-          <Header />
+        <Header />
+        <div className="content_area">
           <AppRoutes />
-          <Footer />
         </div>
+        <Footer />
       </div>
     </QueryClientProvider>
   );
 }
+
 
 export default App;
