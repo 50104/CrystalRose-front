@@ -10,6 +10,7 @@ export default function CareLogRegister({ selectedDate, editData, onSuccess, onC
     adjuvant: '',
     compost: '',
     fungicide: '',
+    watering: '',
     note: ''
   });
 
@@ -31,6 +32,7 @@ export default function CareLogRegister({ selectedDate, editData, onSuccess, onC
         adjuvant: editData.adjuvant || '',
         compost: editData.compost || '',
         fungicide: editData.fungicide || '',
+        watering: editData.watering || '',
         note: editData.note || ''
       });
     }
@@ -43,6 +45,12 @@ export default function CareLogRegister({ selectedDate, editData, onSuccess, onC
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // 모바일에서 키보드 숨기기
+    if (e.target.querySelector('input:focus, textarea:focus')) {
+      e.target.querySelector('input:focus, textarea:focus').blur();
+    }
+    
     try {
       if (editData) {
         await axiosInstance.put(`/api/diaries/carelogs/${editData.id}`, form);
@@ -59,6 +67,7 @@ export default function CareLogRegister({ selectedDate, editData, onSuccess, onC
         adjuvant: '',
         compost: '',
         fungicide: '',
+        watering: '',
         note: ''
       });
       onSuccess?.();
@@ -72,33 +81,82 @@ export default function CareLogRegister({ selectedDate, editData, onSuccess, onC
     <div className="care-form-container">
       <h2 className="full-width">관리 기록 {editData ? '수정' : '등록'}</h2>
       <form onSubmit={handleSubmit} className="care-form">
+        <input type="hidden" name="careDate" value={form.careDate} onChange={handleChange} required />
         <div>
-          <label>날짜</label>
-          <input type="date" name="careDate" value={form.careDate} onChange={handleChange} required />
+          <label>💧 관수</label>
+          <input 
+            type="text" 
+            name="watering" 
+            value={form.watering} 
+            onChange={handleChange}
+            placeholder="물주기 완료"
+            autoComplete="off"
+          />
         </div>
         <div>
-          <label>영양제</label>
-          <input type="text" name="fertilizer" value={form.fertilizer} onChange={handleChange} />
+          <label>💊 영양제</label>
+          <input 
+            type="text" 
+            name="fertilizer" 
+            value={form.fertilizer} 
+            onChange={handleChange}
+            placeholder="액체비료 10ml"
+            autoComplete="off"
+          />
         </div>
         <div>
-          <label>살충제</label>
-          <input type="text" name="pesticide" value={form.pesticide} onChange={handleChange} />
+          <label>🪰 살충제</label>
+          <input 
+            type="text" 
+            name="pesticide" 
+            value={form.pesticide} 
+            onChange={handleChange}
+            placeholder="진딧물 방제"
+            autoComplete="off"
+          />
         </div>
         <div>
-          <label>보조제</label>
-          <input type="text" name="adjuvant" value={form.adjuvant} onChange={handleChange} />
+          <label>🧪 보조제</label>
+          <input 
+            type="text" 
+            name="adjuvant" 
+            value={form.adjuvant} 
+            onChange={handleChange}
+            placeholder="활력제 사용"
+            autoComplete="off"
+          />
         </div>
         <div>
-          <label>살균제</label>
-          <input type="text" name="fungicide" value={form.fungicide} onChange={handleChange} />
+          <label>🧼 살균제</label>
+          <input 
+            type="text" 
+            name="fungicide" 
+            value={form.fungicide} 
+            onChange={handleChange}
+            placeholder="흰가루병 예방"
+            autoComplete="off"
+          />
         </div>
         <div>
-          <label>비료</label>
-          <input type="text" name="compost" value={form.compost} onChange={handleChange} />
+          <label>💩 비료</label>
+          <input 
+            type="text" 
+            name="compost" 
+            value={form.compost} 
+            onChange={handleChange}
+            placeholder="유기질 비료"
+            autoComplete="off"
+          />
         </div>
         <div className="full-width">
-          <label>메모</label>
-          <textarea name="note" value={form.note} onChange={handleChange} />
+          <label>📝 메모</label>
+          <textarea 
+            name="note" 
+            value={form.note} 
+            onChange={handleChange}
+            placeholder="오늘의 관리 내용을 자세히 기록해보세요"
+            rows="4"
+          />
         </div>
         <div className="form-buttons full-width">
           <button type="submit">{editData ? '수정' : '등록'}</button>

@@ -129,18 +129,20 @@ export default function RoseListPage() {
                   >
                     + 기록
                   </Link>
-                  <Link 
-                    to={`/diaries/${rose.id}/timeline`} 
-                    className="rose-entry-action-link secondary"
-                  >
-                    타임라인
-                  </Link>
-                  <Link 
-                    to={`/diaries/${rose.id}/timelapse`} 
-                    className="rose-entry-action-link secondary"
-                  >
-                    타임랩스
-                  </Link>
+                  <div className="rose-entry-actions-row">
+                    <Link 
+                      to={`/diaries/${rose.id}/timeline`} 
+                      className="rose-entry-action-link secondary"
+                    >
+                      타임라인
+                    </Link>
+                    <Link 
+                      to={`/diaries/${rose.id}/timelapse`} 
+                      className="rose-entry-action-link secondary"
+                    >
+                      타임랩스
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>

@@ -12,7 +12,7 @@
   background: white;
   border-radius: 0.5rem;
   padding: 1.5rem;
-  width: 400px;
+  width: 80%;
   max-width: 90vw;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   position: relative;
@@ -52,6 +52,7 @@
 .modal-buttons {
   display: flex;
   gap: 0.5rem;
+  margin-top: 2rem;
 }
 
 .modal-box button {

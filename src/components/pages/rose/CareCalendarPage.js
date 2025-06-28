@@ -216,14 +216,20 @@ const CustomCalendar = () => {
   const getDayData = (date) => {
     const monthKey = getMonthKey(date);
     const dateKey = getDateKey(date);
-    const dayLogs = logs[monthKey]?.filter(log => log.careDate === dateKey) || [];
-    const dayDiary = diaries[monthKey]?.find(diary => {
-      const diaryDate = new Date(diary.recordedAt);
-      const year = diaryDate.getFullYear();
-      const month = String(diaryDate.getMonth() + 1).padStart(2, '0');
-      const day = String(diaryDate.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}` === dateKey;
-    });
+
+    const rawLogs = logs[monthKey];
+    const dayLogs = Array.isArray(rawLogs)
+      ? rawLogs.filter(log => log.careDate === dateKey)
+      : [];
+
+    const diaryList = diaries[monthKey];
+    const dayDiary = Array.isArray(diaryList)
+      ? diaryList.find(diary => {
+          const diaryDate = new Date(diary.recordedAt);
+          return getDateKey(diaryDate) === dateKey;
+        })
+      : null;
+
     return { logs: dayLogs, diary: dayDiary };
   };
 
