@@ -12,9 +12,18 @@ const MyChatPage = () => {
     const fetchChatList = async () => {
       try {
         const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/chat/my/rooms`);
-        setChatList(response.data);
+        
+        const data = response.data;
+        const list = Array.isArray(data)
+          ? data
+          : Array.isArray(data.data)
+            ? data.data
+            : [];
+
+        setChatList(list);
       } catch (error) {
         console.error('채팅 목록을 가져오는 중 오류 발생:', error);
+        setChatList([]); // 실패 시 빈 배열
       }
     };
 
@@ -45,7 +54,7 @@ const MyChatPage = () => {
       <div className="chatlist-inner">
         <Typography variant="h5" className="chatlist-header">내 채팅목록</Typography>
         <div>
-          {chatList.map((chat) => (
+          {Array.isArray(chatList) && chatList.map((chat) => (
             <div key={chat.roomId} className="chatlist-item">
               <div>{chat.roomName}</div>
               <div>{chat.unReadCount}</div>

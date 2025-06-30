@@ -17,7 +17,14 @@ export default function WikiListPage() {
     setError(null);
     try {
       const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/v1/wiki/list`);
-      setWikiEntries(response.data);
+
+      const entries = Array.isArray(response.data)
+        ? response.data
+        : Array.isArray(response.data.data)
+          ? response.data.data
+          : [];
+
+      setWikiEntries(entries);
     } catch (err) {
       setError(err.response?.data?.message || err.message || '데이터를 불러오는 데 실패했습니다.');
       console.error('Error fetching wiki entries:', err);
@@ -60,7 +67,7 @@ export default function WikiListPage() {
         </div>
       ) : (
         <div className="wiki-entries-grid">
-          {wikiEntries.map(entry => (
+          {Array.isArray(wikiEntries) && wikiEntries.map(entry => (
             <Link key={entry.id} to={`/wiki/${entry.id}`} className="wiki-entry-card-link">
               <div className="wiki-entry-card">
                 {entry.imageUrl && (

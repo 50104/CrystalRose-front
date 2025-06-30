@@ -15,8 +15,20 @@ const GroupCattingList = () => {
   }, []);
 
   const loadChatRoom = async () => {
-    const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/chat/room/group/list`);
-    setChatRoomList(response.data);
+    try {
+      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/chat/room/group/list`);
+      
+      const chatRooms = Array.isArray(response.data)
+        ? response.data
+        : Array.isArray(response.data.data)
+          ? response.data.data
+          : [];
+
+      setChatRoomList(chatRooms);
+    } catch (err) {
+      console.error('채팅방 목록 불러오기 실패:', err);
+      setChatRoomList([]); // 실패 시 빈 배열
+    }
   };
 
   const joinChatRoom = async (roomId) => {
@@ -38,7 +50,7 @@ const GroupCattingList = () => {
           채팅방 생성
         </Button>
         <div className="chatroom-list">
-          {chatRoomList.map(chat => (
+          {Array.isArray(chatRoomList) && chatRoomList.map(chat => (
             <div key={chat.roomId} className="chatroom-item">
               <div>{chat.roomId}</div>
               <div>{chat.roomName}</div>

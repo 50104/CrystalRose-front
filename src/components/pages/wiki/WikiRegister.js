@@ -121,11 +121,15 @@ export default function WikiRegisterPage() {
 
   const handleCheckboxChange = (field, value) => {
     setFormData(prevState => {
-      const currentValues = prevState[field] ? prevState[field].split(',') : [];
+      const rawValue = prevState[field];
+      const currentValues = typeof rawValue === 'string' 
+        ? rawValue.split(',') 
+        : [];
+
       const updatedValues = currentValues.includes(value)
         ? currentValues.filter(v => v !== value)
         : [...currentValues, value];
-      
+
       return {
         ...prevState,
         [field]: updatedValues.join(',')

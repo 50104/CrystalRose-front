@@ -11,10 +11,7 @@ const CARE_LABELS = {
 };
 
 export default function CareLogModal({ log, onClose, onEdit }) {
-  const entries = Object.entries(log).filter(([key, value]) =>
-    CARE_LABELS[key] && value && value !== '없음'
-  );
-
+  const entries = Object.entries(log || {}).filter(([key, value]) => value != null);
   const displayDate = new Date(log.careDate + 'T00:00:00');
 
   return (

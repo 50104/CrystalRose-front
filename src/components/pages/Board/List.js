@@ -11,8 +11,8 @@ function List() {
     useEffect(() => {
         axiosInstance.get(`/board/list?page=${currentPage}`)
             .then(res => {
-                setContents(res.data.content);
-                setTotalPage(res.data.totalPage);
+                setContents(Array.isArray(res.data.content) ? res.data.content : []);
+                setTotalPage(res.data.totalPage ?? 1);
             })
             .catch(err => console.error(err));
     }, [currentPage]);
