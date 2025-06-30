@@ -68,6 +68,11 @@ body {
   cursor: pointer;
 }
 
+.mobile-only {
+  display: none !important;
+  pointer-events: none;
+}
+
 @media screen and (max-width: 360px) {
   .header_div {
     height: 8.5vh !important;
@@ -105,20 +110,21 @@ body {
   .nav_log {
     width: 50px;
     margin: 0;
+    padding-left: 7px;
   }
 
   .nav_menu {
     flex: 1;
     display: flex;
     align-items: center;
-    justify-content: center;
+    padding-left: 15px !important;
   }
 
   .nav_menu ul {
     flex-wrap: nowrap;
     white-space: nowrap;
     font-size: 14px;
-    gap: 25px;
+    gap: 20px;
     justify-content: center;
     align-items: center;
     margin: 0;
@@ -131,5 +137,10 @@ body {
 
   .nav_userInfo {
     display: none;
+  }
+
+  .mobile-only {
+    display: flex !important;
+    pointer-events: auto;
   }
 }

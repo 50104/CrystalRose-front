@@ -8,6 +8,9 @@ function AdminPage() {
       
       <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
         <li style={{ marginBottom: '18px' }}>
+          <a href="/memberList" style={{ fontSize: '16px', textDecoration: 'none', color: '#333' }}>회원 리스트</a>
+        </li>
+        <li style={{ marginBottom: '18px' }}>
           <a href="/admin/wiki" style={{ fontSize: '16px', textDecoration: 'none', color: '#333' }}>도감 승인</a>
         </li>
         <li style={{ marginBottom: '18px' }}>

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { modifyUserData, useUserData } from '@utils/api/user';
+import { logoutFunction } from '@utils/api/token';
 import './MyPage.css';
 import { getAccessToken } from '@utils/api/token';
 import { useNavigate } from 'react-router-dom';
@@ -22,7 +23,6 @@ function MyPage() {
             );
         }
     }, [userData]);
-
 
     console.log('currentProfileImage:', currentProfileImage);
 
@@ -127,7 +127,10 @@ function MyPage() {
                 </div>
             </div>
             <div className='ect'>
-
+              <a href="/my/chat/page">내 채팅</a>
+              <a href="/join"><div>회원가입</div></a>
+              <a href="/login"><div>로그인</div></a>
+              <div onClick={logoutFunction} className="cursor">로그아웃</div>
             </div>
         </div>
     );
