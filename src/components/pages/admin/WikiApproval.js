@@ -5,6 +5,8 @@ import { axiosInstance } from '@utils/axios';
 
 export default function WikiApprovalPage() {
   const [pendingEntries, setPendingEntries] = useState([]);
+  const [pendingModifications, setPendingModifications] = useState([]);
+  const [activeTab, setActiveTab] = useState('entries'); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
@@ -12,6 +14,7 @@ export default function WikiApprovalPage() {
 
   useEffect(() => {
     fetchPendingEntries();
+    fetchPendingModifications();
   }, []);
 
   const fetchPendingEntries = async () => {
@@ -23,6 +26,15 @@ export default function WikiApprovalPage() {
       setError(err.response?.data?.message || err.message || '서버에서 데이터를 가져오는데 실패했습니다.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPendingModifications = async () => {
+    try {
+      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/v1/admin/wiki/modifications/pending`);
+      setPendingModifications(response.data);
+    } catch (err) {
+      console.error('수정 대기 목록 조회 실패:', err);
     }
   };
 
@@ -43,6 +55,26 @@ export default function WikiApprovalPage() {
       setMessage({ type: 'success', text: '도감이 거부되었습니다.' });
     } catch (err) {
       setMessage({ type: 'error', text: err.response?.data?.message || '거부 중 오류가 발생했습니다.' });
+    }
+  };
+
+  const handleModificationApprove = async (id) => {
+    try {
+      await axiosInstance.patch(`${process.env.REACT_APP_API_URL}/api/v1/admin/wiki/modifications/${id}/approve`);
+      setPendingModifications(pendingModifications.filter(modification => modification.id !== id));
+      setMessage({ type: 'success', text: '도감 수정이 승인되었습니다.' });
+    } catch (err) {
+      setMessage({ type: 'error', text: err.response?.data?.message || '수정 승인 중 오류가 발생했습니다.' });
+    }
+  };
+
+  const handleModificationReject = async (id) => {
+    try {
+      await axiosInstance.patch(`${process.env.REACT_APP_API_URL}/api/v1/admin/wiki/modifications/${id}/reject`);
+      setPendingModifications(pendingModifications.filter(modification => modification.id !== id));
+      setMessage({ type: 'success', text: '도감 수정이 거부되었습니다.' });
+    } catch (err) {
+      setMessage({ type: 'error', text: err.response?.data?.message || '수정 거부 중 오류가 발생했습니다.' });
     }
   };
 
@@ -74,7 +106,10 @@ export default function WikiApprovalPage() {
       <div className="error-container">
         <p>에러 발생: {error}</p>
         <button 
-          onClick={fetchPendingEntries}
+          onClick={() => {
+            fetchPendingEntries();
+            fetchPendingModifications();
+          }}
           className="retry-button"
         >
           다시 시도
@@ -92,59 +127,147 @@ export default function WikiApprovalPage() {
           {message.text}
         </div>
       )}
-      
-      <h2 className="pending-title">승인 대기 중인 도감 ({pendingEntries.length})</h2>
-      
-      {pendingEntries.length === 0 ? (
-        <div className="no-entries">
-          승인 대기 중인 도감이 없습니다.
-        </div>
-      ) : (
-        <div className="entries-list">
-          {pendingEntries.map(entry => (
-            <div 
-              key={entry.id} 
-              className={`entry-card ${selectedEntry?.id === entry.id ? 'selected' : ''}`}
-              onClick={() => handleEntryClick(entry)}
-            >
-              <div className="entry-header">
-                <div className="entry-info">
-                  <h3 className="entry-name">{entry.name}</h3>
-                  <div className="entry-meta">
-                    <span className="entry-category">{entry.category}</span>
-                    <span className="entry-date">{formatDate(entry.createdDate)}</span>
-                  </div>
-                </div>
-                <div className="entry-actions">
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleApprove(entry.id);
-                    }}
-                    className="approve-button"
-                  >
-                    승인
-                  </button>
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleReject(entry.id);
-                    }}
-                    className="reject-button"
-                  >
-                    거부
-                  </button>
-                </div>
-              </div>
-              
-              {selectedEntry?.id === entry.id && (
-                <div className="entry-details">
-                  <p>상세 정보를 조회하려면 API를 통해 추가 정보를 가져와야 합니다.</p>
-                </div>
-              )}
+
+      <div className="tab-menu">
+        <button 
+          className={`tab-button ${activeTab === 'entries' ? 'active' : ''}`}
+          onClick={() => setActiveTab('entries')}
+        >
+          신규 등록 승인 ({pendingEntries.length})
+        </button>
+        <button 
+          className={`tab-button ${activeTab === 'modifications' ? 'active' : ''}`}
+          onClick={() => setActiveTab('modifications')}
+        >
+          수정 승인 ({pendingModifications.length})
+        </button>
+      </div>
+
+      {activeTab === 'entries' ? (
+        <>
+          <h2 className="pending-title">신규 등록 대기 중인 도감 ({pendingEntries.length})</h2>
+          
+          {pendingEntries.length === 0 ? (
+            <div className="no-entries">
+              신규 등록 대기 중인 도감이 없습니다.
             </div>
-          ))}
-        </div>
+          ) : (
+            <div className="entries-list">
+              {pendingEntries.map(entry => (
+                <div 
+                  key={entry.id} 
+                  className={`entry-card ${selectedEntry?.id === entry.id ? 'selected' : ''}`}
+                  onClick={() => handleEntryClick(entry)}
+                >
+                  <div className="entry-header">
+                    <div className="entry-info">
+                      <h3 className="entry-name">{entry.name}</h3>
+                      <div className="entry-meta">
+                        <span className="entry-category">{entry.category}</span>
+                        <span className="entry-date">{formatDate(entry.createdDate)}</span>
+                        <span className="new-entry-badge">신규 등록</span>
+                      </div>
+                    </div>
+                    <div className="entry-actions">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleApprove(entry.id);
+                        }}
+                        className="approve-button"
+                      >
+                        승인
+                      </button>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleReject(entry.id);
+                        }}
+                        className="reject-button"
+                      >
+                        거부
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {selectedEntry?.id === entry.id && (
+                    <div className="entry-details">
+                      <p>상세 정보를 조회하려면 API를 통해 추가 정보를 가져와야 합니다.</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          <h2 className="pending-title">수정 대기 중인 도감 ({pendingModifications.length})</h2>
+          
+          {pendingModifications.length === 0 ? (
+            <div className="no-entries">
+              수정 대기 중인 도감이 없습니다.
+            </div>
+          ) : (
+            <div className="entries-list">
+              {pendingModifications.map(modification => (
+                <div 
+                  key={modification.id} 
+                  className={`entry-card ${selectedEntry?.id === modification.id ? 'selected' : ''}`}
+                  onClick={() => handleEntryClick(modification)}
+                >
+                  <div className="entry-header">
+                    <div className="entry-info">
+                      <h3 className="entry-name">{modification.name}</h3>
+                      <div className="entry-meta">
+                        <span className="entry-category">{modification.category}</span>
+                        <span className="entry-date">{formatDate(modification.createdDate)}</span>
+                        <span className="modification-badge">수정 요청</span>
+                      </div>
+                    </div>
+                    <div className="entry-actions">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleModificationApprove(modification.id);
+                        }}
+                        className="approve-button"
+                      >
+                        수정 승인
+                      </button>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleModificationReject(modification.id);
+                        }}
+                        className="reject-button"
+                      >
+                        수정 거부
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {selectedEntry?.id === modification.id && (
+                    <div className="entry-details">
+                      <div className="modification-details">
+                        <div className="modification-info">
+                          <p><strong>수정요청자:</strong> {modification.requesterNick || '알 수 없음'}</p>
+                          <p><strong>수정 요청일:</strong> {formatDate(modification.createdDate)}</p>
+                          {modification.description && (
+                            <div className="modification-reason">
+                              <p><strong>수정 사유:</strong></p>
+                              <div className="reason-text">{modification.description}</div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

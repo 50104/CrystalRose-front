@@ -134,9 +134,14 @@ export default function WikiDetailPage() {
 
   return (
     <div className="wiki-detail-container">
-      <RouterLink to="/wiki/list" className="wiki-detail-back-button">
-        &larr; 목록으로 돌아가기
-      </RouterLink>
+      <div className="wiki-detail-navigation">
+        <RouterLink to="/wiki/list" className="wiki-detail-back-button">
+          &larr; 목록으로 돌아가기
+        </RouterLink>
+        <RouterLink to={`/wiki/edit/${wikiId}`} className="wiki-detail-edit-button">
+          수정하기
+        </RouterLink>
+      </div>
       
       <div className="wiki-detail-header">
         <h1 className="wiki-detail-title">{wikiEntry.name}</h1>

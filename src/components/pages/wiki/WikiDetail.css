@@ -8,6 +8,43 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
+.wiki-detail-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.wiki-detail-back-button {
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+}
+
+.wiki-detail-back-button:hover {
+  color: #374151;
+  background-color: #f3f4f6;
+}
+
+.wiki-detail-edit-button {
+  color: #fff;
+  background-color: #ec4899;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+}
+
+.wiki-detail-edit-button:hover {
+  background-color: #db2777;
+}
+
 .wiki-detail-header {
   display: flex;
   justify-content: center;
@@ -78,8 +115,7 @@
   color: #4b5563;
 }
 
-.wiki-detail-retry-button,
-.wiki-detail-back-button {
+.wiki-detail-retry-button {
   padding: 0.6rem 1.2rem;
   background-color: #ec4899;
   color: white;
@@ -93,18 +129,8 @@
   margin-top: 0.5rem;
 }
 
-.wiki-detail-retry-button:hover,
-.wiki-detail-back-button:hover {
+.wiki-detail-retry-button:hover {
   background-color: #db2777;
-}
-
-.wiki-detail-back-button {
-  display: inline-block;
-  margin-bottom: 1.5rem;
-  background-color: #6b7280;
-}
-.wiki-detail-back-button:hover {
-  background-color: #4b5563;
 }
 
 .wiki-detail-content-wrapper {
@@ -295,7 +321,6 @@
   font-weight: 500;
 }
 
-/* 반응형 디자인 개선 */
 @media (max-width: 768px) {
   .wiki-detail-header {
     flex-direction: column;

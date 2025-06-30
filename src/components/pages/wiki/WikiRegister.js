@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import './WikiRegister.css';
 import { axiosInstance } from '@utils/axios';
 
 export default function WikiRegisterPage() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const isEditMode = Boolean(id);
   const [formData, setFormData] = useState({
     name: '',
     category: '',
@@ -18,13 +22,63 @@ export default function WikiRegisterPage() {
     continuousBlooming: '', 
     multiBlooming: '',      
     growthPower: '',        
-    coldResistance: ''     
+    coldResistance: '',
+    description: ''     
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // 수정 모드일 때 기존 데이터 로드
+  useEffect(() => {
+    if (isEditMode && id) {
+      loadWikiData(id);
+    }
+  }, [isEditMode, id]);
+
+  const loadWikiData = async (wikiId) => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get(
+        `${process.env.REACT_APP_API_URL}/api/v1/wiki/${wikiId}`
+      );
+      
+      const wikiData = response.data;
+      setFormData({
+        name: wikiData.name || '',
+        category: wikiData.category || '',
+        cultivarCode: wikiData.cultivarCode || '',
+        flowerSize: wikiData.flowerSize || '',
+        petalCount: wikiData.petalCount || '',
+        fragrance: wikiData.fragrance || '',
+        diseaseResistance: wikiData.diseaseResistance || '',
+        growthType: wikiData.growthType || '',
+        usageType: wikiData.usageType || '',
+        recommendedPosition: wikiData.recommendedPosition || '',
+        imageUrl: wikiData.imageUrl || '',
+        continuousBlooming: wikiData.continuousBlooming || '',
+        multiBlooming: wikiData.multiBlooming || '',
+        growthPower: wikiData.growthPower || '',
+        coldResistance: wikiData.coldResistance || '',
+        description: '' // 수정 시에는 새로운 사유를 입력받음
+      });
+
+      if (wikiData.imageUrl) {
+        setImagePreview(wikiData.imageUrl);
+      }
+    } catch (error) {
+      console.error('도감 데이터 로딩 실패:', error);
+      setMessage({ 
+        type: 'error', 
+        text: '도감 정보를 불러오는데 실패했습니다.' 
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -69,43 +123,73 @@ export default function WikiRegisterPage() {
     setIsSubmitting(true);
     
     try {
-      const response = await axiosInstance.post(
-        `${process.env.REACT_APP_API_URL}/api/v1/wiki/register`, 
-        formData,
-        {
-          headers: {
-            'Content-Type': 'application/json'
+      let response;
+      
+      if (isEditMode) { // 수정
+        response = await axiosInstance.put(
+          `${process.env.REACT_APP_API_URL}/api/v1/wiki/modify/${id}`, 
+          formData,
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
           }
-        }
-      );
+        );
+      } else { // 등록
+        response = await axiosInstance.post(
+          `${process.env.REACT_APP_API_URL}/api/v1/wiki/register`, 
+          formData,
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+      }
 
       if (response.status === 200 || response.status === 201) {
+        const successMessage = isEditMode 
+          ? '장미 도감 수정 요청이 제출되었습니다. 관리자 승인 후 반영됩니다.'
+          : '장미 도감이 성공적으로 등록되었습니다. 관리자 승인 후 게시됩니다.';
+        
         setMessage({
           type: 'success',
-          text: '장미 도감이 성공적으로 등록되었습니다. 관리자 승인 후 게시됩니다.'
+          text: successMessage
         });
-        setFormData({
-          name: '',
-          category: '',
-          cultivarCode: '',
-          flowerSize: '',
-          petalCount: '',
-          fragrance: '',
-          diseaseResistance: '',
-          growthType: '',
-          usageType: '',
-          recommendedPosition: '',
-          imageUrl: '',
-          continuousBlooming: '',
-          multiBlooming: '',
-          growthPower: '',
-          coldResistance: ''
-        });
-        setImagePreview(null);
+
+        if (!isEditMode) { // 등록모드 폼 초기화
+          setFormData({
+            name: '',
+            category: '',
+            cultivarCode: '',
+            flowerSize: '',
+            petalCount: '',
+            fragrance: '',
+            diseaseResistance: '',
+            growthType: '',
+            usageType: '',
+            recommendedPosition: '',
+            imageUrl: '',
+            continuousBlooming: '',
+            multiBlooming: '',
+            growthPower: '',
+            coldResistance: '',
+            description: ''
+          });
+          setImagePreview(null);
+        } else {
+          setTimeout(() => {
+            navigate(`/wiki/${id}`);
+          }, 2000);
+        }
       } else {
+        const errorMessage = isEditMode 
+          ? '수정 중 오류가 발생했습니다. 다시 시도해주세요.'
+          : '등록 중 오류가 발생했습니다. 다시 시도해주세요.';
+        
         setMessage({
           type: 'error',
-          text: '등록 중 오류가 발생했습니다. 다시 시도해주세요.'
+          text: errorMessage
         });
       }
     } catch (error) {
@@ -139,8 +223,16 @@ export default function WikiRegisterPage() {
 
   return (
     <div className="form-container">
-      <h1 className="form-title">장미 도감 등록</h1>
+      <h1 className="form-title">
+        {isEditMode ? '장미 도감 수정' : '장미 도감 등록'}
+      </h1>
       
+      {loading && (
+        <div className="message info">
+          도감 정보를 불러오는 중
+        </div>
+      )}
+
       {message && (
         <div className={`message ${message.type}`}>
           {message.text}
@@ -175,7 +267,7 @@ export default function WikiRegisterPage() {
                 disabled={uploading}
                 style={{ display: 'none' }}
               />
-              {uploading && <p className="upload-status">업로드 중...</p>}
+              {uploading && <p className="upload-status">업로드 중</p>}
             </div>
           </div>
 
@@ -231,7 +323,7 @@ export default function WikiRegisterPage() {
                   <label key={option} className="checkbox-label">
                     <input
                       type="checkbox"
-                      checked={formData.usageType.split(',').includes(option)}
+                      checked={typeof formData.usageType === 'string' && formData.usageType.split(',').includes(option)}
                       onChange={() => handleCheckboxChange('usageType', option)}
                     />
                     {option}
@@ -249,7 +341,7 @@ export default function WikiRegisterPage() {
                   <label key={option} className="checkbox-label">
                     <input
                       type="checkbox"
-                      checked={formData.recommendedPosition.split(',').includes(option)}
+                      checked={typeof formData.recommendedPosition === 'string' && formData.recommendedPosition.split(',').includes(option)}
                       onChange={() => handleCheckboxChange('recommendedPosition', option)}
                     />
                     {option}
@@ -443,13 +535,45 @@ export default function WikiRegisterPage() {
           </div>
         </div>
 
+        {isEditMode && (
+          <div className="modification-reason-section">
+            <div className="form-group">
+              <label className="form-label">
+                수정 사유 <span className="required">*</span>
+              </label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                className="form-textarea"
+                placeholder="수정 사유를 입력해주세요"
+                rows="4"
+                required
+              />
+            </div>
+          </div>
+        )}
+
         <div className="form-actions">
+          {isEditMode && (
+            <button
+              type="button"
+              onClick={() => navigate(`/wiki/${id}`)}
+              disabled={isSubmitting || uploading || loading}
+              className="cancel-button"
+            >
+              취소
+            </button>
+          )}
           <button
             onClick={handleSubmit}
-            disabled={isSubmitting || uploading}
+            disabled={isSubmitting || uploading || loading}
             className="submit-button"
           >
-            {isSubmitting ? '등록 중...' : '도감 등록하기'}
+            {isSubmitting 
+              ? (isEditMode ? '수정 중' : '등록 중') 
+              : (isEditMode ? '도감 수정하기' : '도감 등록하기')
+            }
           </button>
         </div>
       </div>
