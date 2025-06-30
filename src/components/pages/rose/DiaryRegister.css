@@ -185,7 +185,6 @@
   cursor: not-allowed;
 }
 
-/* 반응형 디자인 */
 @media (max-width: 1024px) {
   .diary-image-upload-section {
     flex: 0 0 300px;

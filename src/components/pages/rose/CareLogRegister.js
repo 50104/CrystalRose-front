@@ -5,12 +5,12 @@ import './CareLogRegister.css';
 export default function CareLogRegister({ selectedDate, editData, onSuccess, onCancel }) {
   const [form, setForm] = useState({
     careDate: '',
+    watering: '',
     fertilizer: '',
     pesticide: '',
     adjuvant: '',
-    compost: '',
     fungicide: '',
-    watering: '',
+    compost: '',
     note: ''
   });
 
@@ -27,12 +27,12 @@ export default function CareLogRegister({ selectedDate, editData, onSuccess, onC
     if (editData) {
       setForm({
         careDate: editData.careDate || '',
+        watering: editData.watering || '',
         fertilizer: editData.fertilizer || '',
         pesticide: editData.pesticide || '',
         adjuvant: editData.adjuvant || '',
-        compost: editData.compost || '',
         fungicide: editData.fungicide || '',
-        watering: editData.watering || '',
+        compost: editData.compost || '',
         note: editData.note || ''
       });
     }
@@ -62,12 +62,12 @@ export default function CareLogRegister({ selectedDate, editData, onSuccess, onC
       
       setForm({
         careDate: '',
+        watering: '',
         fertilizer: '',
         pesticide: '',
         adjuvant: '',
-        compost: '',
         fungicide: '',
-        watering: '',
+        compost: '',
         note: ''
       });
       onSuccess?.();

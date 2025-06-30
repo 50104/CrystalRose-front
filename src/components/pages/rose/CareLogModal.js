@@ -2,16 +2,30 @@ import React from 'react';
 import './CareLogModal.css';
 
 const CARE_LABELS = {
+  watering: '💧 관수',
   fertilizer: '💊 영양제',
   pesticide: '🪰 살충제',
   adjuvant: '🧪 보조제',
-  compost: '💩 비료',
   fungicide: '🧼 살균제',
+  compost: '💩 비료',
   note: '📝 메모'
 };
 
 export default function CareLogModal({ log, onClose, onEdit }) {
-  const entries = Object.entries(log || {}).filter(([key, value]) => value != null);
+  const CARE_ORDER = [
+    'watering',
+    'fertilizer',
+    'pesticide',
+    'adjuvant',
+    'fungicide',
+    'compost',
+    'note'
+  ];
+
+  const entries = CARE_ORDER
+    .filter(key => log?.[key] != null && log[key] !== '')
+    .map(key => [key, log[key]]);
+
   const displayDate = new Date(log.careDate + 'T00:00:00');
 
   return (

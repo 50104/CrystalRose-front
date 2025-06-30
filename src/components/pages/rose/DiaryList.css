@@ -72,7 +72,6 @@
   gap: 1.5rem;
 }
 
-/* 반응형 디자인 */
 @media (max-width: 1024px) {
   .diary-grid {
     grid-template-columns: repeat(3, 1fr);

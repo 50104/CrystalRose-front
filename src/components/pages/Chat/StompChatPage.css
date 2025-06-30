@@ -222,7 +222,6 @@
   }
 }
 
-/* 모바일 반응형 */
 @media (max-width: 768px) {
   .stompchat-container {
     height: 90vh;
