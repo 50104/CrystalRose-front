@@ -44,7 +44,14 @@ export default function RoseRegister({ onSuccess }) {
 
   useEffect(() => {
     axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/v1/wiki/list`)
-      .then(res => setWikiList(res.data))
+      .then(res => {
+        const data = Array.isArray(res.data)
+          ? res.data
+          : Array.isArray(res.data.data)
+            ? res.data.data
+            : [];
+        setWikiList(data);
+      })
       .catch(err => console.error("Wiki 불러오기 실패", err));
   }, []);
 
