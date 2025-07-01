@@ -11,6 +11,7 @@ export default function WikiApprovalPage() {
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
   const [selectedEntry, setSelectedEntry] = useState(null);
+  const [comparisonData, setComparisonData] = useState(null);
 
   useEffect(() => {
     fetchPendingEntries();
@@ -89,8 +90,110 @@ export default function WikiApprovalPage() {
     }).format(date);
   };
 
-  const handleEntryClick = (entry) => {
-    setSelectedEntry(selectedEntry?.id === entry.id ? null : entry);
+  const handleEntryClick = async (entry) => {
+    if (selectedEntry?.id === entry.id) {
+      setSelectedEntry(null);
+      setComparisonData(null);
+    } else {
+      setSelectedEntry(entry);
+      
+      // 수정 대기 중인 항목인 경우 비교 데이터를 가져옴
+      if (activeTab === 'modifications') {
+        try {
+          const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/v1/admin/wiki/${entry.id}/original`);
+          setComparisonData(response.data);
+        } catch (err) {
+          console.error('비교 데이터 조회 실패:', err);
+          setComparisonData(null);
+        }
+      }
+    }
+  };
+
+  // 필드 변경 사항을 감지하는 함수 (백엔드 응답 구조에 맞게 수정)
+  const getFieldChanges = (comparisonData) => {
+    if (!comparisonData || !comparisonData.originalData || !comparisonData.modifiedData) return {};
+    
+    const changes = {};
+    const fields = [
+      { key: 'name', label: '품종명' },
+      { key: 'category', label: '카테고리' },
+      { key: 'cultivarCode', label: '품종코드' },
+      { key: 'flowerSize', label: '꽃 크기' },
+      { key: 'petalCount', label: '꽃잎 수' },
+      { key: 'fragrance', label: '향기' },
+      { key: 'diseaseResistance', label: '내병성' },
+      { key: 'coldResistance', label: '내한성' },
+      { key: 'growthType', label: '생장형태' },
+      { key: 'usageType', label: '사용 용도' },
+      { key: 'recommendedPosition', label: '추천 위치' },
+      { key: 'continuousBlooming', label: '연속개화성' },
+      { key: 'multiBlooming', label: '다화성' },
+      { key: 'growthPower', label: '수세' },
+      { key: 'imageUrl', label: '이미지' }
+    ];
+    
+    const original = comparisonData.originalData;
+    const modified = comparisonData.modifiedData;
+    
+    fields.forEach(field => {
+      const originalValue = original[field.key] || '';
+      const currentValue = modified[field.key] || '';
+      
+      if (originalValue !== currentValue) {
+        changes[field.key] = {
+          label: field.label,
+          original: originalValue,
+          current: currentValue
+        };
+      }
+    });
+    
+    return changes;
+  };
+
+  // 변경 사항을 렌더링하는 컴포넌트
+  const renderChanges = (comparisonData) => {
+    const changes = getFieldChanges(comparisonData);
+    const changeKeys = Object.keys(changes);
+    
+    if (changeKeys.length === 0) {
+      return <p>변경된 내용이 없습니다.</p>;
+    }
+    
+    return (
+      <div className="changes-list">
+        <div className="changes-summary">
+          <p><strong>변경된 필드 수:</strong> {changeKeys.length}개</p>
+          <p><strong>요청자:</strong> {comparisonData.requesterNick}</p>
+          {comparisonData.description && (
+            <div className="modification-reason">
+              <p><strong>수정 사유:</strong></p>
+              <div className="reason-text">{comparisonData.description}</div>
+            </div>
+          )}
+        </div>
+        {changeKeys.map(key => (
+          <div key={key} className="change-item">
+            <div className="change-field-label">{changes[key].label}</div>
+            <div className="change-comparison">
+              <div className="change-before">
+                <span className="change-label">변경 전:</span>
+                <span className="change-value original">
+                  {changes[key].original || <em>없음</em>}
+                </span>
+              </div>
+              <div className="change-after">
+                <span className="change-label">변경 후:</span>
+                <span className="change-value modified">
+                  {changes[key].current || <em>없음</em>}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   if (loading) {
@@ -221,8 +324,7 @@ export default function WikiApprovalPage() {
                       <h3 className="entry-name">{modification.name}</h3>
                       <div className="entry-meta">
                         <span className="entry-category">{modification.category}</span>
-                        <span className="entry-date">{formatDate(modification.createdDate)}</span>
-                        <span className="modification-badge">수정 요청</span>
+                        <span className="entry-date">{formatDate(modification.updatedDate || modification.createdDate)}</span>
                       </div>
                     </div>
                     <div className="entry-actions">
@@ -251,12 +353,13 @@ export default function WikiApprovalPage() {
                     <div className="entry-details">
                       <div className="modification-details">
                         <div className="modification-info">
-                          <p><strong>수정요청자:</strong> {modification.requesterNick || '알 수 없음'}</p>
-                          <p><strong>수정 요청일:</strong> {formatDate(modification.createdDate)}</p>
-                          {modification.description && (
-                            <div className="modification-reason">
-                              <p><strong>수정 사유:</strong></p>
-                              <div className="reason-text">{modification.description}</div>
+                          
+                          <h4>변경 사항</h4>
+                          {comparisonData ? (
+                            renderChanges(comparisonData)
+                          ) : (
+                            <div className="loading-changes">
+                              변경 사항을 불러오는 중
                             </div>
                           )}
                         </div>

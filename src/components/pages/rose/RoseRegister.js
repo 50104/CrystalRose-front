@@ -160,7 +160,7 @@ export default function RoseRegister({ onSuccess }) {
                 className="rose-form-select"
               >
                 <option value="">장미를 선택하세요</option>
-                {wikiList.map(wiki => (
+                {Array.isArray(wikiList) && wikiList.map(wiki => (
                   <option key={wiki.id} value={wiki.id}>{wiki.name}</option>
                 ))}
               </select>

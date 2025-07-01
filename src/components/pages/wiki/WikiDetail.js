@@ -150,6 +150,9 @@ export default function WikiDetailPage() {
           {wikiEntry.cultivarCode && (
             <span className="wiki-detail-cultivar-code">{wikiEntry.cultivarCode}</span>
           )}
+          {wikiEntry.modificationStatus === 'PENDING' && (
+            <span className="wiki-detail-modification-badge modification-pending">수정 진행 중</span>
+          )}
         </div>
       </div>
       

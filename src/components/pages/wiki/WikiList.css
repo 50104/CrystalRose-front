@@ -206,6 +206,12 @@
   gap: 0.5rem;
 }
 
+.wiki-entry-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .wiki-entry-name {
   font-size: 1rem;
   font-weight: 600;
@@ -214,7 +220,6 @@
   flex: 1;
   min-width: 0;
   line-height: 1.4;
-  padding-top: 0.25rem;
 }
 
 .wiki-entry-category {
@@ -225,8 +230,7 @@
   border-radius: 999px;
   display: inline-block;
   white-space: nowrap;
-  flex-shrink: 0;
-  margin-top: 0.25rem;
+  margin: 0;
 }
 
 .wiki-entry-description {
@@ -234,6 +238,27 @@
   color: #4b5563;
   line-height: 1.5;
   margin-bottom: 1rem;
+}
+
+.wiki-entry-status-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.wiki-modification-badge {
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.wiki-modification-badge.modification-pending {
+  background-color: #f59e0b;
 }
 
 .wiki-entry-details-link {
