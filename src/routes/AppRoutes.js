@@ -5,12 +5,12 @@ import Home from '@components/pages/Home/Home';
 import NotFound from '@components/pages/Error/NotFound';
 import SignUp from '@components/pages/Auth/SignUp';
 import SignIn from '@components/pages/Auth/SignIn';
+import { OAuthCallback } from '@components/pages/Auth/OAuthCallback';
 import MyPage from '@components/pages/MyPage/MyPage';
 import FindId from '@components/pages/Auth/FindId';
 import FindPwd from '@components/pages/Auth/FindPwd';
 import CheckUserPwd from '@components/pages/MyPage/CheckUserPwd';
 import UserUpdate from '@components/pages/MyPage/UserUpdate';
-import { GetAccess } from '@utils/api/token';
 import Content from '@components/pages/Board/Content';
 import List from '@components/pages/Board/List';
 import Editor from '@components/pages/Board/Editor';
@@ -51,7 +51,7 @@ function AppRoutes() {
         {/* 로그인,회원가입 */}
         <Route path="/login" element={<SignIn />} />
         <Route path="/join" element={<SignUp />} />
-        <Route path="/getAccess" element={<GetAccess />} />
+        <Route path="/getAccess" element={<OAuthCallback />} />
         <Route path="/findId" element={<FindId />} />
         <Route path="/findPwd" element={<FindPwd />} />
 
