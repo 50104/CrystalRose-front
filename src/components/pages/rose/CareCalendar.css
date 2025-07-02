@@ -117,6 +117,10 @@
   border: 2px solid #6b46c1;
 }
 
+.calendar-day.other-month.today .day-number {
+  visibility: hidden;
+}
+
 .day-number {
   width: 24px;
   height: 24px;

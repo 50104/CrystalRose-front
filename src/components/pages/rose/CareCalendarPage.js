@@ -45,25 +45,22 @@ const CustomCalendar = () => {
       const startDate = new Date(month.getFullYear(), month.getMonth(), 1);
       const endDate = new Date(month.getFullYear(), month.getMonth() + 1, 0);
 
-      const [careLogRes, diaryRes] = await Promise.all([
-        axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/diaries/carelogs/list`, {
-          params: {
-            startDate: startDate.toISOString().split('T')[0],
-            endDate: endDate.toISOString().split('T')[0]
-          }
-        }),
-        axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/diaries/list`, {
-          params: {
-            startDate: startDate.toISOString().split('T')[0],
-            endDate: endDate.toISOString().split('T')[0]
-          }
-        })
-      ]);
+      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/calendar/data`, { // 통합 조회
+        params: {
+          startDate: startDate.toISOString().split('T')[0],
+          endDate: endDate.toISOString().split('T')[0]
+        }
+      });
 
-      setLogs(prev => ({ ...prev, [monthKey]: careLogRes.data }));
-      setDiaries(prev => ({ ...prev, [monthKey]: diaryRes.data }));
+      const { careLogs = [], diaries: diaryList = [] } = response.data; // 관리, 다이어리 데이터 분리
+
+      setLogs(prev => ({ ...prev, [monthKey]: careLogs }));
+      setDiaries(prev => ({ ...prev, [monthKey]: diaryList }));
     } catch (error) {
       console.error('월 데이터 로딩 실패:', error);
+      // 에러 시 빈 배열
+      setLogs(prev => ({ ...prev, [monthKey]: [] }));
+      setDiaries(prev => ({ ...prev, [monthKey]: [] }));
     } finally {
       setLoading(false);
     }
@@ -252,13 +249,31 @@ const CustomCalendar = () => {
     // 현재 월 데이터 다시 로딩
     if (selectedDate) {
       const monthKey = getMonthKey(selectedDate);
-      delete logs[monthKey];
+      setLogs(prev => { // 해당 월 데이터 삭제 후 다시 로딩
+        const newLogs = { ...prev };
+        delete newLogs[monthKey];
+        return newLogs;
+      });
+      setDiaries(prev => {
+        const newDiaries = { ...prev };
+        delete newDiaries[monthKey];
+        return newDiaries;
+      });
       loadMonthData(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1));
     }
     if (selected) {
       const date = new Date(selected.careDate);
       const monthKey = getMonthKey(date);
-      delete logs[monthKey];
+      setLogs(prev => { // 해당 월 데이터 삭제 후 다시 로딩
+        const newLogs = { ...prev };
+        delete newLogs[monthKey];
+        return newLogs;
+      });
+      setDiaries(prev => {
+        const newDiaries = { ...prev };
+        delete newDiaries[monthKey];
+        return newDiaries;
+      });
       loadMonthData(new Date(date.getFullYear(), date.getMonth(), 1));
     }
   };
@@ -352,7 +367,7 @@ const CustomCalendar = () => {
                 {generateCalendarDays(month).map((date, dayIndex) => {
                   const dayData = getDayData(date);
                   const isCurrentMonth = date.getMonth() === month.getMonth();
-                  const isToday = getDateKey(date) === getDateKey(new Date());
+                  const isToday = isCurrentMonth && getDateKey(date) === getDateKey(new Date());
                   return (
                     <div
                       key={`${getDateKey(date)}-${monthIndex}`}
