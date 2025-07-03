@@ -11,7 +11,7 @@ const MyChatPage = () => {
   useEffect(() => {
     const fetchChatList = async () => {
       try {
-        const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/chat/my/rooms`);
+        const response = await axiosInstance.get(`/api/v1/chat/my/rooms`);
         
         const data = response.data;
         const list = Array.isArray(data)
@@ -42,7 +42,7 @@ const MyChatPage = () => {
 
   const leaveChatRoom = async (roomId) => {
     try {
-      await axiosInstance.delete(`${process.env.REACT_APP_API_URL}/chat/room/group/${roomId}/leave`);
+      await axiosInstance.delete(`/api/v1/chat/room/group/${roomId}/leave`);
       setChatList(chatList.filter(chat => chat.roomId !== roomId));
     } catch (error) {
       console.error('채팅방 나가기 중 오류 발생:', error);

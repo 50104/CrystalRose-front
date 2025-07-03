@@ -11,7 +11,7 @@ const MemberList = () => {
   useEffect(() => {
     const fetchMemberList = async () => {
       try {
-        const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/user/list`);
+        const response = await axiosInstance.get(`/api/user/list`);
         setMemberList(response.data);
       } catch (error) {
         console.error('회원 목록을 가져오는 중 오류 발생:', error);
@@ -23,7 +23,7 @@ const MemberList = () => {
 
   const startChat = async (otherMemberId) => {
     try {
-      const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/chat/room/private/create?otherMemberId=${otherMemberId}`);
+      const response = await axiosInstance.post(`/api/v1/chat/room/private/create?otherMemberId=${otherMemberId}`);
       const roomId = response.data.roomId;
       navigate(`/chatpage/${roomId}`);
     } catch (error) {

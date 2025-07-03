@@ -24,7 +24,7 @@ class CustomUploadAdapter {
         const data = new FormData();
         data.append('file', file);
 
-        axiosInstance.post('/board/image/upload', data)
+        axiosInstance.post('/api/v1/board/image/upload', data)
           .then(res => {
             if (res.data && res.data.url) {
               resolve({ default: res.data.url });
@@ -51,7 +51,7 @@ function Editor() {
     if (boardNo) {
       const fetchContent = async () => {
         try {
-          const response = await axiosInstance.get(`/board/editor/${boardNo}`);
+          const response = await axiosInstance.get(`/api/v1/board/editor/${boardNo}`);
           const data = response.data.data;
           setTitle(data.boardTitle || '');
           setContent(data.boardContent || '');
@@ -85,8 +85,8 @@ function Editor() {
 
     try {
       const url = boardNo
-        ? `/board/save/${boardNo}`
-        : `/board/save`;
+        ? `/api/v1/board/save/${boardNo}`
+        : `/api/v1/board/save`;
 
       const response = await axiosInstance.post(url, formData);
       const savedBoardNo = response.data.data.boardNo;

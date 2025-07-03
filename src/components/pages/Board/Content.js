@@ -33,7 +33,7 @@ function Content() {
 
   const fetchComments = useCallback(async () => {
     try {
-      const res = await axiosInstance.get(`/board/${boardNo}/comments`);
+      const res = await axiosInstance.get(`/api/v1/board/${boardNo}/comments`);
       setComments(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("댓글 불러오기 오류:", err);
@@ -45,7 +45,7 @@ function Content() {
     if (boardNo) {
       const getContent = async () => {
         try {
-          const response = await axiosInstance.get(`/board/content/${boardNo}`);
+          const response = await axiosInstance.get(`/api/v1/board/content/${boardNo}`);
           if (response.data && response.data.data) {
             const data = response.data.data;
             data.boardContent = decodeHtml(data.boardContent);
@@ -71,7 +71,7 @@ function Content() {
       userNick: userData?.userNick
     };
 
-    axiosInstance.post(`/board/${boardNo}/comments`, payload)
+    axiosInstance.post(`/api/v1/board/${boardNo}/comments`, payload)
       .then(() => {
         setNewComment("");
         return fetchComments();
@@ -83,14 +83,14 @@ function Content() {
 
   const handleDeleteComment = (commentId) => {
     if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
-    axiosInstance.delete(`/board/comments/${commentId}`)
+    axiosInstance.delete(`/api/v1/board/comments/${commentId}`)
       .then(fetchComments)
       .catch(err => console.error("댓글 삭제 실패", err));
   };
 
   const handleDelete = () => {
     if (window.confirm('게시글을 삭제하시겠습니까?')) {
-      axiosInstance.delete(`${process.env.REACT_APP_API_URL}/board/delete/${boardNo}`)
+      axiosInstance.delete(`/api/v1/board/delete/${boardNo}`)
         .then(() => navigate('/list'))
         .catch(error => console.error('삭제 오류', error));
     }

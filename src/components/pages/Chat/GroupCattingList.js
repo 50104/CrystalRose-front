@@ -16,7 +16,7 @@ const GroupCattingList = () => {
 
   const loadChatRoom = async () => {
     try {
-      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/chat/room/group/list`);
+      const response = await axiosInstance.get(`/api/v1/chat/room/group/list`);
       
       const chatRooms = Array.isArray(response.data)
         ? response.data
@@ -32,12 +32,12 @@ const GroupCattingList = () => {
   };
 
   const joinChatRoom = async (roomId) => {
-    await axiosInstance.post(`${process.env.REACT_APP_API_URL}/chat/room/group/${roomId}/join`);
+    await axiosInstance.post(`/api/v1/chat/room/group/${roomId}/join`);
     navigate(`/chatpage/${roomId}`);
   };
 
   const createChatRoom = async () => {
-    await axiosInstance.post(`${process.env.REACT_APP_API_URL}/chat/room/group/create?roomName=${newRoomTitle}`);
+    await axiosInstance.post(`/api/v1/chat/room/group/create?roomName=${newRoomTitle}`);
     setShowCreateRoomModal(false);
     loadChatRoom();
   };

@@ -42,7 +42,7 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
     };
 
     try {
-      await axiosInstance.post(`${process.env.REACT_APP_API_URL}/board/${boardNo}/comments`, payload);
+      await axiosInstance.post(`/api/v1/board/${boardNo}/comments`, payload);
       setReplyContents(prev => ({ ...prev, [parentId]: "" }));
       setReplyBoxOpen(null);
       onRefresh();
@@ -56,7 +56,7 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
     if (!content) return;
 
     try {
-      await axiosInstance.patch(`${process.env.REACT_APP_API_URL}/board/comments/${commentId}`, { content });
+      await axiosInstance.patch(`/api/v1/board/comments/${commentId}`, { content });
       setEditingCommentId(null);
       onRefresh();
     } catch (e) {

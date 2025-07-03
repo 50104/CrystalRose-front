@@ -9,7 +9,7 @@ function List() {
     const [totalPage, setTotalPage] = useState(1);
 
     useEffect(() => {
-        axiosInstance.get(`/board/list?page=${currentPage}`)
+        axiosInstance.get(`/api/v1/board/list?page=${currentPage}`)
             .then(res => {
                 setContents(Array.isArray(res.data.content) ? res.data.content : []);
                 setTotalPage(res.data.totalPage ?? 1);

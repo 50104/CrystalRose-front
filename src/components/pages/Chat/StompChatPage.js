@@ -29,7 +29,7 @@ const StompChatPage = () => {
 
   const fetchRoomInfo = useCallback(async () => {
     try {
-      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/chat/room/${roomId}/info`);
+      const response = await axiosInstance.get(`/api/v1/chat/room/${roomId}/info`);
       const roomData = response.data;
       setRoomInfo(roomData);
       
@@ -63,7 +63,7 @@ const StompChatPage = () => {
         { Authorization: `Bearer ${accessToken}`, roomId },
         () => {
           client.subscribe(
-            `/topic/${roomId}`,
+            `/api/v1/chat/topic/${roomId}`,
             (message) => {
               const parsedMessage = JSON.parse(message.body);
               if (parsedMessage.type === 'READ') {
@@ -88,9 +88,9 @@ const StompChatPage = () => {
 
   const disconnectWebSocket = useCallback(async () => {
     try {
-      await axiosInstance.post(`${process.env.REACT_APP_API_URL}/chat/room/${roomId}/read`);
+      await axiosInstance.post(`/api/v1/chat/room/${roomId}/read`);
       if (stompClient && stompClient.connected) {
-        stompClient.unsubscribe(`/topic/${roomId}`);
+        stompClient.unsubscribe(`/api/v1/chat/topic/${roomId}`);
         stompClient.disconnect();
       }
     } catch (error) {
@@ -100,7 +100,7 @@ const StompChatPage = () => {
 
   const fetchMessageHistory = useCallback(async () => {
     try {
-      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/chat/history/${roomId}`);
+      const response = await axiosInstance.get(`/api/v1/chat/history/${roomId}`);
       setMessages(response.data);
       connectWebSocket();
     } catch (error) {
@@ -130,7 +130,7 @@ const StompChatPage = () => {
     const cursor = oldest?.createdDate;
 
     try {
-      const res = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/chat/history/${roomId}`, {
+      const res = await axiosInstance.get(`/api/v1/chat/history/${roomId}`, {
         params: { cursor }
       });
 
@@ -176,7 +176,7 @@ const StompChatPage = () => {
     }
     const message = { senderId: sender, message: newMessage };
     if (stompClient && stompClient.connected) {
-      stompClient.send(`/publish/${roomId}`, 
+      stompClient.send(`/api/v1/chat/publish/${roomId}`, 
       JSON.stringify(message), 
       { 'Content-Type': 'application/json; charset=UTF-8' });
       setNewMessage('');
