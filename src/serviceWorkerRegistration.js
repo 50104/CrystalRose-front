@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-globals */
+
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
   window.location.hostname === '[::1]' ||
@@ -9,21 +11,17 @@ const isLocalhost = Boolean(
 export function register(config) {
   if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
-    if (publicUrl.origin !== window.location.origin) {
-      return;
-    }
+    if (publicUrl.origin !== window.location.origin) return;
 
     window.addEventListener('load', () => {
-      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js?v=${Date.now()}`;
 
       if (isLocalhost) {
-        // localhost일 때 동작 확인
         checkValidServiceWorker(swUrl, config);
         navigator.serviceWorker.ready.then(() => {
-          console.log('Service worker ready.');
+          console.log('Service Worker is ready (localhost)');
         });
       } else {
-        // 프로덕션일 때 등록
         registerValidSW(swUrl, config);
       }
     });
@@ -41,13 +39,20 @@ function registerValidSW(swUrl, config) {
         installingWorker.onstatechange = () => {
           if (installingWorker.state === 'installed') {
             if (navigator.serviceWorker.controller) {
-              // 새 컨텐츠가 있을 때
               console.log('New content is available; please refresh.');
-              if (config && config.onUpdate) config.onUpdate(registration);
+              if (config && config.onUpdate) {
+                config.onUpdate(registration);
+
+                // 선택적으로 바로 새 서비스워커 활성화
+                if (registration.waiting) {
+                  registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+                }
+              }
             } else {
-              // 캐시된 첫 로드
               console.log('Content is cached for offline use.');
-              if (config && config.onSuccess) config.onSuccess(registration);
+              if (config && config.onSuccess) {
+                config.onSuccess(registration);
+              }
             }
           }
         };
@@ -87,5 +92,14 @@ export function unregister() {
       .catch((error) => {
         console.error(error.message);
       });
+  }
+}
+
+export function forceUnregisterAndReload() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((reg) => reg.unregister());
+      window.location.reload();
+    });
   }
 }

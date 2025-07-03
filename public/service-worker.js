@@ -20,9 +20,35 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // API 요청은 우회하여 조건부 요청(304) 허용
+  if (event.request.url.includes('/api/')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  if (event.request.url.includes('/auth/') || 
+      event.request.url.includes('/oauth/') ||
+      event.request.url.includes('/reissue') ||
+      event.request.url.includes('naver.com') ||
+      event.request.url.includes('google.com') ||
+      event.request.url.includes('kakao.com')) {
+
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  // 정적 리소스만 캐시 처리
   event.respondWith(
     caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
+      if (response) return response;
+
+      return fetch(event.request).catch((error) => {
+        console.error('[Service Worker] Fetch failed:', error);
+        if (event.request.destination === 'document') {
+          return caches.match('/index.html');
+        }
+        throw error;
+      });
     })
   );
 });

@@ -1,4 +1,4 @@
-import { axiosInstance } from '@utils/axios';
+import { axiosInstance, retryableRequest, checkNetworkStatus } from '@utils/axios';
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -68,13 +68,29 @@ export const getUserData = async (navigate, setIsLogin) => {
       console.log('로그인이 필요한 서비스입니다.');
       return;
   }
+
+  // 네트워크 상태 확인
+  if (!checkNetworkStatus()) {
+    throw new Error('네트워크 연결을 확인해주세요.');
+  }
+
   setIsLogin(true);
 
-  const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/user/data`);
+  try {
+    // 재시도 로직으로 사용자 데이터 요청
+    const response = await retryableRequest(
+      () => axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/user/data`),
+      3,
+      1000
+    );
 
-  console.log('접속한 유저1 : ', JSON.stringify(response.data));
-  return response.data;
-}
+    console.log('접속한 유저1 : ', JSON.stringify(response.data));
+    return response.data;
+  } catch (error) {
+    console.error('사용자 데이터 요청 실패:', error);
+    throw error;
+  }
+};
 
 export const modifyUserData = async (data) => {
   const response = await axiosInstance.post(
