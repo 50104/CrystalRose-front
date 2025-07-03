@@ -136,7 +136,7 @@ function SignIn() {
                 </div>
                 <div className='sign-in-content-button-box'>
                 <div className={`${signInButtonClass} full-width`}  onClick={onSignInButtonClickHandler}>로그인</div>
-                <div class="link-container">
+                <div className="link-container">
                     <div className='text-link-lg'><a href="/findId">아이디 찾기</a></div>
                     <div className='text-link-lg'><a href="/findPwd">비밀번호 찾기</a></div>
                     <div className='text-link-lg'><a href="/join">회원가입</a></div>

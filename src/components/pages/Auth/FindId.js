@@ -64,7 +64,7 @@ function FindId() {
                         </div>
                         <div className='find-content-button-box'>
                             <div className={`${signInButtonClass} full-width`}  onClick={sendCertificationEmail}>아이디 찾기</div>
-                            <div class="link-container">
+                            <div className="link-container">
                                 <div className='text-link-lg'><a href="/findPwd">비밀번호 찾기</a></div>
                                 <div className='text-link-lg'><a href="/login">로그인</a></div>
                                 <div className='text-link-lg'><a href="/join">회원가입</a></div>
