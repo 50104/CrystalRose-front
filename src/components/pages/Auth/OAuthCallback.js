@@ -8,25 +8,31 @@ export function OAuthCallback() {
   useEffect(() => {
     const getAccessToken = async () => {
       try {
-        // refresh 토큰 쿠키 저장 확인
-        const cookies = document.cookie;
-        if (!cookies.includes('refresh=')) {
-          console.error('refresh 토큰이 없습니다');
-          navigate('/login');
-          return;
-        }
-
         const response = await axiosInstance.post('/reissue');
 
         if (response.data.accessToken) {
           localStorage.setItem('access', response.data.accessToken);
-          console.log('OAuth 로그인 및 토큰 저장 성공');
-          navigate('/');
+          console.log('Access Token 저장 완료');
+          window.location.href = '/';
         } else {
           throw new Error('Access Token을 받지 못했습니다');
         }
       } catch (error) {
         console.error('OAuth 콜백 처리 오류:', error);
+        
+        if (error.response) {
+          console.error('응답 상태:', error.response.status);
+          console.error('응답 데이터:', error.response.data);
+          
+          if (error.response.status === 400) {
+            const errorMsg = error.response.data;
+            if (errorMsg.includes('refresh null') || errorMsg.includes('no cookies')) {
+              console.error('refresh 토큰이 없습니다. 다시 로그인해주세요.');
+            } else if (errorMsg.includes('refresh expired')) {
+              console.error('refresh 토큰이 만료되었습니다. 다시 로그인해주세요.');
+            }
+          }
+        }
         navigate('/login');
       }
     };

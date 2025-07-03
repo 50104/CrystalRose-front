@@ -1,7 +1,14 @@
-/* eslint-env serviceworker */
+/* eslint-disable no-restricted-globals */
 
 const CACHE_NAME = 'dodorose-cache-v1';
-const urlsToCache = ['/', '/index.html', '/favicon.ico'];
+const urlsToCache = [
+  '/',
+  '/index.html',
+  '/favicon.ico',
+  '/logo192.png',
+  '/logo512.png',
+  '/manifest.json'
+];
 
 self.addEventListener('install', (event) => {
   console.log('[Service Worker] Install');

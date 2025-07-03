@@ -1,32 +1,54 @@
 import axios from 'axios';
 
-const instance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+export const axiosInstance = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:4000',
   withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-// 요청 전에 access 토큰을 Authorization 헤더에 세팅
-instance.interceptors.request.use(
-  async (config) => {
+// 요청 인터셉터
+axiosInstance.interceptors.request.use(
+  (config) => {
     const token = localStorage.getItem('access');
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
-);
-
-// 응답 에러 처리 (401이면 refresh 로 이동)
-instance.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response && error.response.status === 401) {
-      console.warn('Access 토큰 만료, getAccess 요청');
-      window.location.href = '/getAccess';
-    }
+  (error) => {
     return Promise.reject(error);
   }
 );
 
-export const axiosInstance = instance;
+// 응답 인터셉터
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        console.log('401 에러 발생, 토큰 갱신 시도');
+        const response = await axiosInstance.post('/reissue');
+
+        if (response.status === 200 && response.data.accessToken) {
+          localStorage.setItem('access', response.data.accessToken);
+          originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
+          return axiosInstance(originalRequest);
+        }
+      } catch (refreshError) {
+        console.error('토큰 갱신 실패:', refreshError);
+        localStorage.removeItem('access');
+        window.location.href = '/login';
+        return Promise.reject(refreshError);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
