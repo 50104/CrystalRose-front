@@ -68,7 +68,7 @@ export default function WikiListPage() {
       ) : (
         <div className="wiki-entries-grid">
           {Array.isArray(wikiEntries) && wikiEntries.map(entry => (
-            <Link key={entry.id} to={`/wiki/${entry.id}`} className="wiki-entry-card-link">
+            <Link key={entry.id} to={`/wiki/detail/${entry.id}`} className="wiki-entry-card-link">
               <div className="wiki-entry-card">
                 {entry.imageUrl && (
                   <img src={entry.imageUrl} alt={entry.name} className="wiki-entry-image" />

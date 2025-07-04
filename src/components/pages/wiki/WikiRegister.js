@@ -32,6 +32,15 @@ export default function WikiRegisterPage() {
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // 로그인 상태 확인
+  useEffect(() => {
+    const token = localStorage.getItem('access');
+    if (!token) {
+      alert('로그인이 필요한 서비스입니다.');
+      navigate('/login');
+    }
+  }, [navigate]);
+
   // 수정 모드일 때 기존 데이터 로드
   useEffect(() => {
     if (isEditMode && id) {
@@ -43,7 +52,7 @@ export default function WikiRegisterPage() {
     setLoading(true);
     try {
       const response = await axiosInstance.get(
-        `${process.env.REACT_APP_API_URL}/api/v1/wiki/${wikiId}`
+        `/api/v1/wiki/detail/${wikiId}`
       );
       
       const wikiData = response.data;
@@ -220,6 +229,17 @@ export default function WikiRegisterPage() {
       };
     });
   };
+
+  // 인증 확인이 완료되지 않았거나 로그인하지 않은 경우
+  if (!localStorage.getItem('access')) {
+    return (
+      <div className="form-container">
+        <div className="message info">
+          로그인이 필요한 서비스입니다.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="form-container">

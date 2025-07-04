@@ -67,7 +67,7 @@ function AppRoutes() {
         <Route path="/wiki/register" element={<WikiRegister />} />
         <Route path="/wiki/edit/:id" element={<WikiRegister />} />
         <Route path="/wiki/list" element={<WikiList />} />
-        <Route path="/wiki/:wikiId" element={<WikiDetail />} />
+        <Route path="/wiki/detail/:wikiId" element={<WikiDetail />} />
 
         {/* 나의 장미 */}
         <Route path="/rose/register" element={<RoseRegister />} />
