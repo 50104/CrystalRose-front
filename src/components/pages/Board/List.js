@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Pagination from './Pagination';
 import './List.css';
-import { axiosInstance } from '@utils/axios';
+import { noAuthAxios } from '@utils/axios';
 
 function List() {
     const [contents, setContents] = useState([]);
@@ -9,7 +9,7 @@ function List() {
     const [totalPage, setTotalPage] = useState(1);
 
     useEffect(() => {
-        axiosInstance.get(`/api/v1/board/list?page=${currentPage}`)
+        noAuthAxios.get(`/api/v1/board/list?page=${currentPage}`)
             .then(res => {
                 setContents(Array.isArray(res.data.content) ? res.data.content : []);
                 setTotalPage(res.data.totalPage ?? 1);

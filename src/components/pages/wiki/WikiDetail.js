@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link as RouterLink } from 'react-router-dom';
 import './WikiDetail.css';
-import { axiosInstance } from '@utils/axios';
+import { noAuthAxios } from '@utils/axios';
 
 export default function WikiDetailPage() {
   const { wikiId } = useParams();
@@ -72,7 +72,7 @@ export default function WikiDetailPage() {
       setLoading(true);
       setError(null);
       try {
-        const response = await axiosInstance.get(`/api/v1/wiki/detail/${wikiId}`);
+        const response = await noAuthAxios.get(`/api/v1/wiki/detail/${wikiId}`);
         setWikiEntry(response.data);
       } catch (err) {
         setError(err.response?.data?.message || err.message || '데이터를 불러오는 데 실패했습니다.');
@@ -89,7 +89,7 @@ export default function WikiDetailPage() {
     setLoading(true);
     setError(null);
     try {
-      const response = await axiosInstance.get(`/api/v1/wiki/detail/${wikiId}`);
+      const response = await noAuthAxios.get(`/api/v1/wiki/detail/${wikiId}`);
       setWikiEntry(response.data);
     } catch (err) {
       setError(err.response?.data?.message || err.message || '데이터를 불러오는 데 실패했습니다.');

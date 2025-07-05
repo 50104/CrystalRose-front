@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './WikiList.css';
-import { axiosInstance } from '@utils/axios';
+import { noAuthAxios } from '@utils/axios';
 
 export default function WikiListPage() {
   const [wikiEntries, setWikiEntries] = useState([]);
@@ -16,7 +16,7 @@ export default function WikiListPage() {
     setLoading(true);
     setError(null);
     try {
-      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/v1/wiki/list`);
+      const response = await noAuthAxios.get(`${process.env.REACT_APP_API_URL}/api/v1/wiki/list`);
 
       const entries = Array.isArray(response.data)
         ? response.data

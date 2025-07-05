@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import './SignIn.css';
 import '../../common/InputBox.css';
-import { axiosInstance } from '@utils/axios';
 import InputBox from '@components/common/InputBox';
+import { noAuthAxios } from '@utils/axios';
 
 function SignIn() {
 
@@ -72,7 +72,7 @@ function SignIn() {
 
             console.log('로그인:', userId, userPwd);
 
-            const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/login`, formData);
+            const response = await noAuthAxios.post(`${process.env.REACT_APP_API_URL}/login`, formData);
             console.log("응답:", response);
 
             const authorizationHeader = response.headers['authorization'];
@@ -92,7 +92,7 @@ function SignIn() {
                 const confirmUndo = window.confirm("탈퇴 요청된 계정입니다. 철회하시겠습니까?");
                 if (confirmUndo) {
                     try {
-                        const cancelResponse = await axiosInstance.put(
+                        const cancelResponse = await noAuthAxios.put(
                             `${process.env.REACT_APP_API_URL}/api/v1/auth/withdraw/cancel`
                         );
                         alert(cancelResponse.data);

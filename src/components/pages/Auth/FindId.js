@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { axiosInstance } from '@utils/axios';
 import InputBox from '@components/common/InputBox';
 import './Find.css';
+import { noAuthAxios } from '@utils/axios';
 
 function FindId() {
     const [userEmail, setUserEmail] = useState("");
@@ -29,7 +29,7 @@ function FindId() {
             return;
         }
         try {
-            const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/findUserId`, { 
+            const response = await noAuthAxios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/findUserId`, { 
                 userEmail:userEmail 
             });
             if (response.status===200) {

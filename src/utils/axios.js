@@ -110,6 +110,15 @@ oauthAxiosInstance.interceptors.response.use(
   }
 );
 
+// 인증이 필요 없는 요청을 위한 axios 인스턴스
+export const noAuthAxios = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:4000',
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 // 서비스 워커 관련 유틸리티 함수
 export const clearServiceWorkerCache = async () => {
   if ('serviceWorker' in navigator && 'caches' in window) {
