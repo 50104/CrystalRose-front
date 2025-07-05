@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-globals */
 
-const CACHE_NAME = 'dodorose-cache-v1';
+const CACHE_VERSION = 'v1';
+const CACHE_NAME = `dodorose-cache-${CACHE_VERSION}`;
 const urlsToCache = [
   '/',
   '/index.html',
@@ -9,6 +10,13 @@ const urlsToCache = [
   '/logo512.png',
   '/manifest.json'
 ];
+
+// 새 워커 강제 활성화
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
 
 self.addEventListener('install', (event) => {
   console.log('[Service Worker] Install');
@@ -19,54 +27,54 @@ self.addEventListener('install', (event) => {
   );
 });
 
-self.addEventListener('fetch', (event) => {
-  // API 요청은 우회하여 조건부 요청(304) 허용
-  if (event.request.url.includes('/api/')) {
-    event.respondWith(fetch(event.request));
-    return;
-  }
-
-  if (event.request.url.includes('/auth/') || 
-      event.request.url.includes('/oauth/') ||
-      event.request.url.includes('/reissue') ||
-      event.request.url.includes('naver.com') ||
-      event.request.url.includes('google.com') ||
-      event.request.url.includes('kakao.com')) {
-
-    event.respondWith(fetch(event.request));
-    return;
-  }
-
-  // 정적 리소스만 캐시 처리
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      if (response) return response;
-
-      return fetch(event.request).catch((error) => {
-        console.error('[Service Worker] Fetch failed:', error);
-        if (event.request.destination === 'document') {
-          return caches.match('/index.html');
-        }
-        throw error;
-      });
-    })
+self.addEventListener('activate', (event) => {
+  console.log('[Service Worker] Activate');
+  event.waitUntil(
+    caches.keys().then((keyList) =>
+      Promise.all(
+        keyList.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
+      )
+    )
   );
 });
 
-self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activate');
-  const cacheWhitelist = [CACHE_NAME];
+// 캐시 전략
+self.addEventListener('fetch', (event) => {
+  const url = event.request.url;
 
-  event.waitUntil(
-    caches.keys().then((keyList) => {
-      return Promise.all(
-        keyList.map((key) => {
-          if (!cacheWhitelist.includes(key)) {
-            return caches.delete(key);
-          }
-          return Promise.resolve(); 
-        })
-      );
+  // API, 인증은 캐싱 안함
+  if (
+    url.includes('/api/') ||
+    url.includes('/auth/') ||
+    url.includes('/oauth/') ||
+    url.includes('/reissue') ||
+    url.includes('kakao.com') ||
+    url.includes('google.com') ||
+    url.includes('naver.com')
+  ) {
+    return;
+  }
+
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      if (response) return response;
+      return fetch(event.request).then((networkResponse) => {
+        if (
+          networkResponse &&
+          networkResponse.status === 200 &&
+          networkResponse.type === 'basic'
+        ) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      });
     })
   );
 });

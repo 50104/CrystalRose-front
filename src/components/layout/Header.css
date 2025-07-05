@@ -73,6 +73,89 @@ body {
   pointer-events: none;
 }
 
+/* 버전 업데이트 알림 스타일 */
+.update-alert {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  text-align: center;
+  font-weight: bold;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.update-alert button {
+  background: #721c24;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  margin-left: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.update-alert button:hover {
+  background: #5a1419;
+}
+
+body.update-alert-active .nav_userInfo {
+  margin-top: 60px !important;
+}
+
+body.update-alert-active .calendar-toolbar {
+  margin-top: 60px !important;
+}
+
+/* 모바일에서의 버전 업데이트 알림 스타일 */
+@media screen and (max-width: 430px) {
+  .update-alert {
+    font-size: 12px !important;
+    padding: 10px 8px !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 99999 !important;
+    display: block !important;
+    background: #f8d7da !important;
+    color: #721c24 !important;
+    text-align: center !important;
+    font-weight: bold !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  .update-alert button {
+    font-size: 12px !important;
+    padding: 5px 10px !important;
+    margin-left: 8px !important;
+    background: #721c24 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    font-weight: bold !important;
+  }
+  
+  .update-alert button:hover {
+    background: #5a1419 !important;
+  }
+  
+  body.update-alert-active .nav_userInfo {
+    margin-top: 50px !important;
+  }
+  
+  body.update-alert-active .calendar-toolbar {
+    margin-top: 50px !important;
+  }
+}
+
 @media screen and (max-width: 360px) {
   .header_div {
     height: 8.5vh !important;

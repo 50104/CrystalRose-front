@@ -1,25 +1,44 @@
 import logo from '@assets/images/branding/50104.png';
 import { logoutFunction } from '@utils/api/token';
 import { GetUser } from '@utils/api/user';
+import { useEffect } from 'react';
 
 import './Header.css';
 
-const Header = () => {
+const Header = ({ updateAvailable, reloadPage }) => {
   const { isLogin, userRole, userNick } = GetUser();
+
+  // 버전 업데이트 알림 상태에 따라 body에 클래스 추가/제거
+  useEffect(() => {
+    if (updateAvailable) {
+      document.body.classList.add('update-alert-active');
+    } else {
+      document.body.classList.remove('update-alert-active');
+    }
+
+    return () => {
+      document.body.classList.remove('update-alert-active');
+    };
+  }, [updateAvailable]);
 
   return (
     <div className="header_div">
+      {/* 버전 업데이트 알림 */}
+      {updateAvailable && (
+        <div className="update-alert">
+          새로운 버전이 있습니다. <button onClick={reloadPage}>새로고침</button>
+        </div>
+      )}
+
       {/* UserInfo 영역 */}
       <div className="nav_userInfo">
         {!isLogin ? (
           <>
-            {/* <a href="/favoriteList"><div>즐겨찾기</div></a> */}
             <a href="/join"><div>회원가입</div></a>
             <a href="/login"><div>로그인</div></a>
           </>
         ) : (
           <>
-            {/* <a href="/favoriteList"><div>즐겨찾기</div></a> */}
             {userRole === 'ROLE_ADMIN' && (
               <a href="/admin"><div>{userNick}님 관리자 페이지</div></a>
             )}
