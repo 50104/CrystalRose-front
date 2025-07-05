@@ -1,12 +1,20 @@
 .user-info {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 30px;
+    max-width: 1200px;
+    min-height: 80vh;
 }
 
 .img-modify {
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     flex: 1;
-    padding: 5% 0 5% 5%;
 }
 
 .user-img-wrapper {
@@ -64,6 +72,12 @@
     justify-content: center;
     cursor: pointer;
     z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.modify-button:hover {
+    background-color: #8e5dca;
+    transform: scale(1.01);
 }
 
 .settings-button img {
@@ -73,27 +87,32 @@
 
 .img-box-body {
     display: flex;
-    gap: 10px;
-    justify-content: flex-start;
+    gap: 15px;
+    justify-content: center;
     align-items: center;
-    margin-top: 10px;
-    margin-left: 55px;
+    margin-top: 20px;
+    width: 100%;
 }
 
 .img-box {
     cursor: pointer;
-    padding: 8px 16px;
+    padding: 10px 20px;
     background-color: rgb(232, 222, 255);
     color: rgb(0, 0, 0);
     border: none;
-    border-radius: 6px;
+    border-radius: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    flex: 1;
+    min-width: 80px;
 }
 
 .img-box:hover {
     background-color: rgb(212, 194, 255);
+    transform: translateY(-2px);
 }
 
 .modify-box-body {
@@ -104,5 +123,77 @@
 }
 
 .ect {
-    flex: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
+    max-width: 400px;
+    padding: 25px;
+    flex: 1;
+}
+
+.ect a,
+.ect div {
+    padding: 12px 20px;
+    background-color: rgb(232, 222, 255);
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.ect a:hover,
+.ect div:hover {
+    background-color: rgb(212, 194, 255);
+    transform: translateY(-2px);
+}
+
+.ect a div {
+    background: none;
+    color: inherit;
+    padding: 0;
+    box-shadow: none;
+    transform: none;
+}
+
+.ect a div:hover {
+    background: none;
+    transform: none;
+    box-shadow: none;
+}
+
+.cursor {
+    cursor: pointer;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .user-info {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        padding: 20px 15px;
+        margin: 10px;
+    }
+    
+    .img-modify,
+    .ect {
+        max-width: 100%;
+        padding: 20px;
+    }
+    
+    .user-img-wrapper {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .ect a,
+    .ect div {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
 }

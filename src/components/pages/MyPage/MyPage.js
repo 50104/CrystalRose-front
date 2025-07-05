@@ -5,6 +5,7 @@ import './MyPage.css';
 import { getAccessToken } from '@utils/api/token';
 import { useNavigate } from 'react-router-dom';
 import { FaGear } from "react-icons/fa6";
+import { clearServiceWorkerCache, reregisterServiceWorker } from '@utils/axios';
 
 function MyPage() {
     const { userData, loading } = useUserData();
@@ -90,6 +91,14 @@ function MyPage() {
         }
     };
 
+    const handleForceUpdate = async () => {
+        const confirm = window.confirm("새 버전이 있습니다. 업데이트 하시겠습니까?");
+        if (confirm) {
+            await clearServiceWorkerCache();
+            await reregisterServiceWorker();
+        }
+    };
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -131,6 +140,7 @@ function MyPage() {
               <a href="/join"><div>회원가입</div></a>
               <a href="/login"><div>로그인</div></a>
               <div onClick={logoutFunction} className="cursor">로그아웃</div>
+              <div onClick={handleForceUpdate}>강제 업데이트</div>
             </div>
         </div>
     );
