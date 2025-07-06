@@ -11,17 +11,20 @@ const isLocalhost = Boolean(
 );
 
 export function register(config) {
-  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
-    const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
+  // 개발 환경에서도 Service Worker 허용
+  if ('serviceWorker' in navigator) {
+    const publicUrl = new URL(process.env.PUBLIC_URL || '/', window.location.href);
     if (publicUrl.origin !== window.location.origin) return;
 
     window.addEventListener('load', () => {
-      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js?v=${SW_VERSION}`;
+      const swUrl = `${process.env.PUBLIC_URL || ''}/service-worker.js?v=${SW_VERSION}`;
 
       // 기존 Service Worker 정리
       navigator.serviceWorker.getRegistrations().then((registrations) => {
         registrations.forEach((registration) => {
-          if (registration.scope !== window.location.origin + '/') {
+          // 현재 도메인과 다른 scope의 Service Worker만 제거
+          if (registration.scope !== `${window.location.origin}/`) {
+            console.log('Removing old service worker:', registration.scope);
             registration.unregister().catch(console.error);
           }
         });
@@ -43,6 +46,8 @@ function registerValidSW(swUrl, config) {
   navigator.serviceWorker
     .register(swUrl)
     .then((registration) => {
+      console.log('Service Worker registered successfully:', registration.scope);
+      
       registration.onupdatefound = () => {
         const installingWorker = registration.installing;
         if (installingWorker == null) return;
@@ -73,9 +78,12 @@ function registerValidSW(swUrl, config) {
       console.error('Error during service worker registration:', error);
       
       // Chrome 확장 프로그램 충돌 등의 에러 처리
-      if (error.message.includes('chrome-extension') || 
+      if (error.message && (
+          error.message.includes('chrome-extension') || 
           error.message.includes('unsupported') ||
-          error.message.includes('Cache')) {
+          error.message.includes('Cache') ||
+          error.message.includes('put')
+      )) {
         console.warn('Service Worker registration failed due to browser extension conflict. Continuing without SW.');
         return;
       }
@@ -86,18 +94,22 @@ function registerValidSW(swUrl, config) {
         return;
       }
       
-      // 심각한 에러의 경우 재시도
-      setTimeout(() => {
-        if (navigator.serviceWorker.controller === null) {
+      // 심각한 에러의 경우 재시도 (최대 1회)
+      if (!registerValidSW.retried) {
+        registerValidSW.retried = true;
+        setTimeout(() => {
           console.log('Retrying service worker registration...');
           registerValidSW(swUrl, config);
-        }
-      }, 5000);
+        }, 3000);
+      }
     });
 }
 
 function checkValidServiceWorker(swUrl, config) {
-  fetch(swUrl, { headers: { 'Service-Worker': 'script' } })
+  fetch(swUrl, { 
+    headers: { 'Service-Worker': 'script' },
+    cache: 'no-cache'
+  })
     .then((response) => {
       const contentType = response.headers.get('content-type');
       if (
