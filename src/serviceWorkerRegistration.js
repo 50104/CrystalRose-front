@@ -1,5 +1,7 @@
 /* eslint-disable no-restricted-globals */
 
+const SW_VERSION = '1.0.0';
+
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
   window.location.hostname === '[::1]' ||
@@ -14,7 +16,8 @@ export function register(config) {
     if (publicUrl.origin !== window.location.origin) return;
 
     window.addEventListener('load', () => {
-      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js?v=${Date.now()}`;
+      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js?v=${SW_VERSION}`;
+
       navigator.serviceWorker.register(swUrl);
 
       if (isLocalhost) {

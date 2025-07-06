@@ -18,8 +18,10 @@ function App() {
   useEffect(() => {
     serviceWorkerRegistration.register({
       onUpdate: (registration) => {
-        setUpdateAvailable(true);
-        setWaitingWorker(registration.waiting);
+        if (registration.waiting) {
+          setUpdateAvailable(true);
+          setWaitingWorker(registration.waiting);
+        }
       },
     });
   }, []);
