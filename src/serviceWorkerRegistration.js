@@ -18,13 +18,20 @@ export function register(config) {
     window.addEventListener('load', () => {
       const swUrl = `${process.env.PUBLIC_URL}/service-worker.js?v=${SW_VERSION}`;
 
-      navigator.serviceWorker.register(swUrl);
+      // 기존 Service Worker 정리
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        registrations.forEach((registration) => {
+          if (registration.scope !== window.location.origin + '/') {
+            registration.unregister().catch(console.error);
+          }
+        });
+      }).catch(console.error);
 
       if (isLocalhost) {
         checkValidServiceWorker(swUrl, config);
         navigator.serviceWorker.ready.then(() => {
           console.log('Service Worker is ready (localhost)');
-        });
+        }).catch(console.error);
       } else {
         registerValidSW(swUrl, config);
       }
@@ -64,6 +71,28 @@ function registerValidSW(swUrl, config) {
     })
     .catch((error) => {
       console.error('Error during service worker registration:', error);
+      
+      // Chrome 확장 프로그램 충돌 등의 에러 처리
+      if (error.message.includes('chrome-extension') || 
+          error.message.includes('unsupported') ||
+          error.message.includes('Cache')) {
+        console.warn('Service Worker registration failed due to browser extension conflict. Continuing without SW.');
+        return;
+      }
+      
+      // 기타 네트워크 에러 처리
+      if (error.name === 'NetworkError' || error.name === 'TypeError') {
+        console.warn('Network error during service worker registration. App will work without offline capabilities.');
+        return;
+      }
+      
+      // 심각한 에러의 경우 재시도
+      setTimeout(() => {
+        if (navigator.serviceWorker.controller === null) {
+          console.log('Retrying service worker registration...');
+          registerValidSW(swUrl, config);
+        }
+      }, 5000);
     });
 }
 
@@ -106,4 +135,35 @@ export function forceUnregisterAndReload() {
       window.location.reload();
     });
   }
+}
+
+// 캐시 및 Service Worker 완전 정리 함수
+export function clearAllCaches() {
+  return new Promise((resolve) => {
+    if ('caches' in window) {
+      caches.keys().then((cacheNames) => {
+        Promise.all(
+          cacheNames.map((cacheName) => caches.delete(cacheName))
+        ).then(() => {
+          console.log('All caches cleared');
+          resolve();
+        }).catch((error) => {
+          console.error('Error clearing caches:', error);
+          resolve();
+        });
+      }).catch((error) => {
+        console.error('Error getting cache names:', error);
+        resolve();
+      });
+    } else {
+      resolve();
+    }
+  });
+}
+
+// 개발 모드에서만 사용하는 강제 새로고침 함수
+export function forceRefresh() {
+  clearAllCaches().then(() => {
+    forceUnregisterAndReload();
+  });
 }
