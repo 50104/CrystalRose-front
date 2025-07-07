@@ -62,7 +62,7 @@ self.addEventListener('activate', (event) => {
 function isCacheableRequest(request) {
   const url = request.url;
 
-  // 확장 프로그램 요청, 데이터/blob 요청 제외
+  // 확장 프로그램, 데이터, blob 요청 제외
   if (!url.startsWith('http')) return false;
   if (url.startsWith('chrome-extension://') ||
       url.startsWith('moz-extension://') ||
@@ -72,7 +72,7 @@ function isCacheableRequest(request) {
 
   if (url.startsWith('data:') || url.startsWith('blob:') || url.startsWith('about:')) return false;
 
-  // POST/PUT/DELETE 등 비GET 요청 제외
+  // 비 GET 요청 제외
   if (request.method !== 'GET') return false;
 
   // API, 인증 관련 요청 제외
@@ -95,8 +95,13 @@ function isCacheableRequest(request) {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
 
-  if (!isCacheableRequest(request)) return;
+  // 캐싱 제외 요청은 네트워크로 직접 요청
+  if (!isCacheableRequest(request)) {
+    event.respondWith(fetch(request));
+    return;
+  }
 
+  // 캐시 우선 전략
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -110,20 +115,17 @@ self.addEventListener('fetch', (event) => {
 
         const responseToCache = networkResponse.clone();
 
-        // 캐시 저장 시 URL 확인
-        const reqUrl = request.url;
-        if (reqUrl.startsWith('http://') || reqUrl.startsWith('https://')) {
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(request, responseToCache).catch((error) => {
-              console.warn('[Service Worker] Cache put failed:', error);
-            });
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(request, responseToCache).catch((error) => {
+            console.warn('[Service Worker] Cache put failed:', error);
           });
-        }
+        });
 
         return networkResponse;
       }).catch((error) => {
         console.warn('[Service Worker] Network fetch failed:', error);
 
+        // HTML 요청 실패 시 index.html fallback
         if (request.headers.get('Accept')?.includes('text/html')) {
           return caches.match('/index.html');
         }
