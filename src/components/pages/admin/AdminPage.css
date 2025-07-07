@@ -1,0 +1,72 @@
+.admin-page {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    max-width: 1200px;
+    min-height: 80vh;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.admin-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 400px;
+    padding: 25px;
+}
+
+.admin-menu-item {
+    padding: 12px 20px;
+    background-color: rgb(232, 222, 255);
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    font-size: 16px;
+}
+
+.admin-menu-item:hover {
+    background-color: rgb(212, 194, 255);
+    transform: translateY(-2px);
+}
+
+.admin-menu-item:visited {
+    color: rgb(0, 0, 0);
+}
+
+.admin-menu-title {
+    text-align: center;
+    color: rgb(0, 0, 0);
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .admin-page {
+        padding: 20px 15px;
+        gap: 20px;
+        align-items: center;
+    }
+    
+    .admin-menu {
+        max-width: 100%;
+        padding: 20px;
+    }
+    
+    .admin-menu-item {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+    
+    .admin-menu-title {
+        font-size: 20px;
+    }
+}
