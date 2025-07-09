@@ -29,6 +29,7 @@ function App() {
   const reloadPage = async () => {
     const confirm = window.confirm("새 버전이 있습니다. 업데이트 하시겠습니까?");
     if (waitingWorker && confirm) {
+        waitingWorker.postMessage({ type: 'SKIP_WAITING' });
         await clearServiceWorkerCache();
         await reregisterServiceWorker();
     }

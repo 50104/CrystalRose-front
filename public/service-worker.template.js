@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-globals */
+import { CACHE_VERSION } from './cacheVersion';
 
-const CACHE_VERSION = 'v0709';
 const CACHE_NAME = `dodorose-cache-${CACHE_VERSION}`;
 const urlsToCache = [
   '/',

@@ -24,3 +24,9 @@ yarn-debug.log*
 yarn-error.log*
 
 gitmessage.txt
+
+# service worker files
+/src/swVersion.js
+/src/cacheVersion.js
+/public/service-worker.*.js
+!/public/service-worker.template.js

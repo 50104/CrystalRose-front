@@ -1,6 +1,5 @@
 /* eslint-disable no-restricted-globals */
-
-const SW_VERSION = '0709';
+import { SW_VERSION } from './swVersion';
 
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
@@ -17,7 +16,7 @@ export function register(config) {
     if (publicUrl.origin !== window.location.origin) return;
 
     window.addEventListener('load', () => {
-      const swUrl = `${process.env.PUBLIC_URL || ''}/service-worker.js?v=${SW_VERSION}`;
+      const swUrl = `${process.env.PUBLIC_URL || ''}/service-worker.${SW_VERSION}.js`;
 
       // 기존 Service Worker 정리
       navigator.serviceWorker.getRegistrations().then((registrations) => {
