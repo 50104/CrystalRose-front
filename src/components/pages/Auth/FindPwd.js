@@ -46,7 +46,7 @@ function FindPwd() {
             return;
         }
         try {
-            const response = await noAuthAxios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/findUserPwd`, {
+            const response = await noAuthAxios.post(`/api/v1/auth/findUserPwd`, {
                 userId: userId,
                 userEmail: userEmail
             });

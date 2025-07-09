@@ -21,7 +21,7 @@ export default function WikiApprovalPage() {
   const fetchPendingEntries = async () => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/v1/admin/wiki/pending`);
+      const response = await axiosInstance.get(`/api/v1/admin/wiki/pending`);
       setPendingEntries(response.data);
     } catch (err) {
       setError(err.response?.data?.message || err.message || '서버에서 데이터를 가져오는데 실패했습니다.');
@@ -32,7 +32,7 @@ export default function WikiApprovalPage() {
 
   const fetchPendingModifications = async () => {
     try {
-      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/v1/admin/wiki/modifications/pending`);
+      const response = await axiosInstance.get(`/api/v1/admin/wiki/modifications/pending`);
       setPendingModifications(response.data);
     } catch (err) {
       console.error('수정 대기 목록 조회 실패:', err);
@@ -41,7 +41,7 @@ export default function WikiApprovalPage() {
 
   const handleApprove = async (id) => {
     try {
-      await axiosInstance.patch(`${process.env.REACT_APP_API_URL}/api/v1/admin/wiki/${id}/approve`);
+      await axiosInstance.patch(`/api/v1/admin/wiki/${id}/approve`);
       setPendingEntries(pendingEntries.filter(entry => entry.id !== id));
       setMessage({ type: 'success', text: '도감이 승인되었습니다.' });
     } catch (err) {
@@ -51,7 +51,7 @@ export default function WikiApprovalPage() {
 
   const handleReject = async (id) => {
     try {
-      await axiosInstance.patch(`${process.env.REACT_APP_API_URL}/api/v1/admin/wiki/${id}/reject`);
+      await axiosInstance.patch(`/api/v1/admin/wiki/${id}/reject`);
       setPendingEntries(pendingEntries.filter(entry => entry.id !== id));
       setMessage({ type: 'success', text: '도감이 거부되었습니다.' });
     } catch (err) {
@@ -61,7 +61,7 @@ export default function WikiApprovalPage() {
 
   const handleModificationApprove = async (id) => {
     try {
-      await axiosInstance.patch(`${process.env.REACT_APP_API_URL}/api/v1/admin/wiki/modifications/${id}/approve`);
+      await axiosInstance.patch(`/api/v1/admin/wiki/modifications/${id}/approve`);
       setPendingModifications(pendingModifications.filter(modification => modification.id !== id));
       setMessage({ type: 'success', text: '도감 수정이 승인되었습니다.' });
     } catch (err) {
@@ -71,7 +71,7 @@ export default function WikiApprovalPage() {
 
   const handleModificationReject = async (id) => {
     try {
-      await axiosInstance.patch(`${process.env.REACT_APP_API_URL}/api/v1/admin/wiki/modifications/${id}/reject`);
+      await axiosInstance.patch(`/api/v1/admin/wiki/modifications/${id}/reject`);
       setPendingModifications(pendingModifications.filter(modification => modification.id !== id));
       setMessage({ type: 'success', text: '도감 수정이 거부되었습니다.' });
     } catch (err) {
@@ -100,7 +100,7 @@ export default function WikiApprovalPage() {
       // 수정 대기 중인 항목인 경우 비교 데이터를 가져옴
       if (activeTab === 'modifications') {
         try {
-          const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/v1/admin/wiki/${entry.id}/original`);
+          const response = await axiosInstance.get(`/api/v1/admin/wiki/${entry.id}/original`);
           setComparisonData(response.data);
         } catch (err) {
           console.error('비교 데이터 조회 실패:', err);

@@ -52,11 +52,11 @@ const StompChatPage = () => {
     if (stompClient && stompClient.connected) return;
 
     try {
-      const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/reissue`);
+      const response = await axiosInstance.post(`/reissue`);
       const accessToken = response.data.accessToken;
       localStorage.setItem("access", accessToken);
 
-      const sockJs = new SockJS(`${process.env.REACT_APP_API_URL}/connect`);
+      const sockJs = new SockJS(`/connect`);
       const client = Stomp.over(sockJs);
 
       client.connect(

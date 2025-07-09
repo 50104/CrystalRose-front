@@ -9,7 +9,7 @@ export default function MyBlockList() {
 
   const fetchBlocked = async () => {
     try {
-        const url = `${process.env.REACT_APP_API_URL}/api/v1/blocks/me`;
+        const url = `/api/v1/blocks/me`;
         console.log('Request URL:', url); // 실제 URL 확인
         const res = await axiosInstance.get(url);
       setBlockedUsers(res.data);
@@ -23,7 +23,7 @@ export default function MyBlockList() {
 
   const handleUnblock = async (id) => {
     try {
-      await axiosInstance.delete(`${process.env.REACT_APP_API_URL}/api/v1/blocks/${id}`);
+      await axiosInstance.delete(`/api/v1/blocks/${id}`);
       setBlockedUsers(blockedUsers.filter(u => u.userNo !== id));
     } catch (err) {
       alert('차단 해제 실패');

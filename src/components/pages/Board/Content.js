@@ -123,7 +123,7 @@ function Content() {
 
   const checkAlreadyReported = async () => {
     try {
-      const res = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/reports/check`, {
+      const res = await axiosInstance.get(`/api/reports/check`, {
         params: { postId: content.boardNo }
       });
       return res.data.alreadyReported;
@@ -135,7 +135,7 @@ function Content() {
 
   const checkAlreadyReportedComment = async (commentId) => {
     try {
-      const res = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/comment-reports/check`, {
+      const res = await axiosInstance.get(`/api/comment-reports/check`, {
         params: { commentId }
       });
       return res.data.alreadyReported;

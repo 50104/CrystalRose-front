@@ -44,7 +44,7 @@ export default function TimelapsePage() {
 
   useEffect(() => {
     axiosInstance
-      .get(`${process.env.REACT_APP_API_URL}/api/diaries/${roseId}/timeline`)
+      .get(`/api/diaries/${roseId}/timeline`)
       .then((res) => setDiaryList(res.data))
       .catch((err) => console.error('타임랩스 조회 실패', err));
   }, [roseId]);

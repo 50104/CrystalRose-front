@@ -16,7 +16,7 @@ const CheckUserPwd = () => {
             return;
         }
         try {
-            const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/user/validatePassword`, { 
+            const response = await axiosInstance.post(`/api/user/validatePassword`, { 
                 userId: userData.userId,
                 userPwd 
             });

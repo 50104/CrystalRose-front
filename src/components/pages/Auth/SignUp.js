@@ -121,7 +121,7 @@ function SignUp() {
         setUserIdMessage('');
         console.log('userId:', userId);
         try {
-            const response = await noAuthAxios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/id-check`, {
+            const response = await noAuthAxios.post(`/api/v1/auth/id-check`, {
                 userId: userId,
             });
             userIdCheckResponse(response.data);
@@ -151,7 +151,7 @@ function SignUp() {
         if (!userId || !userEmail) return;
         if (isUserEmailError) return;
         try {
-            await noAuthAxios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/email-check`, {
+            await noAuthAxios.post(`/api/v1/auth/email-check`, {
                 userId: userId, userEmail: userEmail,
             });
         } catch (error) {
@@ -163,7 +163,7 @@ function SignUp() {
         setUserEmailMessage('인증번호가 전송되었습니다.');
         console.log('userEmail:', userEmail);
         try {
-            const response = await noAuthAxios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/email-certification`, {
+            const response = await noAuthAxios.post(`/api/v1/auth/email-certification`, {
                 userId: userId, userEmail: userEmail,
             });
             userEmailCertificationResponse(response.data);
@@ -198,7 +198,7 @@ function SignUp() {
         if (!userId || !userEmail || !certificationNumber) return;
         console.log('certificationNumber:', certificationNumber);
         try {
-            const response = await noAuthAxios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/check-certification`, {
+            const response = await noAuthAxios.post(`/api/v1/auth/check-certification`, {
                 userId: userId, userEmail: userEmail, certificationNumber: certificationNumber,
             });
             checkCertificationResponse(response.data);
@@ -252,7 +252,7 @@ function SignUp() {
         }
         console.log('입력 정보:', '1', userId, '2', userNick, '3', userPwd, '4', userEmail, '5', certificationNumber);
         try {
-            const response = await noAuthAxios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/join`, {
+            const response = await noAuthAxios.post(`/api/v1/auth/join`, {
                 userId: userId, 
                 userNick: userNick, 
                 userPwd: userPwd,
@@ -291,7 +291,7 @@ function SignUp() {
 
     // OAuth 로그인
     const onSnsSignInButtonClickHandler = (type) => {
-        window.location.href = `${process.env.REACT_APP_API_URL}/api/v1/auth/oauth2/${type}`;
+        window.location.href = `/api/v1/auth/oauth2/${type}`;
     };
 
     // key down

@@ -98,7 +98,7 @@ export default function WikiRegisterPage() {
       formData.append('file', file);
 
       const response = await axiosInstance.post(
-        `${process.env.REACT_APP_API_URL}/api/v1/wiki/image/upload`,
+        `/api/v1/wiki/image/upload`,
         formData,
         {
           headers: {
@@ -136,7 +136,7 @@ export default function WikiRegisterPage() {
       
       if (isEditMode) { // 수정
         response = await axiosInstance.put(
-          `${process.env.REACT_APP_API_URL}/api/v1/wiki/modify/${id}`, 
+          `/api/v1/wiki/modify/${id}`, 
           formData,
           {
             headers: {
@@ -146,7 +146,7 @@ export default function WikiRegisterPage() {
         );
       } else { // 등록
         response = await axiosInstance.post(
-          `${process.env.REACT_APP_API_URL}/api/v1/wiki/register`, 
+          `/api/v1/wiki/register`, 
           formData,
           {
             headers: {

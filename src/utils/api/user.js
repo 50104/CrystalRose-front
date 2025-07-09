@@ -79,7 +79,7 @@ export const getUserData = async (navigate, setIsLogin) => {
   try {
     // 재시도 로직으로 사용자 데이터 요청
     const response = await retryableRequest(
-      () => axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/user/data`),
+      () => axiosInstance.get(`/api/user/data`),
       3,
       1000
     );
@@ -94,7 +94,7 @@ export const getUserData = async (navigate, setIsLogin) => {
 
 export const modifyUserData = async (data) => {
   const response = await axiosInstance.post(
-    `${process.env.REACT_APP_API_URL}/api/user/modify`,
+    `/api/user/modify`,
     data,
     {
       headers: {

@@ -11,7 +11,7 @@ export default function RoseTimelinePage() {
 
   const fetchTimeline = useCallback(async () => {
     try {
-      const res = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/diaries/${roseId}/timeline`);
+      const res = await axiosInstance.get(`/api/diaries/${roseId}/timeline`);
       setTimeline(res.data);
     } catch (err) {
       console.error("장미 타임라인 조회 실패", err);

@@ -121,7 +121,7 @@ const UserUpdate = () => {
         if (!userInfo.userEmail) return;
         if (isUserEmailError) return;
         try {
-            await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/email-check`, {
+            await axiosInstance.post(`/api/v1/auth/email-check`, {
                 userId: userInfo.userId, userEmail: userInfo.userEmail,
             });
         } catch (error) {
@@ -134,7 +134,7 @@ const UserUpdate = () => {
         setUserEmailMessage('인증번호가 전송되었습니다.');
         console.log('userEmail:', userInfo.userEmail);
         try {
-            const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/email-certification`, {
+            const response = await axiosInstance.post(`/api/v1/auth/email-certification`, {
                 userId: userInfo.userId, userEmail: userInfo.userEmail,
             });
             userEmailCertificationResponse(response.data);
@@ -170,7 +170,7 @@ const UserUpdate = () => {
         if (!userInfo.userEmail || !userInfo.certificationNumber) return;
         console.log('certificationNumber:', userInfo.certificationNumber);
         try {
-            const response = await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/check-certification`, {
+            const response = await axiosInstance.post(`/api/v1/auth/check-certification`, {
                 userId: userInfo.userId, userEmail: userInfo.userEmail, certificationNumber: userInfo.certificationNumber,
             });
             checkCertificationResponse(response.data);
@@ -213,7 +213,7 @@ const UserUpdate = () => {
             userRole: userInfo.userRole
         })], { type: 'application/json' }));
         try {
-            await axiosInstance.put(`${process.env.REACT_APP_API_URL}/api/user/update`, formData, {
+            await axiosInstance.put(`/api/user/update`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -249,7 +249,7 @@ const UserUpdate = () => {
         if (!confirmDelete) return;
 
         try {
-            await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/withdraw`, {
+            await axiosInstance.post(`/api/v1/auth/withdraw`, {
                 userPwd: userInfo.userPwd,
             });
             alert('탈퇴 요청이 완료되었습니다. 계정은 1주일 후 삭제됩니다.');

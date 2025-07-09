@@ -29,7 +29,7 @@ function FindId() {
             return;
         }
         try {
-            const response = await noAuthAxios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/findUserId`, { 
+            const response = await noAuthAxios.post(`/api/v1/auth/findUserId`, { 
                 userEmail:userEmail 
             });
             if (response.status===200) {

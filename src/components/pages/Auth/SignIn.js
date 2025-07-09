@@ -53,7 +53,7 @@ function SignIn() {
 
     // OAuth
     const onSnsSignInButtonClickHandler = (type) => {
-        window.location.href = `${process.env.REACT_APP_API_URL}/api/v1/auth/oauth2/${type}`;
+        window.location.href = `/api/v1/auth/oauth2/${type}`;
     };
 
     // 로그인 버튼
@@ -70,10 +70,7 @@ function SignIn() {
             formData.append('userId', userId);
             formData.append('userPwd', userPwd);
 
-            console.log('로그인:', userId, userPwd);
-
-            const response = await noAuthAxios.post(`${process.env.REACT_APP_API_URL}/login`, formData);
-            console.log("응답:", response);
+            const response = await noAuthAxios.post(`/api/v1/auth/login`, formData);
 
             const authorizationHeader = response.headers['authorization'];
             const accessToken = authorizationHeader?.split(' ')[1];
@@ -93,7 +90,7 @@ function SignIn() {
                 if (confirmUndo) {
                     try {
                         const cancelResponse = await noAuthAxios.put(
-                            `${process.env.REACT_APP_API_URL}/api/v1/auth/withdraw/cancel`
+                            `/api/v1/auth/withdraw/cancel`
                         );
                         alert(cancelResponse.data);
                         localStorage.removeItem("access");

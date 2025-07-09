@@ -12,8 +12,8 @@ export default function DiaryListPage() {
   const fetchData = async () => {
     try {
       const [diaryRes, careDateRes] = await Promise.all([
-        axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/diaries/list`),
-        axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/diaries/caredates/list`)
+        axiosInstance.get(`/api/diaries/list`),
+        axiosInstance.get(`/api/diaries/caredates/list`)
       ]);
       setDiaries(diaryRes.data);
 

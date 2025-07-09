@@ -49,7 +49,7 @@ export default function DiaryRegister({ onSuccess }) {
 
   // 내 장미 목록 불러오기
   useEffect(() => {
-    axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/roses/list`)
+    axiosInstance.get(`/api/roses/list`)
       .then(res => {
         setRoseList(res.data);
         console.log('내 장미 목록:', res.data);
@@ -70,7 +70,7 @@ export default function DiaryRegister({ onSuccess }) {
       const uploadForm = new FormData();
       uploadForm.append('file', file);
       const res = await axiosInstance.post(
-        `${process.env.REACT_APP_API_URL}/api/diaries/image/upload`,
+        `/api/diaries/image/upload`,
         uploadForm,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
@@ -105,7 +105,7 @@ export default function DiaryRegister({ onSuccess }) {
     
     try {
       await axiosInstance.post(
-        `${process.env.REACT_APP_API_URL}/api/diaries/register`,
+        `/api/diaries/register`,
         {
           ...submitData,
           roseId: formData.roseId 

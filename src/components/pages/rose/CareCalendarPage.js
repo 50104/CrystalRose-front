@@ -45,7 +45,7 @@ const CustomCalendar = () => {
       const startDate = new Date(month.getFullYear(), month.getMonth(), 1);
       const endDate = new Date(month.getFullYear(), month.getMonth() + 1, 0);
 
-      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/calendar/data`, { // 통합 조회
+      const response = await axiosInstance.get(`/api/calendar/data`, { // 통합 조회
         params: {
           startDate: startDate.toISOString().split('T')[0],
           endDate: endDate.toISOString().split('T')[0]

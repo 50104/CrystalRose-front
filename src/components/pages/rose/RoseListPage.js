@@ -18,7 +18,7 @@ export default function RoseListPage() {
     setError(null);
     try {
       console.log('장미 목록 요청 시작');
-      const response = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/roses/list`);
+      const response = await axiosInstance.get(`/api/roses/list`);
       console.log('API 응답:', response);
       console.log('응답 데이터:', response.data);
       

@@ -43,7 +43,7 @@ export default function RoseRegister({ onSuccess }) {
   };
 
   useEffect(() => {
-    noAuthAxios.get(`${process.env.REACT_APP_API_URL}/api/v1/wiki/list`)
+    noAuthAxios.get(`/api/v1/wiki/list`)
       .then(res => {
         const data = Array.isArray(res.data)
           ? res.data
@@ -69,7 +69,7 @@ export default function RoseRegister({ onSuccess }) {
       uploadForm.append('file', file);
 
       const res = await axiosInstance.post(
-        `${process.env.REACT_APP_API_URL}/api/roses/image/upload`,
+        `/api/roses/image/upload`,
         uploadForm,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
@@ -95,7 +95,7 @@ export default function RoseRegister({ onSuccess }) {
 
     setIsSubmitting(true);
     try {
-      await axiosInstance.post(`${process.env.REACT_APP_API_URL}/api/roses/mine`, {
+      await axiosInstance.post(`/api/roses/mine`, {
         ...formData
       });
       setMessage({ type: 'success', text: '등록 성공!' });

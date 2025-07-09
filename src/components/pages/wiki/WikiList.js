@@ -16,7 +16,7 @@ export default function WikiListPage() {
     setLoading(true);
     setError(null);
     try {
-      const response = await noAuthAxios.get(`${process.env.REACT_APP_API_URL}/api/v1/wiki/list`);
+      const response = await noAuthAxios.get(`/api/v1/wiki/list`);
 
       const entries = Array.isArray(response.data)
         ? response.data

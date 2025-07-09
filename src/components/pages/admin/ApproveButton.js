@@ -7,9 +7,7 @@ const ApproveButton = ({ id }) => {
 
   const mutation = useMutation({
     mutationFn: (id) => {
-      return axiosInstance.patch(
-        `${process.env.REACT_APP_API_URL}/api/v1/admin/wiki/${id}/approve`
-      );
+      return axiosInstance.patch(`/api/v1/admin/wiki/${id}/approve`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['pendingWikiList']);
