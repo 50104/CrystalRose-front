@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-globals */
 
-const SW_VERSION = '1.0.0';
+const SW_VERSION = '0709';
 
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { axiosInstance } from '@utils/axios';
+import { axiosInstance, noAuthAxios } from '@utils/axios';
 import { GetUser } from '@utils/api/user';
 import './RoseRegister.css';
 
@@ -43,7 +43,7 @@ export default function RoseRegister({ onSuccess }) {
   };
 
   useEffect(() => {
-    axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/v1/wiki/list`)
+    noAuthAxios.get(`${process.env.REACT_APP_API_URL}/api/v1/wiki/list`)
       .then(res => {
         const data = Array.isArray(res.data)
           ? res.data
