@@ -21,8 +21,8 @@ jobs:
       - name: Generate version files
         run: |
           VERSION=$(date +%Y%m%d%H%M)
-          echo "export const SW_VERSION = 'v$VERSION';" > src/swVersion.js
-          echo "export const CACHE_VERSION = 'v$VERSION';" > src/cacheVersion.js
+          echo "export const SW_VERSION = '$VERSION';" > src/swVersion.js
+          echo "export const CACHE_VERSION = '$VERSION';" > src/cacheVersion.js
 
           cp public/service-worker.template.js public/service-worker.$VERSION.js
 
