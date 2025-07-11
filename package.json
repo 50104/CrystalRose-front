@@ -44,7 +44,8 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "test": "craco test"
+    "test": "craco test",
+    "sw:generate": "node scripts/generate-sw-version.js"
   },
   "eslintConfig": {
     "extends": [

@@ -79,7 +79,7 @@ function isCacheableRequest(request) {
   if (
     url.includes('/api/') ||
     url.includes('/auth/') ||
-    url.includes('/oauth/') ||
+    url.includes('/oauth2/') ||
     url.includes('/reissue') ||
     url.includes('kakao.com') ||
     url.includes('google.com') ||

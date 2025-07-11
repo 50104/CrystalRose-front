@@ -1,10 +1,8 @@
 import { useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
 
 // refresh 토큰으로 access 토큰 재발급 이후 홈으로 이동
 export function GetAccess() {
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAccessToken = async () => {
@@ -15,17 +13,17 @@ export function GetAccess() {
         if (response.data.accessToken) {
           localStorage.setItem('access', response.data.accessToken);
           console.log('GetAccess: Access Token 저장 완료');
-          navigate('/');
+          window.location.href = '/';
         } else {
           throw new Error('Access Token을 받지 못했습니다');
         }
       } catch (error) {
         console.error('GetAccess: 토큰 획득 실패:', error);
-        navigate('/login');
+        window.location.href = '/login';
       }
     };
     fetchAccessToken();
-  }, [navigate]);
+  }, []);
 
   return (
     <div style={{ 

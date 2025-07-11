@@ -291,7 +291,7 @@ function SignUp() {
 
     // OAuth 로그인
     const onSnsSignInButtonClickHandler = (type) => {
-        window.location.href = `/api/v1/auth/oauth2/${type}`;
+        window.location.href = `${process.env.REACT_APP_API_URL}/api/v1/auth/oauth2/${type}`;
     };
 
     // key down

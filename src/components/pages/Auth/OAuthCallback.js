@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { oauthAxiosInstance, retryableRequest, checkNetworkStatus, clearServiceWorkerCache } from '@utils/axios';
 
 export function OAuthCallback() {
-  const navigate = useNavigate();
   const [status, setStatus] = useState('로그인 처리 중');
 
   useEffect(() => {
@@ -66,13 +64,13 @@ export function OAuthCallback() {
         
         // 3초 후 로그인 페이지로 이동
         setTimeout(() => {
-          navigate('/login');
+          window.location.href = '/login';
         }, 3000);
       }
     };
 
     getAccessToken();
-  }, [navigate]);
+  }, []);
 
   return (
     <div style={{ 

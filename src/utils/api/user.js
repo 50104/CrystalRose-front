@@ -1,7 +1,6 @@
 import { axiosInstance, retryableRequest, checkNetworkStatus } from '@utils/axios';
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { getAccessToken } from './token';
 
 export const GetUser = () => {
@@ -30,19 +29,18 @@ export const useUserData = () => {
   const [userData, setUserData] = useState(null);
   const [isLogin, setIsLogin] = useState(false);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const result = await getUserData(navigate, setIsLogin);
+        const result = await getUserData(setIsLogin);
         setUserData(result);
         setLoading(false);
       } catch (error) {
         if (error.response?.data === 'access token expired') {
           try {
             await getAccessToken();
-            const result = await getUserData(navigate, setIsLogin);
+            const result = await getUserData(setIsLogin);
             setUserData(result);
             setLoading(false);
           } catch (error) {
@@ -57,12 +55,12 @@ export const useUserData = () => {
     };
 
     fetchUserData();
-  }, [navigate]);
+  }, []);
 
   return { userData, loading, isLogin };
 };
 
-export const getUserData = async (navigate, setIsLogin) => {
+export const getUserData = async (setIsLogin) => {
   const token = localStorage.getItem('access');
   if (!token) {
       console.log('로그인이 필요한 서비스입니다.');
