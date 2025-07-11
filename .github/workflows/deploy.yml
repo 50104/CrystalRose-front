@@ -20,11 +20,7 @@ jobs:
 
       - name: Generate version files
         run: |
-          VERSION=$(date +%Y%m%d%H%M)
-          echo "export const SW_VERSION = '$VERSION';" > src/swVersion.js
-          echo "export const CACHE_VERSION = '$VERSION';" > src/cacheVersion.js
-
-          cp public/service-worker.template.js public/service-worker.$VERSION.js
+          node scripts/generate-sw-version.js
 
       - name: Install dependencies
         run: npm ci
@@ -45,7 +41,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ap-northeast-2
           SOURCE_DIR: build
-      
+
       - name: Clean up old service worker versions
         run: |
           cd public
