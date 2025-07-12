@@ -87,23 +87,30 @@ export default function RoseRegister({ onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // 폼 검증
-    if (!validateForm()) {
-      return;
-    }
 
-    setIsSubmitting(true);
+    if (!validateForm()) return;
+
     try {
-      await axiosInstance.post(`/api/roses/mine`, {
-        ...formData
+      const checkRes = await axiosInstance.get(`/api/roses/check-duplicate`, {
+        params: { wikiId: formData.wikiId }
       });
+
+      if (checkRes.data?.exists) {
+        alert('해당 품종의 장미는 이미 등록되어 있습니다.');
+        return;
+      }
+
+      setIsSubmitting(true);
+
+      await axiosInstance.post(`/api/roses/mine`, formData);
       setMessage({ type: 'success', text: '등록 성공!' });
+
       setFormData({
         wikiId: '', nickname: '', acquiredDate: '', locationNote: '', imageUrl: ''
       });
       setImagePreview(null);
       onSuccess?.();
+
     } catch (err) {
       console.error(err);
       setMessage({ type: 'error', text: '등록 실패!' });
