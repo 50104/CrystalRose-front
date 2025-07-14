@@ -18,6 +18,7 @@ const StompChatPage = () => {
   const [roomInfo, setRoomInfo] = useState(null);
   const [roomTitle, setRoomTitle] = useState('채팅방');
   const chatBoxRef = useRef(null);
+  const isSubscribedRef = useRef(false);
   const token = localStorage.getItem('access');
 
   useEffect(() => {
@@ -47,20 +48,30 @@ const StompChatPage = () => {
       setRoomTitle('채팅방');
     }
   }, [roomId, senderId, token]); 
+  
+  useEffect(() => {
+    if (!isInitialLoad && messages.length > 0) {
+      scrollToBottom();
+    }
+  }, [isInitialLoad, messages]);
 
   const connectWebSocket = useCallback(async () => {
-    if (stompClient && stompClient.connected) return;
+    if (stompClient && stompClient.connected) {
+      console.log("이미 WebSocket 연결됨");
+      return;
+    }
 
     try {
       const response = await axiosInstance.post(`/reissue`);
       const accessToken = response.data.accessToken;
       localStorage.setItem("access", accessToken);
 
-      const sockJs = new SockJS(`/connect`);
+      const sockJs = new SockJS(`${process.env.REACT_APP_API_URL}/connect`);
       const client = Stomp.over(sockJs);
 
       client.connect(
-        { Authorization: `Bearer ${accessToken}`, roomId },
+        { Authorization: `Bearer ${accessToken}`, 
+          roomId: roomId.toString() },
         () => {
           client.subscribe(
             `/api/v1/chat/topic/${roomId}`,
@@ -71,9 +82,9 @@ const StompChatPage = () => {
                 return;
               }
               setMessages((prev) => [...prev, parsedMessage]);
-              scrollToBottom();
             }
           );
+          isSubscribedRef.current = true;
         },
         (error) => {
           console.error('웹소켓 오류:', error);
@@ -92,6 +103,7 @@ const StompChatPage = () => {
       if (stompClient && stompClient.connected) {
         stompClient.unsubscribe(`/api/v1/chat/topic/${roomId}`);
         stompClient.disconnect();
+        isSubscribedRef.current = false;
       }
     } catch (error) {
       console.error('웹소켓 종료 실패:', error);
