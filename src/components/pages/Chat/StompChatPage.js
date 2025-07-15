@@ -14,31 +14,51 @@ const StompChatPage = () => {
   const [senderId, setSenderId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [roomInfo, setRoomInfo] = useState(null);
   const [roomTitle, setRoomTitle] = useState('채팅방');
   const chatBoxRef = useRef(null);
   const isSubscribedRef = useRef(false);
   const token = localStorage.getItem('access');
 
-  useEffect(() => {
-    if (isInitialLoad && messages.length > 0) {
-      scrollToBottom();
-      setIsInitialLoad(false);
+  const getWsUrl = () => {
+    const defaultHost = window.location.hostname === 'localhost'
+      ? 'http://localhost:4000'
+      : 'https://api.dodorose.com';
+    const baseUrl = process.env.REACT_APP_API_URL || defaultHost;
+    return `${baseUrl}/api/v1/connect`;
+  };
+
+  const scrollToBottom = () => {
+    const box = chatBoxRef.current;
+    if (box) {
+      box.scrollTop = box.scrollHeight;
     }
-  }, [messages, isInitialLoad]);
+  };
+
+  const prevMessagesRef = useRef([]);
+  useEffect(() => {
+    const prevMessages = prevMessagesRef.current;
+    const prevLastMsg = prevMessages[prevMessages.length - 1];
+    const newLastMsg = messages[messages.length - 1];
+
+    if (prevLastMsg?.id !== newLastMsg?.id && !loading) {
+      setTimeout(() => {
+        scrollToBottom();
+      }, 0);
+    }
+
+    prevMessagesRef.current = messages;
+  }, [messages, loading]);
 
   const fetchRoomInfo = useCallback(async () => {
     try {
       const response = await axiosInstance.get(`/api/v1/chat/room/${roomId}/info`);
       const roomData = response.data;
       setRoomInfo(roomData);
-      
-      // 채팅방 이름 설정
+
       if (roomData.isGroupChat === 'Y') {
         setRoomTitle(roomData.roomName || '그룹채팅방');
       } else {
-        // 1대1 채팅방 : 방이름 상대방 닉네임 
         const currentUserId = senderId || (token ? jwtDecode(token).userId : null);
         const otherParticipant = roomData.participants?.find(p => p.userId !== currentUserId);
         setRoomTitle(otherParticipant?.userNick || '채팅방');
@@ -47,47 +67,56 @@ const StompChatPage = () => {
       console.error('채팅방 정보 불러오기 실패:', error);
       setRoomTitle('채팅방');
     }
-  }, [roomId, senderId, token]); 
-  
-  useEffect(() => {
-    if (!isInitialLoad && messages.length > 0) {
-      scrollToBottom();
-    }
-  }, [isInitialLoad, messages]);
+  }, [roomId, senderId, token]);
 
   const connectWebSocket = useCallback(async () => {
-    if (stompClient && stompClient.connected) {
+    if (stompClient?.connected) {
       console.log("이미 WebSocket 연결됨");
       return;
     }
 
     try {
-      const response = await axiosInstance.post(`/reissue`);
+      const response = await axiosInstance.post('/reissue', {}, {
+        withCredentials: true
+      });
+
       const accessToken = response.data.accessToken;
       localStorage.setItem("access", accessToken);
 
-      const sockJs = new SockJS(`${process.env.REACT_APP_API_URL}/connect`);
-      const client = Stomp.over(sockJs);
+      const sock = new SockJS(getWsUrl());
+      const client = Stomp.over(sock);
 
       client.connect(
-        { Authorization: `Bearer ${accessToken}`, 
-          roomId: roomId.toString() },
+        {
+          Authorization: `Bearer ${accessToken}`,
+          roomId: roomId.toString(),
+          'accept-version': '1.1,1.2',
+          'heart-beat': '10000,10000'
+        },
         () => {
-          client.subscribe(
-            `/api/v1/chat/topic/${roomId}`,
-            (message) => {
+          if (!isSubscribedRef.current && stompClient?.connected) {
+            client.subscribe(`/api/v1/chat/topic/${roomId}`, (message) => {
               const parsedMessage = JSON.parse(message.body);
+
               if (parsedMessage.type === 'READ') {
                 window.dispatchEvent(new Event('chat-read'));
                 return;
               }
-              setMessages((prev) => [...prev, parsedMessage]);
-            }
-          );
-          isSubscribedRef.current = true;
+
+              setMessages((prev) => {
+                if (!parsedMessage.id || prev.some((m) => m.id === parsedMessage.id)) {
+                  return prev;
+                }
+                return [...prev, parsedMessage];
+              });
+            });
+
+            isSubscribedRef.current = true;
+          }
         },
         (error) => {
           console.error('웹소켓 오류:', error);
+          alert('실시간 채팅 서버에 연결할 수 없습니다.');
         }
       );
 
@@ -100,7 +129,7 @@ const StompChatPage = () => {
   const disconnectWebSocket = useCallback(async () => {
     try {
       await axiosInstance.post(`/api/v1/chat/room/${roomId}/read`);
-      if (stompClient && stompClient.connected) {
+      if (stompClient?.connected) {
         stompClient.unsubscribe(`/api/v1/chat/topic/${roomId}`);
         stompClient.disconnect();
         isSubscribedRef.current = false;
@@ -127,9 +156,7 @@ const StompChatPage = () => {
     }
     fetchRoomInfo();
     fetchMessageHistory();
-    return () => {
-      disconnectWebSocket();
-    };
+    return () => disconnectWebSocket();
   }, [roomId, token, fetchRoomInfo, fetchMessageHistory, disconnectWebSocket]);
 
   const fetchOlderMessages = useCallback(async () => {
@@ -149,9 +176,7 @@ const StompChatPage = () => {
       const existingIds = new Set(messages.map((m) => m.id));
       const newUniqueMessages = res.data.filter((m) => !existingIds.has(m.id));
 
-      if (res.data.length === 0) {
-        setHasMore(false);
-      }
+      if (res.data.length === 0) setHasMore(false);
 
       if (newUniqueMessages.length > 0) {
         setMessages((prev) => [...newUniqueMessages, ...prev]);
@@ -178,37 +203,43 @@ const StompChatPage = () => {
     }
   }, [loading, hasMore, fetchOlderMessages]);
 
-  const sendMessage = () => {
-    if (newMessage.trim() === '') return;
-    const token = localStorage.getItem('access');
-    let sender = null;
-    if (token) {
-      const decoded = jwtDecode(token);
-      sender = decoded.userId;
-    }
-    const message = { senderId: sender, message: newMessage };
-    if (stompClient && stompClient.connected) {
-      stompClient.send(`/api/v1/chat/publish/${roomId}`, 
-      JSON.stringify(message), 
-      { 'Content-Type': 'application/json; charset=UTF-8' });
-      setNewMessage('');
-    } else {
-      console.error('웹소켓 연결 안됨');
-    }
-  };
-
-  const scrollToBottom = () => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-    }
-  };
-
   useEffect(() => {
     const box = chatBoxRef.current;
     if (!box) return;
     box.addEventListener('scroll', handleScroll);
     return () => box.removeEventListener('scroll', handleScroll);
   }, [messages, loading, handleScroll]);
+
+  const sendMessage = () => {
+    if (newMessage.trim() === '') return;
+
+    const token = localStorage.getItem('access');
+    let sender = null;
+    if (token) {
+      const decoded = jwtDecode(token);
+      sender = decoded.userId;
+    }
+
+    const message = {
+      senderId: sender,
+      message: newMessage,
+      createdDate: new Date().toISOString(), // 직접 렌더링용
+      senderNick: roomInfo?.participants?.find(p => p.userId === sender)?.userNick || '',
+      senderProfileImg: roomInfo?.participants?.find(p => p.userId === sender)?.userProfileImg || ''
+    };
+
+    if (stompClient?.connected) {
+      stompClient.send(`/api/v1/chat/publish/${roomId}`, JSON.stringify(message), {
+        'Content-Type': 'application/json; charset=UTF-8'
+      });
+
+      setMessages((prev) => [...prev, { ...message, id: `local-${Date.now()}` }]);
+      scrollToBottom();
+      setNewMessage('');
+    } else {
+      console.error('웹소켓 연결 안됨');
+    }
+  };
 
   return (
     <div className="stompchat-container">
@@ -220,13 +251,15 @@ const StompChatPage = () => {
           )}
         </h2>
       </div>
-      
+
       <div ref={chatBoxRef} className="stompchat-box">
         {loading && <div className="stompchat-loading">이전 메시지 불러오는 중</div>}
-        {messages.map((msg) => {
+        {messages.map((msg, index) => {
           const isMine = msg.senderId?.toString() === senderId?.toString();
+          const key = msg.id ?? msg.createdDate ?? `msg-${index}`;
+
           return (
-            <div key={msg.id} className={`stompchat-message-wrapper ${isMine ? 'stompchat-message-right' : 'stompchat-message-left'}`}>
+            <div key={key} className={`stompchat-message-wrapper ${isMine ? 'stompchat-message-right' : 'stompchat-message-left'}`}>
               {!isMine && (
                 <div className="stompchat-profile-img">
                   <img
@@ -247,9 +280,9 @@ const StompChatPage = () => {
                     {msg.message}
                   </div>
                   <div className="stompchat-timestamp">
-                    {new Date(msg.createdDate).toLocaleTimeString('ko-KR', { 
-                      hour: '2-digit', 
-                      minute: '2-digit' 
+                    {new Date(msg.createdDate).toLocaleTimeString('ko-KR', {
+                      hour: '2-digit',
+                      minute: '2-digit'
                     })}
                   </div>
                 </div>
@@ -258,7 +291,7 @@ const StompChatPage = () => {
           );
         })}
       </div>
-      
+
       <div className="stompchat-input-container">
         <input
           type="text"
