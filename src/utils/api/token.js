@@ -8,8 +8,10 @@ export function GetAccess() {
     const fetchAccessToken = async () => {
       try {
         console.log('GetAccess: 토큰 재발급 시작');
-        const response = await axiosInstance.post('/reissue');
-        
+        const response = await axiosInstance.post('/reissue', {}, {
+          withCredentials: true
+        });
+
         if (response.data.accessToken) {
           localStorage.setItem('access', response.data.accessToken);
           console.log('GetAccess: Access Token 저장 완료');
@@ -45,7 +47,9 @@ export function GetAccess() {
 export const getAccessToken = async () => {
   try {
     console.log('getAccessToken: 토큰 재발급 요청');
-    const response = await axiosInstance.post('/reissue');
+    const response = await axiosInstance.post('/reissue', {}, {
+      withCredentials: true
+    });
     
     if (response.data.accessToken) {
       localStorage.setItem('access', response.data.accessToken);

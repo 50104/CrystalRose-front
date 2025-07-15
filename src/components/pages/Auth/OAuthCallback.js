@@ -18,7 +18,8 @@ export function OAuthCallback() {
         const response = await retryableRequest(
           () => oauthAxiosInstance.post('/reissue'),
           3,
-          1000
+          1000,
+          { withCredentials: true }
         );
 
         if (response.data.accessToken) {

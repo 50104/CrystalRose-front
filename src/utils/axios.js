@@ -51,8 +51,10 @@ axiosInstance.interceptors.response.use(
 
       try {
         console.log('401 에러 발생, 토큰 갱신 시도');
-        const response = await axiosInstance.post('/reissue');
-
+        const response = await axiosInstance.post('/reissue', {}, {
+          withCredentials: true
+        });
+        
         if (response.status === 200 && response.data.accessToken) {
           localStorage.setItem('access', response.data.accessToken);
           originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
