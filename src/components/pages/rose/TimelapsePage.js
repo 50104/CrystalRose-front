@@ -1,17 +1,20 @@
 import { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { axiosInstance } from '@utils/axios';
 import './TimelapsePage.css';
 
 export default function TimelapsePage() {
   const { roseId } = useParams();
+  const navigate = useNavigate();
   const [diaryList, setDiaryList] = useState([]);
   const [index, setIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const containerRef = useRef(null);
   const intervalRef = useRef(null);
   const current = diaryList[index];
+  const location = useLocation();
+  const roseName = location.state?.nickname || '장미';
 
   // 5장 썸네일
   const getVisibleThumbnails = () => {
@@ -64,6 +67,7 @@ export default function TimelapsePage() {
   return (
     <div className="timelapse-wrapper">
       <div className="timelapse-container">
+        <h1 className="timelapse-title">{roseName} 타임랩스</h1>
         <AnimatePresence mode="wait">
           <motion.img
             key={current.imageUrl}
@@ -85,8 +89,7 @@ export default function TimelapsePage() {
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.6 }}
         >
-          <p>📅 {new Date(current.recordedAt).toLocaleDateString('ko-KR')}</p>
-          <p>📝 {current.note}</p>
+          <p>{new Date(current.recordedAt).toLocaleDateString('ko-KR')} &nbsp;&nbsp;📝 {current.note}</p>
         </motion.div>
 
         <button
@@ -108,6 +111,15 @@ export default function TimelapsePage() {
               className={`thumbnail-image ${originalIndex === index ? 'active' : ''}`}
             />
           ))}
+        </div>
+      </div>
+      
+      <div className="timelapse-navigation">
+        <div
+          className="timelapse-back-button"
+          onClick={() => navigate('/roses/list')}
+        >
+          &larr; 목록으로 돌아가기
         </div>
       </div>
     </div>

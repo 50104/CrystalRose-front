@@ -4,18 +4,23 @@
   height: 480px;
   margin: 2rem auto;
   position: relative;
-  overflow: hidden;
-  border-radius: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  background-color: #f9fafb;
+}
+
+.timelapse-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #111827;
+  text-align: center;
 }
 
 .timelapse-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   position: absolute;
   border-radius: 1rem;
+  background-color: rgb(255, 255, 255);
 }
 
 .timelapse-info {
@@ -117,13 +122,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 1rem;
+  margin-top: 5rem;
 }
 
 .timelapse-toggle-button {
   position: absolute;
-  bottom: 2rem;
-  right: 2rem;
+  bottom: 1rem;
+  right: 1rem;
   padding: 0.6rem 1.2rem;
   background-color: #ec4899;
   color: white;
@@ -133,8 +138,32 @@
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s;
+  z-index: 10;
 }
 
 .timelapse-toggle-button:hover {
   background-color: #be185d;
+}
+
+.timelapse-navigation {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6rem;
+  justify-content: flex-start;
+}
+
+.timelapse-back-button {
+  color: #6b7280;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+}
+
+.timelapse-back-button:hover {
+  color: #374151;
+  background-color: #f3f4f6;
 }

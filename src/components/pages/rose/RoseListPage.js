@@ -138,6 +138,7 @@ export default function RoseListPage() {
                     </Link>
                     <Link 
                       to={`/diaries/${rose.id}/timelapse`} 
+                      state={{ nickname: rose.nickname }}
                       className="rose-entry-action-link secondary"
                     >
                       타임랩스

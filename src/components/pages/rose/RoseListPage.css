@@ -1,7 +1,5 @@
 .rose-list-container {
   max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
   font-family: sans-serif;
 }
 
@@ -9,7 +7,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .rose-list-title {
@@ -17,6 +15,7 @@
   font-weight: 700;
   color: #111827;
   margin: 0;
+  text-align: center;
 }
 
 .rose-list-buttons {
