@@ -9,7 +9,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .wiki-list-title {
@@ -195,7 +195,7 @@
 }
 
 .wiki-entry-content {
-  padding: 1rem;
+  padding: 1rem 1rem 0 1rem;
 }
 
 .wiki-entry-header {
@@ -223,7 +223,7 @@
 }
 
 .wiki-entry-category {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: #ec4899;
   background-color: #fce7f3;
   padding: 0.25rem 0.5rem;
