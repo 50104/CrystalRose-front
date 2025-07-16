@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
 import './DiaryRegister.css';
 import { safeConvertToWebP } from '../../../utils/imageUtils';
 
 export default function DiaryRegister({ onSuccess }) {
   const { roseId } = useParams();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     roseId: roseId || '', 
     note: '',
@@ -17,12 +18,6 @@ export default function DiaryRegister({ onSuccess }) {
   const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
-
-  const normalizeRecordedAt = (value) => {
-    if (value.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/)) return value;
-    if (value.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)) return value + ':00';
-    return value;
-  };
 
   // 필수 필드 검증 함수
   const validateForm = () => {
@@ -103,7 +98,7 @@ export default function DiaryRegister({ onSuccess }) {
     // 날짜 형식 변환
     const submitData = {
         ...formData,
-        recordedAt: formData.recordedAt ? normalizeRecordedAt(formData.recordedAt) : null
+        recordedAt: formData.recordedAt && formData.recordedAt.trim() !== '' ? formData.recordedAt : null
     };
     console.log('Submitting data:', submitData);
     console.log("선택된 장미 ID:", formData.roseId);
@@ -124,6 +119,7 @@ export default function DiaryRegister({ onSuccess }) {
         imageUrl: ''
       });
       setImagePreview(null);
+      navigate(`/diaries/${formData.roseId}/timeline`);
       onSuccess?.();
     } catch (err) {
       console.error('Submit error:', err.response?.data || err.message);
@@ -201,12 +197,12 @@ export default function DiaryRegister({ onSuccess }) {
               <label className="diary-form-label">
                 기록 날짜 <span className="diary-required">*</span>
               </label>
-              <input 
-                type="datetime-local" 
-                name="recordedAt" 
-                value={formData.recordedAt} 
-                onChange={handleChange} 
-                required 
+              <input
+                type="date"
+                name="recordedAt"
+                value={formData.recordedAt}
+                onChange={handleChange}
+                required
                 className="diary-form-input"
               />
             </div>
