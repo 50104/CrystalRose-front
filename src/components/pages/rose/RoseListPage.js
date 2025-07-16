@@ -132,6 +132,7 @@ export default function RoseListPage() {
                   <div className="rose-entry-actions-row">
                     <Link 
                       to={`/diaries/${rose.id}/timeline`} 
+                      state={{ nickname: rose.nickname }}
                       className="rose-entry-action-link secondary"
                     >
                       타임라인
