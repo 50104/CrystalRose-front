@@ -5,6 +5,7 @@ import './MyPage.css';
 import { getAccessToken } from '@utils/api/token';
 import { useNavigate } from 'react-router-dom';
 import { FaGear } from "react-icons/fa6";
+import { safeConvertToWebP } from '../../../utils/imageUtils';
 
 function MyPage() {
     const { userData, loading } = useUserData();
@@ -56,10 +57,12 @@ function MyPage() {
 
     const handleModify = async () => {
         const file = inputRef.current.files[0];
+        const finalFile = await safeConvertToWebP(file);
+
         const formData = new FormData();
         formData.append('userNick', userData.userNick);
-        if (!isDelete && file) {
-            formData.append("userProfileFile", file);
+        if (!isDelete && finalFile) {
+            formData.append("userProfileFile", finalFile);
         }
         formData.append('isDelete', String(isDelete));
 

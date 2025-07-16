@@ -3,6 +3,7 @@ import { axiosInstance, noAuthAxios } from '@utils/axios';
 import { GetUser } from '@utils/api/user';
 import { useNavigate } from 'react-router-dom';
 import './RoseRegister.css';
+import { safeConvertToWebP } from '../../../utils/imageUtils';
 
 export default function RoseRegister({ onSuccess }) {
   const { isLogin } = GetUser();
@@ -80,11 +81,12 @@ export default function RoseRegister({ onSuccess }) {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    const finalFile = await safeConvertToWebP(file);
 
     setUploading(true);
     try {
       const uploadForm = new FormData();
-      uploadForm.append('file', file);
+      uploadForm.append('file', finalFile);
 
       const res = await axiosInstance.post(
         `/api/roses/image/upload`,

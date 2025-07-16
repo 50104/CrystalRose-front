@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './WikiRegister.css';
 import { axiosInstance } from '@utils/axios';
+import { safeConvertToWebP } from '../../../utils/imageUtils';
 
 export default function WikiRegisterPage() {
   const { id } = useParams();
@@ -92,19 +93,17 @@ export default function WikiRegisterPage() {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    const finalFile = await safeConvertToWebP(file);
+
     setUploading(true);
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', finalFile);
 
       const response = await axiosInstance.post(
         `/api/v1/wiki/image/upload`,
         formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
+        { headers: { 'Content-Type': 'multipart/form-data' } }
       );
 
       const url = response.data.url;
@@ -112,7 +111,6 @@ export default function WikiRegisterPage() {
       setImagePreview(url);
     } catch (error) {
       console.error('이미지 업로드 실패:', error);
-      console.log('imageUrl:', formData.imageUrl);
       setMessage({ type: 'error', text: '이미지 업로드에 실패했습니다.' });
     } finally {
       setUploading(false);

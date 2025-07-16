@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
 import './DiaryRegister.css';
+import { safeConvertToWebP } from '../../../utils/imageUtils';
 
 export default function DiaryRegister({ onSuccess }) {
   const { roseId } = useParams();
@@ -65,15 +66,19 @@ export default function DiaryRegister({ onSuccess }) {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    const finalFile = await safeConvertToWebP(file);
+
     setUploading(true);
     try {
       const uploadForm = new FormData();
-      uploadForm.append('file', file);
+      uploadForm.append('file', finalFile);
+
       const res = await axiosInstance.post(
         `/api/diaries/image/upload`,
         uploadForm,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       );
+
       const url = res.data.url;
       setFormData(prev => ({ ...prev, imageUrl: url }));
       setImagePreview(url);
