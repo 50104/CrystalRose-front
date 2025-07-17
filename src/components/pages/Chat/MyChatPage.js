@@ -62,7 +62,7 @@ const MyChatPage = () => {
                 <Button color="primary" onClick={() => enterChatRoom(chat.roomId)}>입장</Button>
                 <Button
                   color="secondary"
-                  disabled={chat.isGroupChat === 'N'}
+                  // disabled={chat.isGroupChat === 'N'}
                   onClick={() => leaveChatRoom(chat.roomId)}
                 >
                   나가기

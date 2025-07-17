@@ -24,8 +24,8 @@ const MemberList = () => {
   const startChat = async (otherMemberId) => {
     try {
       const response = await axiosInstance.post(`/api/v1/chat/room/private/create?otherMemberId=${otherMemberId}`);
-      const roomId = response.data.roomId;
-      navigate(`/chatpage/${roomId}`);
+      const { roomId, displayName } = response.data;
+      navigate(`/chatpage/${roomId}`, { state: { displayName } });
     } catch (error) {
       console.error('채팅방을 생성하는 중 오류 발생:', error);
     }
