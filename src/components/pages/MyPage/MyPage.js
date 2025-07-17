@@ -99,42 +99,49 @@ function MyPage() {
 
     return (
         <div className='user-info'>
-            <div className='img-modify'>
-                <div className="user-img-wrapper">
-                    <div className='img-wrapper-inner' onClick={onUploadImageButtonClick}>
-                        <img 
-                            className="user-img"
-                            alt="profile"
-                            src={changeProfileImage ? changeProfileImage : (currentProfileImage ? currentProfileImage : "https://i.pinimg.com/564x/d9/7b/bb/d97bbb08017ac2309307f0822e63d082.jpg")} 
+            {userData ? (
+                <>
+                    <div className='img-modify'>
+                        <div className="user-img-wrapper">
+                            <div className='img-wrapper-inner' onClick={onUploadImageButtonClick}>
+                                <img 
+                                    className="user-img"
+                                    alt="profile"
+                                    src={changeProfileImage ? changeProfileImage : (currentProfileImage ? currentProfileImage : "https://i.pinimg.com/564x/d9/7b/bb/d97bbb08017ac2309307f0822e63d082.jpg")} 
+                                />
+                                <div className="user-img-overlay" readOnly>편집</div>
+                            </div>
+                            <div className="modify-button" onClick={handleUserEdit}><FaGear size={32} /></div>
+                        </div><br/>
+                        <input 
+                            ref={inputRef}
+                            className="hidden"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange} 
+                            style={{ display: 'none' }}
                         />
-                        <div className="user-img-overlay" readOnly>편집</div>
+                        {fileName && <div>{fileName}</div>}
+                        <div className='img-box-body'>
+                            <div className="img-box" onClick={handleModify}>
+                                확인
+                            </div>
+                            <div className="img-box" onClick={deleteButtonClick}>
+                                초기화
+                            </div>
+                        </div>
                     </div>
-                    <div className="modify-button" onClick={handleUserEdit}><FaGear size={32} /></div>
-                </div><br/>
-                <input 
-                    ref={inputRef}
-                    className="hidden"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange} 
-                    style={{ display: 'none' }}
-                />
-                {fileName && <div>{fileName}</div>}
-                <div className='img-box-body'>
-                    <div className="img-box" onClick={handleModify}>
-                        확인
+                    <div className='ect'>
+                        <a href="/my/chat/page">내 채팅</a>
+                        <div onClick={logoutFunction} className="cursor">로그아웃</div>
                     </div>
-                    <div className="img-box" onClick={deleteButtonClick}>
-                        초기화
-                    </div>
+                </>
+            ) : (
+                <div className='ect'>
+                    <a href="/join"><div>회원가입</div></a>
+                    <a href="/login"><div>로그인</div></a>
                 </div>
-            </div>
-            <div className='ect'>
-              <a href="/my/chat/page">내 채팅</a>
-              <a href="/join"><div>회원가입</div></a>
-              <a href="/login"><div>로그인</div></a>
-              <div onClick={logoutFunction} className="cursor">로그아웃</div>
-            </div>
+            )}
         </div>
     );
 }
