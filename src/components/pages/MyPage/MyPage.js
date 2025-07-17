@@ -48,7 +48,16 @@ function MyPage() {
         }
     };
 
+    useEffect(() => {
+        if (isDelete) {
+            handleModify();
+        }
+        // eslint-disable-next-line
+    }, [isDelete]);
+
     const deleteButtonClick = () => {
+        const result = window.confirm('프로필사진을 초기화하시겠습니까?');
+        if (!result) return;
         setCurrentProfileImage(null);
         setChangeProfileImage(null);
         setIsDelete(true);
@@ -57,7 +66,7 @@ function MyPage() {
 
     const handleModify = async () => {
         const file = inputRef.current.files[0];
-        const finalFile = await safeConvertToWebP(file);
+        const finalFile = file ? await safeConvertToWebP(file) : null;
 
         const formData = new FormData();
         formData.append('userNick', userData.userNick);
@@ -124,10 +133,10 @@ function MyPage() {
                         {fileName && <div>{fileName}</div>}
                         <div className='img-box-body'>
                             <div className="img-box" onClick={handleModify}>
-                                확인
+                                저장
                             </div>
                             <div className="img-box" onClick={deleteButtonClick}>
-                                초기화
+                                삭제
                             </div>
                         </div>
                     </div>
