@@ -88,6 +88,14 @@ video {
   vertical-align: baseline;
 }
 
+html, body {
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none; /* Firefox */
+}
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
 /* HTML5 display-role reset for older browsers */
 article,
 aside,
@@ -151,10 +159,13 @@ html, body {
 
 .main_div {
   background-color: #f8f8ff;
-  min-height: calc(100vh - 200px);
   box-sizing: border-box;
   overflow: auto;
   padding: 20px;
+}
+
+.main_div::-webkit-scrollbar {
+  display: none;
 }
 
 @media screen and (max-width: 430px) {
@@ -165,5 +176,9 @@ html, body {
   .content_area {
     flex: none;
     height: calc(100vh - 120px);
+  }
+  
+  ::-webkit-scrollbar {
+    display: none;
   }
 }

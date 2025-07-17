@@ -13,20 +13,7 @@
 }
 
 .custom-calendar-container::-webkit-scrollbar {
-  width: 2px;
-}
-
-.custom-calendar-container::-webkit-scrollbar-track {
-  border-radius: 3px;
-}
-
-.custom-calendar-container::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
-}
-
-.custom-calendar-container::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
+  display: none;
 }
 
 .calendar-month {

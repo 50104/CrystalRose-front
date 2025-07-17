@@ -37,16 +37,7 @@
 }
 
 .stompchat-box::-webkit-scrollbar {
-  width: 4px;
-}
-
-.stompchat-box::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.stompchat-box::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 2px;
+  display: none;
 }
 
 .stompchat-message-wrapper {
