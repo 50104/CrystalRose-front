@@ -8,6 +8,13 @@ export default function WikiDetailPage() {
   const [wikiEntry, setWikiEntry] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 480);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const getProgressValue = (value) => {
     if (!value) return 0;
@@ -142,7 +149,7 @@ export default function WikiDetailPage() {
           수정하기
         </RouterLink>
       </div>
-      
+
       <div className="wiki-detail-header">
         <h1 className="wiki-detail-title">{wikiEntry.name}</h1>
         <div className="wiki-detail-header-info">
@@ -155,31 +162,33 @@ export default function WikiDetailPage() {
           )}
         </div>
       </div>
-      
+
       <div className="wiki-detail-content-wrapper">
         <div className="wiki-detail-left-section">
           {wikiEntry.imageUrl && (
             <img src={wikiEntry.imageUrl} alt={wikiEntry.name} className="wiki-detail-image" />
           )}
-          <div className="wiki-detail-image-info">
-            {wikiEntry.petalCount && (
-              <div className="wiki-detail-info-item">
-                <strong>꽃잎 수:</strong> <span>{wikiEntry.petalCount}</span>
-              </div>
-            )}
-            {wikiEntry.growthType && (
-              <div className="wiki-detail-info-item">
-                <strong>생장형태:</strong> <span>{wikiEntry.growthType}</span>
-              </div>
-            )}
-          </div>
+          {!isMobile && (
+            <div className="wiki-detail-image-info">
+              {wikiEntry.petalCount && (
+                <div className="wiki-detail-info-item">
+                  <strong>꽃잎 수:</strong> <span>{wikiEntry.petalCount}</span>
+                </div>
+              )}
+              {wikiEntry.growthType && (
+                <div className="wiki-detail-info-item">
+                  <strong>생장형태:</strong> <span>{wikiEntry.growthType}</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
-        
+
         <div className="wiki-detail-right-section">
           {wikiEntry.description && (
             <p className="wiki-detail-description">{wikiEntry.description}</p>
           )}
-          
+
           <div className="wiki-detail-specs">
             <div className="wiki-detail-progress-section">
               {wikiEntry.fragrance && (
@@ -197,7 +206,7 @@ export default function WikiDetailPage() {
                   <div className="progress-value">{wikiEntry.fragrance}</div>
                 </div>
               )}
-              
+
               {wikiEntry.growthPower && (
                 <div className="wiki-detail-progress-item">
                   <div className="progress-label">수세</div>
@@ -213,7 +222,7 @@ export default function WikiDetailPage() {
                   <div className="progress-value">{wikiEntry.growthPower}</div>
                 </div>
               )}
-              
+
               {wikiEntry.diseaseResistance && (
                 <div className="wiki-detail-progress-item">
                   <div className="progress-label">내병성</div>
@@ -229,7 +238,7 @@ export default function WikiDetailPage() {
                   <div className="progress-value">{wikiEntry.diseaseResistance}</div>
                 </div>
               )}
-              
+
               {wikiEntry.coldResistance && (
                 <div className="wiki-detail-progress-item">
                   <div className="progress-label">내한성</div>
@@ -245,7 +254,7 @@ export default function WikiDetailPage() {
                   <div className="progress-value">{wikiEntry.coldResistance}</div>
                 </div>
               )}
-              
+
               {wikiEntry.multiBlooming && (
                 <div className="wiki-detail-progress-item">
                   <div className="progress-label">다화성</div>
@@ -261,7 +270,7 @@ export default function WikiDetailPage() {
                   <div className="progress-value">{wikiEntry.multiBlooming}</div>
                 </div>
               )}
-              
+
               {wikiEntry.flowerSize && (
                 <div className="wiki-detail-progress-item">
                   <div className="progress-label">꽃 크기</div>
@@ -277,7 +286,7 @@ export default function WikiDetailPage() {
                   <div className="progress-value">{wikiEntry.flowerSize}</div>
                 </div>
               )}
-              
+
               {wikiEntry.continuousBlooming && (
                 <div className="wiki-detail-progress-item">
                   <div className="progress-label">연속개화성</div>
@@ -295,6 +304,20 @@ export default function WikiDetailPage() {
               )}
             </div>
 
+            {isMobile && (
+              <div className="wiki-detail-image-info">
+                {wikiEntry.petalCount && (
+                  <div className="wiki-detail-info-item">
+                    <strong>꽃잎 수:</strong> <span>{wikiEntry.petalCount}</span>
+                  </div>
+                )}
+                {wikiEntry.growthType && (
+                  <div className="wiki-detail-info-item">
+                    <strong>생장형태:</strong> <span>{wikiEntry.growthType}</span>
+                  </div>
+                )}
+              </div>
+            )}
             <div className="wiki-detail-bottom-info">
               {wikiEntry.usageType && (
                 <div className="wiki-detail-info-item">

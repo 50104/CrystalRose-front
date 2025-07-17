@@ -1,7 +1,7 @@
 .wiki-detail-container {
   max-width: 900px;
-  margin: 2rem auto;
-  padding: 2rem;
+  margin: auto;
+  padding: 1rem 1rem 1px 1rem;
   font-family: sans-serif;
   background-color: #fff;
   border-radius: 0.5rem;
@@ -241,7 +241,9 @@
 }
 
 .wiki-detail-specs {
-  margin-top: 0.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* 프로그레스 바 섹션 */
@@ -254,27 +256,8 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-}
-
-@media (min-width: 768px) {
-  .wiki-detail-progress-section {
-    flex: 1;
-    gap: 1rem;
-  }
-  
-  .wiki-detail-specs {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .wiki-detail-right-section {
-    flex-direction: column;
-  }
-  
-  .wiki-detail-bottom-info {
-    margin-top: auto;
-  }
+  flex: 1;
+  gap: 1rem;
 }
 
 /* 프로그레스 바 아래 정보 섹션 */
@@ -335,47 +318,45 @@
   font-weight: 500;
 }
 
-@media (max-width: 768px) {
-  .wiki-detail-header {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .wiki-detail-title {
-    font-size: 2rem;
-    text-align: center;
-  }
-  
-  .wiki-detail-header-info {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .wiki-detail-left-section {
-    width: 100%;
-  }
-  
-  .wiki-detail-progress-item {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
-  }
-  
-  .progress-label {
-    text-align: left;
-    min-width: auto;
-  }
-  
-  .wiki-detail-progress-section {
-    padding: 1rem;
+@media (max-width: 480px) {
+  .wiki-detail-content-wrapper {
+    margin-bottom: 1rem;
+    gap: 1rem;
   }
 
-  .wiki-detail-info-row {
-    flex-direction: column;
-    gap: 0.5rem;
+  .wiki-detail-image-info {
+    margin-top: 0rem;
+    margin-bottom: 1rem;
+  }
+
+  .wiki-detail-header {
+    margin-bottom: 1rem;
+  }
+
+  .wiki-detail-progress-item {
+    justify-content: center;
+    gap: 0.25rem;
+  }
+
+  .progress-label {
+    text-align: center;
+    min-width: 65px;
+    font-size: 0.88rem;
+    padding-right: 2px;
   }
   
-  .wiki-detail-info-row .wiki-detail-info-item {
+  .progress-value {
+    text-align: right;
+    min-width: 20px;
+    font-size: 0.88rem;
+    padding-left: 2px;
+    padding-right: 5px;
+  }
+
+  .progress-container {
     width: 100%;
+    min-width: 120px;
+    max-width: none;
+    margin: 0 4px;
   }
 }
