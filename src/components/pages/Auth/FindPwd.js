@@ -45,14 +45,13 @@ function FindPwd() {
             alert('이메일과 아이디를 입력해주세요.');
             return;
         }
+        setUserEmailMessage('임시 비밀번호가 이메일로 전송되었습니다.');
+        setEmailError(false);
         try {
-            const response = await noAuthAxios.post(`/api/v1/auth/findUserPwd`, {
+            await noAuthAxios.post(`/api/v1/auth/findUserPwd`, {
                 userId: userId,
                 userEmail: userEmail
             });
-            if (response.status === 200) {
-                setUserEmailMessage('임시 비밀번호가 이메일로 전송되었습니다.');
-            }
         } catch (error) {
             if (error.response && error.response.status === 400) {
                 setEmailError(true);

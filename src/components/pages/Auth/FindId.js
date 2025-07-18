@@ -24,22 +24,24 @@ function FindId() {
 
     const sendCertificationEmail = async (e) => {
         e.preventDefault();
-        if(!userEmail) {
+        if (!userEmail) {
             alert('이메일을 입력해주세요.');
             return;
         }
+        setUserEmailMessage("아이디가 이메일로 전송되었습니다.");
+        setUserEmailError(false);
         try {
-            const response = await noAuthAxios.post(`/api/v1/auth/findUserId`, { 
-                userEmail:userEmail 
+            await noAuthAxios.post(`/api/v1/auth/findUserId`, { 
+                userEmail: userEmail 
             });
-            if (response.status===200) {
-                setUserEmailMessage("아이디가 이메일로 전송되었습니다.");
-            } 
         } catch (error) {
-            if(error.response.status===400){
-                setUserEmailError(error.response.data.code);
-            } else{
-                setUserEmailError("서버 오류가 발생했습니다. 다시 시도해주세요.");
+            if (error.response?.status === 400) {
+                const message = error.response.data?.message || "입력 값을 확인해주세요.";
+                setUserEmailError(true);
+                setUserEmailMessage(message);
+            } else {
+                setUserEmailError(true);
+                setUserEmailMessage("서버 오류가 발생했습니다. 다시 시도해주세요.");
             }
         }
     };
