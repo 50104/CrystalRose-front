@@ -113,13 +113,11 @@ function SignUp() {
         setCertificationCheck(false);
     };
 
-    // onButtonClick
     // 아이디 중복 확인
     const onUserIdButtonClickHandler = async () => {
         if (!userId) return;
         if (isUserIdError) return;
         setUserIdMessage('');
-        console.log('userId:', userId);
         try {
             const response = await noAuthAxios.post(`/api/v1/auth/id-check`, {
                 userId: userId,
@@ -161,7 +159,6 @@ function SignUp() {
             return;
         }
         setUserEmailMessage('인증번호가 전송되었습니다.');
-        console.log('userEmail:', userEmail);
         try {
             const response = await noAuthAxios.post(`/api/v1/auth/email-certification`, {
                 userId: userId, userEmail: userEmail,
@@ -196,7 +193,6 @@ function SignUp() {
     // 인증번호 확인
     const onCertificationNumberButtonClickHandler = async () => {
         if (!userId || !userEmail || !certificationNumber) return;
-        console.log('certificationNumber:', certificationNumber);
         try {
             const response = await noAuthAxios.post(`/api/v1/auth/check-certification`, {
                 userId: userId, userEmail: userEmail, certificationNumber: certificationNumber,
@@ -250,7 +246,6 @@ function SignUp() {
             alert('이메일 인증은 필수입니다.');
             return;
         }
-        console.log('입력 정보:', '1', userId, '2', userNick, '3', userPwd, '4', userEmail, '5', certificationNumber);
         try {
             const response = await noAuthAxios.post(`/api/v1/auth/join`, {
                 userId: userId, 
@@ -264,25 +259,39 @@ function SignUp() {
             console.error('회원가입 실패:', error.response ? error.response.data : error.message);
             alert("회원가입에 실패했습니다. 다시 시도해주세요.");
         }
-        window.location.href = '/';
     };
 
     const signUpResponse = (responseBody) => {
         if (!responseBody) return;
         const { code } = responseBody;
-        if (code === ResponseCode.VALIDATION_FAIL) alert('모든 값을 입력하세요.');
+        if (code === ResponseCode.VALIDATION_FAIL) {
+            alert('모든 값을 입력하세요.');
+            return;
+        }
         if (code === ResponseCode.DUPLICATION_ID) {
             setUserIdError(true);
             setUserIdMessage('이미 사용중인 아이디입니다.');
             setUserIdCheck(false);
+            return;
         }
         if (code === ResponseCode.CERTIFICATION_FAIL) {
             setCertificationNumberError(true);
             setCertificationNumberMessage('인증번호가 일치하지않습니다.');
             setCertificationCheck(false);
+            return;
         }
-        if (code === ResponseCode.DATABASE_ERROR) alert('데이터베이스 오류입니다.');
+        if (code === ResponseCode.DATABASE_ERROR) {
+            alert('데이터베이스 오류입니다.');
+            return;
+        }
         if (code !== ResponseCode.SUCCESS) return;
+
+        // 회원가입 성공 시 모달
+        if (window.confirm('회원가입이 완료되었습니다. 로그인하시겠습니까?')) {
+            navigate('/login');
+        } else {
+            navigate('/');
+        }
     };
 
     const onSignInButtonClickHandler = () => {
