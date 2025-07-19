@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
 import { jwtDecode } from 'jwt-decode';
 import { format, isSameDay, parseISO } from 'date-fns';
+import { ko } from 'date-fns/locale';
 import './StompChatPage.css';
 
 const StompChatPage = () => {
@@ -233,7 +234,7 @@ const StompChatPage = () => {
         currentDate = msgDate;
         grouped.push(
           <div key={`date-${index}`} className="stompchat-date-separator">
-            {format(currentDate, 'yyyy년 MM월 dd일 eee')}
+            {format(currentDate, 'yyyy년 MM월 dd일 EEEE', { locale: ko })}
           </div>
         );
       }
