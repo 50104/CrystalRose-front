@@ -4,6 +4,7 @@ import Stomp from 'webstomp-client';
 import { useParams } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
 import { jwtDecode } from 'jwt-decode';
+import { format, isSameDay, parseISO } from 'date-fns';
 import './StompChatPage.css';
 
 const StompChatPage = () => {
@@ -30,9 +31,7 @@ const StompChatPage = () => {
 
   const scrollToBottom = () => {
     const box = chatBoxRef.current;
-    if (box) {
-      box.scrollTop = box.scrollHeight;
-    }
+    if (box) box.scrollTop = box.scrollHeight;
   };
 
   const prevMessagesRef = useRef([]);
@@ -55,11 +54,10 @@ const StompChatPage = () => {
       const response = await axiosInstance.get(`/api/v1/chat/room/${roomId}/info`);
       const roomData = response.data;
       setRoomInfo(roomData);
-
+      const currentUserId = senderId || (token ? jwtDecode(token).userId : null);
       if (roomData.isGroupChat === 'Y') {
         setRoomTitle(roomData.roomName || '그룹채팅방');
       } else {
-        const currentUserId = senderId || (token ? jwtDecode(token).userId : null);
         const otherParticipant = roomData.participants?.find(p => p.userId !== currentUserId);
         setRoomTitle(otherParticipant?.userNick || '채팅방');
       }
@@ -70,19 +68,15 @@ const StompChatPage = () => {
   }, [roomId, senderId, token]);
 
   const connectWebSocket = useCallback(async () => {
-    if (stompClient?.connected) {
-      console.log("WebSocket이 이미 연결되어 있습니다.");
-      return;
-    }
-
+    if (stompClient?.connected) return;
     try {
-      const response = await axiosInstance.post('/reissue', {}, {
-        withCredentials: true
-      });
-
+      const response = await axiosInstance.post('/reissue', {}, { withCredentials: true });
       const accessToken = response.data.accessToken;
       localStorage.setItem("access", accessToken);
-
+      console.log("🔐 WebSocket 연결 시도");
+      console.log("👉 roomId:", roomId);
+      console.log("👉 accessToken:", accessToken);
+      console.log("👉 WebSocket URL:", getWsUrl());
       const sock = new SockJS(getWsUrl());
       const client = Stomp.over(sock);
 
@@ -169,15 +163,10 @@ const StompChatPage = () => {
     const cursor = oldest?.createdDate;
 
     try {
-      const res = await axiosInstance.get(`/api/v1/chat/history/${roomId}`, {
-        params: { cursor }
-      });
-
+      const res = await axiosInstance.get(`/api/v1/chat/history/${roomId}`, { params: { cursor } });
       const existingIds = new Set(messages.map((m) => m.id));
       const newUniqueMessages = res.data.filter((m) => !existingIds.has(m.id));
-
       if (res.data.length === 0) setHasMore(false);
-
       if (newUniqueMessages.length > 0) {
         setMessages((prev) => [...newUniqueMessages, ...prev]);
         setTimeout(() => {
@@ -198,9 +187,7 @@ const StompChatPage = () => {
   const handleScroll = useCallback(() => {
     const box = chatBoxRef.current;
     if (!box || loading || !hasMore) return;
-    if (box.scrollTop <= 20) {
-      fetchOlderMessages();
-    }
+    if (box.scrollTop <= 20) fetchOlderMessages();
   }, [loading, hasMore, fetchOlderMessages]);
 
   useEffect(() => {
@@ -212,27 +199,23 @@ const StompChatPage = () => {
 
   const sendMessage = () => {
     if (newMessage.trim() === '') return;
-
     const token = localStorage.getItem('access');
     let sender = null;
     if (token) {
       const decoded = jwtDecode(token);
       sender = decoded.userId;
     }
-
     const message = {
       senderId: sender,
       message: newMessage,
-      createdDate: new Date().toISOString(), // 직접 렌더링용
+      createdDate: new Date().toISOString(),
       senderNick: roomInfo?.participants?.find(p => p.userId === sender)?.userNick || '',
       senderProfileImg: roomInfo?.participants?.find(p => p.userId === sender)?.userProfileImg || ''
     };
-
     if (stompClient?.connected) {
       stompClient.send(`/api/v1/chat/publish/${roomId}`, JSON.stringify(message), {
         'Content-Type': 'application/json; charset=UTF-8'
       });
-
       setMessages((prev) => [...prev, { ...message, id: `local-${Date.now()}` }]);
       scrollToBottom();
       setNewMessage('');
@@ -241,57 +224,61 @@ const StompChatPage = () => {
     }
   };
 
+  const renderMessagesWithDateSeparators = () => {
+    const grouped = [];
+    let currentDate = null;
+    messages.forEach((msg, index) => {
+      const msgDate = parseISO(msg.createdDate);
+      if (!currentDate || !isSameDay(currentDate, msgDate)) {
+        currentDate = msgDate;
+        grouped.push(
+          <div key={`date-${index}`} className="stompchat-date-separator">
+            {format(currentDate, 'yyyy년 MM월 dd일 eee')}
+          </div>
+        );
+      }
+      const isMine = msg.senderId?.toString() === senderId?.toString();
+      const key = msg.id ?? msg.createdDate ?? `msg-${index}`;
+      grouped.push(
+        <div key={key} className={`stompchat-message-wrapper ${isMine ? 'stompchat-message-right' : 'stompchat-message-left'}`}>
+          {!isMine && (
+            <div className="stompchat-profile-img">
+              <img
+                src={msg.senderProfileImg || "https://crystalrose-web.s3.ap-northeast-2.amazonaws.com/profiles/default.jpg"}
+                alt="profile"
+                className="stompchat-profile-img-tag"
+              />
+            </div>
+          )}
+          <div className="stompchat-message-content">
+            {!isMine && <div className="stompchat-sender-name">{msg.senderNick}</div>}
+            <div className="stompchat-message-bubble-wrapper">
+              <div className="stompchat-message-bubble">{msg.message}</div>
+              <div className="stompchat-timestamp">
+                {new Date(msg.createdDate).toLocaleTimeString('ko-KR', {
+                  hour: '2-digit', minute: '2-digit'
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    });
+    return grouped;
+  };
+
   return (
     <div className="stompchat-container">
       <div className="stompchat-header">
         <h2>
           {roomTitle}
-          {roomInfo?.participants?.length > 0 && (
-            <> ({roomInfo.participants.length})</>
-          )}
+          {roomInfo?.participants?.length > 0 && <> ({roomInfo.participants.length})</>}
         </h2>
       </div>
-
       <div ref={chatBoxRef} className="stompchat-box">
         {loading && <div className="stompchat-loading">이전 메시지 불러오는 중</div>}
-        {messages.map((msg, index) => {
-          const isMine = msg.senderId?.toString() === senderId?.toString();
-          const key = msg.id ?? msg.createdDate ?? `msg-${index}`;
-
-          return (
-            <div key={key} className={`stompchat-message-wrapper ${isMine ? 'stompchat-message-right' : 'stompchat-message-left'}`}>
-              {!isMine && (
-                <div className="stompchat-profile-img">
-                  <img
-                    src={msg.senderProfileImg || "https://crystalrose-web.s3.ap-northeast-2.amazonaws.com/profiles/default.jpg"}
-                    alt="profile"
-                    className="stompchat-profile-img-tag"
-                  />
-                </div>
-              )}
-              <div className="stompchat-message-content">
-                {!isMine && (
-                  <div className="stompchat-sender-name">
-                    {msg.senderNick}
-                  </div>
-                )}
-                <div className="stompchat-message-bubble-wrapper">
-                  <div className="stompchat-message-bubble">
-                    {msg.message}
-                  </div>
-                  <div className="stompchat-timestamp">
-                    {new Date(msg.createdDate).toLocaleTimeString('ko-KR', {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+        {renderMessagesWithDateSeparators()}
       </div>
-
       <div className="stompchat-input-container">
         <input
           type="text"
@@ -301,9 +288,7 @@ const StompChatPage = () => {
           placeholder="메시지를 입력하세요"
           className="stompchat-input"
         />
-        <button onClick={sendMessage} className="stompchat-button">
-          전송
-        </button>
+        <button onClick={sendMessage} className="stompchat-button">전송</button>
       </div>
     </div>
   );

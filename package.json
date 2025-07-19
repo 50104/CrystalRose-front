@@ -19,6 +19,7 @@
     "apis": "^0.1.2",
     "axios": "^1.7.2",
     "core-js": "^3.8.3",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.17.3",
     "html-react-parser": "^5.1.12",
     "jwt-decode": "^4.0.0",
