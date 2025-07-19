@@ -48,7 +48,6 @@ export default function DiaryRegister({ onSuccess }) {
     axiosInstance.get(`/api/roses/list`)
       .then(res => {
         setRoseList(res.data);
-        console.log('내 장미 목록:', res.data);
       })
       .catch(err => console.error("내 장미 목록 불러오기 실패", err));
   }, []);
@@ -88,20 +87,15 @@ export default function DiaryRegister({ onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // 폼 검증
     if (!validateForm()) {
       return;
     }
-
     setIsSubmitting(true);
     
-    // 날짜 형식 변환
     const submitData = {
         ...formData,
         recordedAt: formData.recordedAt && formData.recordedAt.trim() !== '' ? formData.recordedAt : null
     };
-    console.log('Submitting data:', submitData);
-    console.log("선택된 장미 ID:", formData.roseId);
     
     try {
       await axiosInstance.post(

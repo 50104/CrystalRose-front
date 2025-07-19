@@ -63,7 +63,7 @@ export const useUserData = () => {
 export const getUserData = async (setIsLogin) => {
   const token = localStorage.getItem('access');
   if (!token) {
-      console.log('로그인이 필요한 서비스입니다.');
+      alert('로그인이 필요한 서비스입니다.');
       return;
   }
 
@@ -81,8 +81,6 @@ export const getUserData = async (setIsLogin) => {
       3,
       1000
     );
-
-    console.log('접속한 유저1 : ', JSON.stringify(response.data));
     return response.data;
   } catch (error) {
     console.error('사용자 데이터 요청 실패:', error);

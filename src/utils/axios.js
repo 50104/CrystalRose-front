@@ -3,7 +3,7 @@ import axios from 'axios';
 export const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:4000',
   withCredentials: true,
-  timeout: 10000, // 10초 타임아웃 설정
+  timeout: 15000, // 15초 타임아웃 설정
   headers: {
     'Content-Type': 'application/json',
   },
@@ -80,7 +80,7 @@ axiosInstance.interceptors.response.use(
 export const oauthAxiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:4000',
   withCredentials: true,
-  timeout: 15000, // OAuth는 더 긴 타임아웃
+  timeout: 20000, // OAuth는 더 긴 타임아웃
   headers: {
     'Content-Type': 'application/json',
   },

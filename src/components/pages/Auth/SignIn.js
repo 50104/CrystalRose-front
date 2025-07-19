@@ -86,28 +86,28 @@ function SignIn() {
 
             localStorage.setItem('access', accessToken);
 
-            if (isWithdrawal) {
+            if (isWithdrawal) {   
                 const confirmUndo = window.confirm("탈퇴 요청된 계정입니다. 철회하시겠습니까?");
                 if (confirmUndo) {
                     try {
-                        const cancelResponse = await noAuthAxios.put(
-                            `/api/v1/auth/withdraw/cancel`
+                        const bearer = `Bearer ${accessToken}`;
+                        await noAuthAxios.put(
+                            `/api/v1/auth/withdraw/cancel`, {},
+                            {headers: {Authorization: bearer}}
                         );
-                        alert(cancelResponse.data);
-                        localStorage.removeItem("access");
-                        window.location.reload();
-                        return;
+                        alert("탈퇴가 철회되었습니다.");
+                        window.location.href = "/";
                     } catch (e) {
-                        alert("탈퇴 철회 중 오류 발생");
+                        alert("탈퇴 철회 중 오류가 발생했습니다.");
+                        localStorage.removeItem("access");
                         console.error(e);
-                        return;
                     }
-                } else { // 철회 안 하고 나가는 경우
+                } else {
                     localStorage.removeItem("access");
+                    alert("철회를 거부하셨습니다. 탈퇴 요청이 유지됩니다.");
                     return;
                 }
             }
-
             window.location.href = '/';
         } catch (error) {
             if (error.response?.status === 401) {

@@ -25,8 +25,6 @@ function MyPage() {
         }
     }, [userData]);
 
-    console.log('currentProfileImage:', currentProfileImage);
-
     const onUploadImageButtonClick = useCallback(() => {
         if (!inputRef.current) {
             return;

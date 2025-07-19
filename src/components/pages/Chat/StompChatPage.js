@@ -71,7 +71,7 @@ const StompChatPage = () => {
 
   const connectWebSocket = useCallback(async () => {
     if (stompClient?.connected) {
-      console.log("이미 WebSocket 연결됨");
+      console.log("WebSocket이 이미 연결되어 있습니다.");
       return;
     }
 

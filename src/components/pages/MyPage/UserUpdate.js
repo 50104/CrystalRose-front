@@ -125,14 +125,12 @@ const UserUpdate = () => {
                 userId: userInfo.userId, userEmail: userInfo.userEmail,
             });
         } catch (error) {
-            console.log('이메일 중복 확인 요청:', { userId: userInfo.userId, userEmail: userInfo.userEmail });
             console.error('이메일 중복 확인 실패:', error.response ? error.response.data : error.message);
             setUserEmailError(true);
             setUserEmailMessage('이미 사용중인 이메일입니다.');
             return;
         }
         setUserEmailMessage('인증번호가 전송되었습니다.');
-        console.log('userEmail:', userInfo.userEmail);
         try {
             const response = await axiosInstance.post(`/api/v1/auth/email-certification`, {
                 userId: userInfo.userId, userEmail: userInfo.userEmail,
@@ -140,7 +138,6 @@ const UserUpdate = () => {
             userEmailCertificationResponse(response.data);
             setUserEmailError(false);
         } catch (error) {
-            console.log('이메일 전송 실패:', { userId: userInfo.userId, userEmail: userInfo.userEmail });
             console.error('이메일 전송 실패:', error.response ? error.response.data : error.message);
             setUserEmailError(true);
             setUserEmailMessage('이메일 전송 실패.');
@@ -168,7 +165,6 @@ const UserUpdate = () => {
             return;
         }
         if (!userInfo.userEmail || !userInfo.certificationNumber) return;
-        console.log('certificationNumber:', userInfo.certificationNumber);
         try {
             const response = await axiosInstance.post(`/api/v1/auth/check-certification`, {
                 userId: userInfo.userId, userEmail: userInfo.userEmail, certificationNumber: userInfo.certificationNumber,

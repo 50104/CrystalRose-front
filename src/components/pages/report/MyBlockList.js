@@ -10,7 +10,6 @@ export default function MyBlockList() {
   const fetchBlocked = async () => {
     try {
         const url = `/api/v1/blocks/me`;
-        console.log('Request URL:', url); // 실제 URL 확인
         const res = await axiosInstance.get(url);
       setBlockedUsers(res.data);
     } catch (err) {

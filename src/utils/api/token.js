@@ -76,10 +76,8 @@ export const getAccessToken = async () => {
 // access 토큰 제거 후 리디렉션
 export const logoutFunction = async () => {
   try {
-    console.log('logoutFunction: 로그아웃 시작');
     await axiosInstance.post('/logout');
     localStorage.removeItem('access');
-    console.log('logoutFunction: 로그아웃 완료');
     window.location.href = '/';
   } catch (error) {
     console.error('logoutFunction: 로그아웃 오류', error);

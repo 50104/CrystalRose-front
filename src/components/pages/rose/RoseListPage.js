@@ -17,15 +17,10 @@ export default function RoseListPage() {
     setLoading(true);
     setError(null);
     try {
-      console.log('장미 목록 요청 시작');
       const response = await axiosInstance.get(`/api/roses/list`);
-      console.log('API 응답:', response);
-      console.log('응답 데이터:', response.data);
       
-      // 응답 데이터 안전성 체크
       if (response.data && Array.isArray(response.data)) {
         setRoses(response.data);
-        console.log('내 장미 목록 설정 완료:', response.data);
       } else {
         console.warn('예상과 다른 응답 형식:', response.data);
         setRoses([]);
