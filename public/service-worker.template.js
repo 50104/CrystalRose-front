@@ -23,7 +23,7 @@ self.addEventListener('install', (event) => {
   console.log('[Service Worker] Install');
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[Service Worker] Caching base files');
+      // console.log('[Service Worker] Caching base files');
       return Promise.allSettled(
         urlsToCache.map(url =>
           cache.add(url).catch((error) => {
@@ -41,13 +41,13 @@ self.addEventListener('install', (event) => {
 
 // 활성화 시 오래된 캐시 삭제
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activate');
+  // console.log('[Service Worker] Activate');
   event.waitUntil(
     caches.keys().then((keyList) =>
       Promise.all(
         keyList.map((key) => {
           if (key !== CACHE_NAME) {
-            console.log('[Service Worker] Deleting old cache:', key);
+            // console.log('[Service Worker] Deleting old cache:', key);
             return caches.delete(key);
           }
           return null;

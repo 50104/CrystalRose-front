@@ -16,4 +16,4 @@ content = content.replace(/__REPLACE_CACHE_VERSION__/g, version);
 
 fs.writeFileSync(targetPath, content);
 
-console.log(`Generated service worker: service-worker.${version}.js`);
+// console.log(`Generated service worker: service-worker.${version}.js`);

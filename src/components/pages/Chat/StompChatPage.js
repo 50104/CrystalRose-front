@@ -74,10 +74,6 @@ const StompChatPage = () => {
       const response = await axiosInstance.post('/reissue', {}, { withCredentials: true });
       const accessToken = response.data.accessToken;
       localStorage.setItem("access", accessToken);
-      console.log("🔐 WebSocket 연결 시도");
-      console.log("👉 roomId:", roomId);
-      console.log("👉 accessToken:", accessToken);
-      console.log("👉 WebSocket URL:", getWsUrl());
       const sock = new SockJS(getWsUrl());
       const client = Stomp.over(sock);
 

@@ -24,7 +24,7 @@ export function OAuthCallback() {
 
         if (response.data.accessToken) {
           localStorage.setItem('access', response.data.accessToken);
-          console.log('Access Token 저장 완료');
+          // console.log('Access Token 저장 완료');
           setStatus('로그인 완료! 페이지를 이동합니다...');
           
           // 약간의 지연 후 리디렉션
@@ -40,7 +40,7 @@ export function OAuthCallback() {
         
         try {
           await clearServiceWorkerCache();
-          console.log('서비스 워커 캐시가 클리어되었습니다.');
+          // console.log('서비스 워커 캐시가 클리어되었습니다.');
         } catch (cacheError) {
           console.error('캐시 클리어 실패:', cacheError);
         }

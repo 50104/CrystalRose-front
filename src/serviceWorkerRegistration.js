@@ -23,7 +23,7 @@ export function register(config) {
         registrations.forEach((registration) => {
           // 현재 도메인과 다른 scope의 Service Worker만 제거
           if (registration.scope !== `${window.location.origin}/`) {
-            console.log('Removing old service worker:', registration.scope);
+            // console.log('Removing old service worker:', registration.scope);
             registration.unregister().catch(console.error);
           }
         });
@@ -32,7 +32,7 @@ export function register(config) {
       if (isLocalhost) {
         checkValidServiceWorker(swUrl, config);
         navigator.serviceWorker.ready.then(() => {
-          console.log('Service Worker is ready (localhost)');
+          // console.log('Service Worker is ready (localhost)');
         }).catch(console.error);
       } else {
         registerValidSW(swUrl, config);
@@ -45,7 +45,7 @@ function registerValidSW(swUrl, config) {
   navigator.serviceWorker
     .register(swUrl)
     .then((registration) => {
-      console.log('Service Worker registered successfully:', registration.scope);
+      // console.log('Service Worker registered successfully:', registration.scope);
       
       registration.onupdatefound = () => {
         const installingWorker = registration.installing;
@@ -54,7 +54,7 @@ function registerValidSW(swUrl, config) {
         installingWorker.onstatechange = () => {
           if (installingWorker.state === 'installed') {
             if (navigator.serviceWorker.controller) {
-              console.log('New content is available; please refresh.');
+              // console.log('New content is available; please refresh.');
               if (config && config.onUpdate) {
                 config.onUpdate(registration);
 
@@ -64,7 +64,7 @@ function registerValidSW(swUrl, config) {
                 }
               }
             } else {
-              console.log('Content is cached for offline use.');
+              // console.log('Content is cached for offline use.');
               if (config && config.onSuccess) {
                 config.onSuccess(registration);
               }
@@ -97,7 +97,7 @@ function registerValidSW(swUrl, config) {
       if (!registerValidSW.retried) {
         registerValidSW.retried = true;
         setTimeout(() => {
-          console.log('Retrying service worker registration...');
+          // console.log('Retrying service worker registration...');
           registerValidSW(swUrl, config);
         }, 3000);
       }
@@ -125,7 +125,7 @@ function checkValidServiceWorker(swUrl, config) {
       }
     })
     .catch(() => {
-      console.log('No internet connection found. App is running in offline mode.');
+      // console.log('No internet connection found. App is running in offline mode.');
     });
 }
 
@@ -156,7 +156,7 @@ export function clearAllCaches() {
         Promise.all(
           cacheNames.map((cacheName) => caches.delete(cacheName))
         ).then(() => {
-          console.log('All caches cleared');
+          // console.log('All caches cleared');
           resolve();
         }).catch((error) => {
           console.error('Error clearing caches:', error);

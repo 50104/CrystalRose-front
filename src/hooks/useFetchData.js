@@ -7,7 +7,7 @@ const useFetchData = (apiUrl) => {
   const fetchData = async () => {
     try {
       const response = await axiosInstance.get(apiUrl);
-      console.log(apiUrl + ' 데이터 불러오기 성공');
+      // console.log(apiUrl + ' 데이터 불러오기 성공');
       setEntities(response.data);
     } catch (error) {
       console.error('데이터 불러오기 에러:', error);
