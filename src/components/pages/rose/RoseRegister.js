@@ -266,7 +266,15 @@ export default function RoseRegister({ onSuccess }) {
             className="rose-submit-button"
             disabled={isSubmitting || !isLogin || uploading || !isFormValid()}
           >
-            {isSubmitting ? '등록 중...' : '등록하기'}
+            {isSubmitting ? '등록 중...' : '등록'}
+          </button>
+          <button
+            type="button"
+            className="rose-cancel-button"
+            onClick={() => navigate('/roses/list')}
+            disabled={isSubmitting || uploading}
+          >
+            취소
           </button>
         </div>
       </div>
