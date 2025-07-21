@@ -94,13 +94,22 @@ export default function RoseListPage() {
         <div className="rose-entries-grid">
           {roses.map(rose => (
             <div key={rose.id} className="rose-entry-card">
-              {rose.imageUrl && (
-                <img 
-                  src={rose.imageUrl} 
-                  alt={rose.nickname || '장미'} 
-                  className="rose-entry-image" 
-                />
-              )}
+              <div className="rose-image-wrapper">
+                {rose.imageUrl && (
+                  <img 
+                    src={rose.imageUrl} 
+                    alt={rose.nickname || '장미'} 
+                    className="rose-entry-image" 
+                  />
+                )}
+                <Link 
+                  to="/rose/register"
+                  state={{ roseData: rose }} 
+                  className="rose-edit-button"
+                >
+                  수정
+                </Link>
+              </div>
               <div className="rose-entry-content">
                 <div className="rose-entry-details">
                   <h2 className="rose-entry-nickname">{rose.nickname || '이름 없음'}</h2>
@@ -122,7 +131,7 @@ export default function RoseListPage() {
                     to={`/diaries/register/${rose.id}`} 
                     className="rose-entry-action-link"
                   >
-                    + 기록
+                    + 기록 추가
                   </Link>
                   <div className="rose-entry-actions-row">
                     <Link 

@@ -246,3 +246,24 @@
 .rose-entry-action-link.secondary:hover {
   background-color: #4b5563;
 }
+
+.rose-image-wrapper {
+  position: relative;
+}
+
+.rose-edit-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.rose-edit-button:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}

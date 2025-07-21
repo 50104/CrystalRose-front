@@ -1,20 +1,22 @@
 import { useState, useEffect } from 'react';
 import { axiosInstance, noAuthAxios } from '@utils/axios';
 import { GetUser } from '@utils/api/user';
-import { useNavigate } from 'react-router-dom';
-import './RoseRegister.css';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { safeConvertToWebP } from '../../../utils/imageUtils';
+import './RoseRegister.css';
 
 export default function RoseRegister({ onSuccess }) {
   const { isLogin } = GetUser();
   const navigate = useNavigate();
+  const location = useLocation();
+  const roseData = location.state?.roseData;
 
   const [formData, setFormData] = useState({
-    wikiId: '',
-    nickname: '',
-    acquiredDate: '',
-    locationNote: '',
-    imageUrl: ''
+    wikiId: roseData?.wikiId || '',
+    nickname: roseData?.nickname || '',
+    acquiredDate: roseData?.acquiredDate || '',
+    locationNote: roseData?.locationNote || '',
+    imageUrl: roseData?.imageUrl || ''
   });
 
   const [wikiList, setWikiList] = useState([]);
@@ -22,7 +24,8 @@ export default function RoseRegister({ onSuccess }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreview, setImagePreview] = useState(roseData?.imageUrl || null);
+  const [wikiName, setWikiName] = useState(roseData?.varietyName || '');
 
   const validateForm = () => {
     const requiredFields = [
@@ -123,8 +126,13 @@ export default function RoseRegister({ onSuccess }) {
 
       setIsSubmitting(true);
 
-      await axiosInstance.post(`/api/roses/mine`, formData);
-      setMessage({ type: 'success', text: '등록 성공!' });
+      if (roseData?.id) {
+        await axiosInstance.put(`/api/roses/modify/${roseData.id}`, formData);
+        setMessage({ type: 'success', text: '수정 완료!' });
+      } else {
+        await axiosInstance.post(`/api/roses/mine`, formData);
+        setMessage({ type: 'success', text: '등록 성공!' });
+      }
 
       setFormData({
         wikiId: '', nickname: '', acquiredDate: '', locationNote: '', imageUrl: ''
@@ -193,28 +201,38 @@ export default function RoseRegister({ onSuccess }) {
               <label className="rose-form-label">
                 장미 선택 <span className="rose-required">*</span>
               </label>
-              <select
-                name="wikiId"
-                value={formData.wikiId}
-                onChange={handleChange}
-                required
-                className="rose-form-select"
-              >
-                <option value="">장미를 선택하세요</option>
-                {sortedWikiList.map(wiki => {
-                  const isDisabled = disabledWikiIds.includes(wiki.id);
-                  return (
-                    <option
-                      key={wiki.id}
-                      value={wiki.id}
-                      disabled={isDisabled}
-                      className={isDisabled ? 'rose-disabled-option' : ''}
-                    >
-                      {wiki.name} {isDisabled ? '(등록됨)' : ''}
-                    </option>
-                  );
-                })}
-              </select>
+
+              {roseData ? (
+                <input
+                  type="text"
+                  value={wikiName}
+                  disabled
+                  className="rose-form-input"
+                />
+              ) : (
+                <select
+                  name="wikiId"
+                  value={formData.wikiId}
+                  onChange={handleChange}
+                  required
+                  className="rose-form-select"
+                >
+                  <option value="">장미를 선택하세요</option>
+                  {sortedWikiList.map(wiki => {
+                    const isDisabled = disabledWikiIds.includes(wiki.id);
+                    return (
+                      <option
+                        key={wiki.id}
+                        value={wiki.id}
+                        disabled={isDisabled}
+                        className={isDisabled ? 'rose-disabled-option' : ''}
+                      >
+                        {wiki.name} {isDisabled ? '(등록됨)' : ''}
+                      </option>
+                    );
+                  })}
+                </select>
+              )}
             </div>
 
             <div className="rose-form-group">
@@ -266,7 +284,7 @@ export default function RoseRegister({ onSuccess }) {
             className="rose-submit-button"
             disabled={isSubmitting || !isLogin || uploading || !isFormValid()}
           >
-            {isSubmitting ? '등록 중...' : '등록'}
+            {isSubmitting ? '처리 중...' : roseData ? '수정' : '등록'}
           </button>
           <button
             type="button"

@@ -216,21 +216,6 @@
   }
 }
 
-.rose-list-container {
-  max-width: 600px;
-  margin: auto;
-}
-
-.rose-list {
-  list-style: none;
-  padding: 0;
-}
-
-.rose-item {
-  padding: 0.5rem;
-  border-bottom: 1px solid #eee;
-}
-
 .rose-disabled-option {
   color: gray;
 }
