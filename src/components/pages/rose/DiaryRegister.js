@@ -5,21 +5,21 @@ import './DiaryRegister.css';
 import { safeConvertToWebP } from '../../../utils/imageUtils';
 
 export default function DiaryRegister({ onSuccess }) {
-  const { roseId } = useParams();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    roseId: roseId || '', 
-    note: '',
-    recordedAt: '',
-    imageUrl: ''
-  });
+  const { roseId } = useParams();
   const [roseList, setRoseList] = useState([]); 
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
 
-  // 필수 필드 검증 함수
+  const [formData, setFormData] = useState({
+    roseId: roseId || '', 
+    note: '',
+    recordedAt: '',
+    imageUrl: ''
+  });
+  
   const validateForm = () => {
     const requiredFields = [
       { field: 'roseId', name: '장미 선택' },
@@ -38,7 +38,6 @@ export default function DiaryRegister({ onSuccess }) {
     return true;
   };
 
-  // 모든 필수 필드가 채워졌는지 확인
   const isFormValid = () => {
     return formData.roseId && formData.note && formData.recordedAt && formData.imageUrl;
   };
@@ -86,25 +85,22 @@ export default function DiaryRegister({ onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
+
     setIsSubmitting(true);
-    
+    const roseIdToUse = formData.roseId;
+
     const submitData = {
-        ...formData,
-        recordedAt: formData.recordedAt && formData.recordedAt.trim() !== '' ? formData.recordedAt : null
+      ...formData,
+      recordedAt: formData.recordedAt?.trim() || null
     };
-    
+
     try {
-      await axiosInstance.post(
-        `/api/diaries/register`,
-        {
-          ...submitData,
-          roseId: formData.roseId 
-        }
-      );
+      await axiosInstance.post(`/api/diaries/register`, {
+        ...submitData,
+        roseId: roseIdToUse
+      });
+
       setMessage({ type: 'success', text: '성장 기록 등록 성공' });
       setFormData({
         roseId: roseId || '',
@@ -113,13 +109,27 @@ export default function DiaryRegister({ onSuccess }) {
         imageUrl: ''
       });
       setImagePreview(null);
-      navigate(`/diaries/${formData.roseId}/timeline`);
+
+      if (roseId) {
+        navigate(`/diaries/${roseIdToUse}/timeline`);
+      } else {
+        navigate('/diaries/list');
+      }
+
       onSuccess?.();
     } catch (err) {
       console.error('Submit error:', err.response?.data || err.message);
       setMessage({ type: 'error', text: '등록 실패' });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (roseId) {
+      navigate('/roses/list');
+    } else {
+      navigate('/diaries/list');
     }
   };
 
@@ -218,12 +228,19 @@ export default function DiaryRegister({ onSuccess }) {
         </div>
 
         <div className="diary-form-actions">
-          <button 
+          <button
             onClick={handleSubmit}
             className="diary-submit-button"
             disabled={isSubmitting || uploading || !isFormValid()}
           >
-            {isSubmitting ? '등록 중...' : '기록 등록하기'}
+            {isSubmitting ? '등록 중...' : '기록 등록'}
+          </button>
+          <button
+            onClick={handleCancel}
+            className="diary-cancel-button"
+            disabled={isSubmitting}
+          >
+            취소
           </button>
         </div>
       </div>

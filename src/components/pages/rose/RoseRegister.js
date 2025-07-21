@@ -156,7 +156,7 @@ export default function RoseRegister({ onSuccess }) {
 
   return (
     <div className="rose-form-container">
-      <h1 className="rose-form-title">내 장미 등록</h1>
+      <h1 className="rose-form-title">내 장미 추가</h1>
 
       {message && (
         <div className={`rose-message ${message.type}`}>
@@ -284,7 +284,7 @@ export default function RoseRegister({ onSuccess }) {
             className="rose-submit-button"
             disabled={isSubmitting || !isLogin || uploading || !isFormValid()}
           >
-            {isSubmitting ? '처리 중...' : roseData ? '수정' : '등록'}
+            {isSubmitting ? '처리 중...' : roseData ? '수정' : '장미 등록'}
           </button>
           <button
             type="button"

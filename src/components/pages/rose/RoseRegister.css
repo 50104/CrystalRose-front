@@ -31,12 +31,6 @@
   color: #b91c1c;
 }
 
-.rose-form-content {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
 .rose-top-section {
   display: flex;
   gap: 2rem;
@@ -158,6 +152,7 @@
   display: flex;
   justify-content: center;
   margin-top: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .rose-submit-button {
