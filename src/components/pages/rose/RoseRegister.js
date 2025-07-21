@@ -65,7 +65,11 @@ export default function RoseRegister({ onSuccess }) {
         .then(res => setDisabledWikiIds(res.data))
         .catch(err => console.error("등록된 장미 Wiki ID 조회 실패", err));
     }
-  }, [isLogin]);
+    if (roseData?.wikiId && !roseData.id) {
+      setFormData(prev => ({ ...prev, imageUrl: '' }));
+      setImagePreview(null);
+    }
+  }, [isLogin, roseData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -201,14 +205,16 @@ export default function RoseRegister({ onSuccess }) {
               <label className="rose-form-label">
                 장미 선택 <span className="rose-required">*</span>
               </label>
-
-              {roseData ? (
-                <input
-                  type="text"
-                  value={wikiName}
-                  disabled
-                  className="rose-form-input"
-                />
+              {roseData?.wikiId ? (
+                <>
+                  <input
+                    type="text"
+                    value={wikiName}
+                    disabled
+                    className="rose-form-input"
+                  />
+                  <input type="hidden" name="wikiId" value={formData.wikiId} />
+                </>
               ) : (
                 <select
                   name="wikiId"
@@ -225,7 +231,6 @@ export default function RoseRegister({ onSuccess }) {
                         key={wiki.id}
                         value={wiki.id}
                         disabled={isDisabled}
-                        className={isDisabled ? 'rose-disabled-option' : ''}
                       >
                         {wiki.name} {isDisabled ? '(등록됨)' : ''}
                       </option>
@@ -289,7 +294,13 @@ export default function RoseRegister({ onSuccess }) {
           <button
             type="button"
             className="rose-cancel-button"
-            onClick={() => navigate('/roses/list')}
+            onClick={() => {
+              if (roseData?.wikiId && !roseData.id) {
+                navigate('/wiki/list');
+              } else {
+                navigate('/roses/list');
+              }
+            }}
             disabled={isSubmitting || uploading}
           >
             취소

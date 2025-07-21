@@ -1,16 +1,24 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './WikiList.css';
-import { noAuthAxios } from '@utils/axios';
+import { noAuthAxios, axiosInstance } from '@utils/axios';
+import { GetUser } from '@utils/api/user';
 
 export default function WikiListPage() {
   const [wikiEntries, setWikiEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [disabledWikiIds, setDisabledWikiIds] = useState([]);
+  const { isLogin } = GetUser();
 
   useEffect(() => {
+    if (!isLogin) return;
+
+    axiosInstance.get('/api/roses/mine/wiki-ids')
+      .then(res => setDisabledWikiIds(res.data))
+      .catch(err => console.error('내 장미 도감 ID 목록 조회 실패', err));
     fetchWikiEntries();
-  }, []);
+  }, [isLogin]);
 
   const fetchWikiEntries = async () => {
     setLoading(true);
@@ -69,21 +77,39 @@ export default function WikiListPage() {
         <div className="wiki-entries-grid">
           {Array.isArray(wikiEntries) && wikiEntries.map(entry => (
             <Link key={entry.id} to={`/wiki/detail/${entry.id}`} className="wiki-entry-card-link">
-              <div className="wiki-entry-card">
-                {entry.imageUrl && (
-                  <img src={entry.imageUrl} alt={entry.name} className="wiki-entry-image" />
-                )}
-                <div className="wiki-entry-content">
-                  <div className="wiki-entry-header">
-                  <h2 className="wiki-entry-name">{entry.name}</h2>
-                    <div className="wiki-entry-name-row">
-                      <p className="wiki-entry-category">{entry.category}</p>
-                      {entry.modificationStatus === 'PENDING' && (
-                        <span className="wiki-modification-badge modification-pending">수정 진행 중</span>
-                      )}
+              <div key={entry.id} className="wiki-entry-card">
+                <div className="wiki-image-wrapper">
+                  {entry.imageUrl && (
+                    <img src={entry.imageUrl} alt={entry.name} className="wiki-entry-image" />
+                  )}
+
+                  {!disabledWikiIds.includes(entry.id) && (
+                    <Link
+                      to="/rose/register"
+                      state={{
+                        roseData: {
+                          wikiId: entry.id,
+                          varietyName: entry.name,
+                          imageUrl: ''
+                        }
+                      }}
+                      className="wiki-register-overlay-button"
+                    >
+                      내 장미로 등록
+                    </Link>
+                  )}
+                  <div className="wiki-entry-content">
+                    <div className="wiki-entry-header">
+                    <h2 className="wiki-entry-name">{entry.name}</h2>
+                      <div className="wiki-entry-name-row">
+                        <p className="wiki-entry-category">{entry.category}</p>
+                        {entry.modificationStatus === 'PENDING' && (
+                          <span className="wiki-modification-badge modification-pending">수정 진행 중</span>
+                        )}
+                      </div>
                     </div>
+                    <p className="wiki-entry-description">{entry.description?.substring(0, 100)}{entry.description?.length > 100 ? '...' : ''}</p>
                   </div>
-                  <p className="wiki-entry-description">{entry.description?.substring(0, 100)}{entry.description?.length > 100 ? '...' : ''}</p>
                 </div>
               </div>
             </Link>

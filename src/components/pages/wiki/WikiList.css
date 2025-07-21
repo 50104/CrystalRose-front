@@ -139,7 +139,6 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.25rem;
-    margin-bottom: 0.5rem;
   }
   
   .wiki-entry-name {
@@ -202,7 +201,6 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 0.75rem;
   gap: 0.5rem;
 }
 
@@ -261,6 +259,12 @@
   background-color: #f59e0b;
 }
 
+.wiki-entry-actions {
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .wiki-entry-details-link {
   display: inline-block;
   margin-top: 0.5rem;
@@ -275,4 +279,25 @@
 
 .wiki-entry-details-link:hover {
   background-color: #be185d;
+}
+
+.wiki-image-wrapper {
+  position: relative;
+}
+
+.wiki-register-overlay-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: rgba(99, 102, 241, 0.85);
+  color: white;
+  padding: 0.35rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.wiki-register-overlay-button:hover {
+  background-color: rgba(79, 70, 229, 0.95);
 }
