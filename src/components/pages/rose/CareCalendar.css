@@ -152,7 +152,7 @@
 }
 
 .calendar-day[style*="background-image"] .day-event {
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.7);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -236,7 +236,7 @@
   }
 
   .day-event {
-    font-size: 0.65rem !important;
+    font-size: 0.55rem !important;
     padding: 0.1rem 0.2rem !important;
     border-radius: 0.25rem !important;
   }

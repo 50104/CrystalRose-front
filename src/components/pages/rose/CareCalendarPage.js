@@ -5,6 +5,16 @@ import CareLogModal from './CareLogModal';
 import CareLogRegister from './CareLogRegister';
 import './CareCalendar.css';
 
+const CARE_LABELS = {
+  watering: '💧',
+  fertilizer: '💊',
+  pesticide: '🪰',
+  adjuvant: '🧪',
+  fungicide: '🧼',
+  compost: '💩',
+  note: '📝'
+};
+
 const CustomCalendar = () => {
   const [months, setMonths] = useState([]);
   const [logs, setLogs] = useState({});
@@ -36,29 +46,28 @@ const CustomCalendar = () => {
     }
   }, [months]);
 
-  const loadMonthData = useCallback(async (month) => {
+  const loadMonthData = useCallback(async (month, force = false) => {
     const monthKey = `${month.getFullYear()}-${month.getMonth()}`;
-    if (logs[monthKey]) return;
+    if (!force && logs[monthKey]) return;
 
     setLoading(true);
     try {
       const startDate = new Date(month.getFullYear(), month.getMonth(), 1);
       const endDate = new Date(month.getFullYear(), month.getMonth() + 1, 0);
 
-      const response = await axiosInstance.get(`/api/calendar/data`, { // 통합 조회
+      const response = await axiosInstance.get(`/api/calendar/data`, {
         params: {
           startDate: startDate.toISOString().split('T')[0],
           endDate: endDate.toISOString().split('T')[0]
         }
       });
 
-      const { careLogs = [], diaries: diaryList = [] } = response.data; // 관리, 다이어리 데이터 분리
+      const { careLogs = [], diaries: diaryList = [] } = response.data;
 
       setLogs(prev => ({ ...prev, [monthKey]: careLogs }));
       setDiaries(prev => ({ ...prev, [monthKey]: diaryList }));
     } catch (error) {
       console.error('월 데이터 로딩 실패:', error);
-      // 에러 시 빈 배열
       setLogs(prev => ({ ...prev, [monthKey]: [] }));
       setDiaries(prev => ({ ...prev, [monthKey]: [] }));
     } finally {
@@ -244,38 +253,25 @@ const CustomCalendar = () => {
   const handleRegisterSuccess = () => {
     setShowRegisterModal(false);
     setShowEditModal(false);
+    if (selectedDate) refreshMonth(selectedDate);
+    if (selected) refreshMonth(new Date(selected.careDate));
     setSelectedDate(null);
     setSelected(null);
-    // 현재 월 데이터 다시 로딩
-    if (selectedDate) {
-      const monthKey = getMonthKey(selectedDate);
-      setLogs(prev => { // 해당 월 데이터 삭제 후 다시 로딩
-        const newLogs = { ...prev };
-        delete newLogs[monthKey];
-        return newLogs;
-      });
-      setDiaries(prev => {
-        const newDiaries = { ...prev };
-        delete newDiaries[monthKey];
-        return newDiaries;
-      });
-      loadMonthData(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1));
-    }
-    if (selected) {
-      const date = new Date(selected.careDate);
-      const monthKey = getMonthKey(date);
-      setLogs(prev => { // 해당 월 데이터 삭제 후 다시 로딩
-        const newLogs = { ...prev };
-        delete newLogs[monthKey];
-        return newLogs;
-      });
-      setDiaries(prev => {
-        const newDiaries = { ...prev };
-        delete newDiaries[monthKey];
-        return newDiaries;
-      });
-      loadMonthData(new Date(date.getFullYear(), date.getMonth(), 1));
-    }
+  };
+
+  const refreshMonth = (targetDate) => {
+    const monthKey = `${targetDate.getFullYear()}-${targetDate.getMonth()}`;
+    setLogs(prev => {
+      const copy = { ...prev };
+      delete copy[monthKey];
+      return copy;
+    });
+    setDiaries(prev => {
+      const copy = { ...prev };
+      delete copy[monthKey];
+      return copy;
+    });
+    loadMonthData(new Date(targetDate.getFullYear(), targetDate.getMonth(), 1), true);
   };
 
   const handleEdit = () => {
@@ -379,7 +375,19 @@ const CustomCalendar = () => {
                     >
                       <div className="day-number">{date.getDate()}</div>
                       {isCurrentMonth && dayData.logs.length > 0 && (
-                        <div className="day-event">🌹 관리</div>
+                        <div className="day-event">
+                          {
+                            Array.from(
+                              new Set(
+                                dayData.logs.flatMap(log =>
+                                  Object.entries(log)
+                                    .filter(([key, value]) => CARE_LABELS[key] && value)
+                                    .map(([key]) => key)
+                                )
+                              )
+                            ).map(key => CARE_LABELS[key]).join('')
+                          }
+                        </div>
                       )}
                     </div>
                   );
