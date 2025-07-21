@@ -1,7 +1,6 @@
 .diary-list-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem;
   font-family: 'Noto Sans KR', sans-serif;
 }
 
@@ -16,7 +15,7 @@
   font-size: 2rem;
   font-weight: 700;
   color: #111827;
-  margin-bottom: 1rem;
+  text-align: center;
 }
 
 .diary-list-buttons {
@@ -28,6 +27,10 @@
 .diary-roses-button {
   padding: 0.75rem 1.5rem;
   color: white;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  display: flex;
   text-decoration: none;
   border-radius: 0.5rem;
   font-weight: 600;
@@ -101,8 +104,9 @@
   }
   
   .diary-list-buttons {
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.5rem;
+    width: 100%;
   }
 }
 

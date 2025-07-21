@@ -25,7 +25,7 @@ export default function RoseRegister({ onSuccess }) {
   const [message, setMessage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState(roseData?.imageUrl || null);
-  const [wikiName, setWikiName] = useState(roseData?.varietyName || '');
+  const wikiName = roseData?.varietyName || '';
 
   const validateForm = () => {
     const requiredFields = [

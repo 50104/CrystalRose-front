@@ -228,6 +228,14 @@ export default function WikiRegisterPage() {
     });
   };
 
+  const handleCancel = () => {
+    if (isEditMode && id) {
+      navigate(`/wiki/detail/${id}`);
+    } else {
+      navigate('/wiki/list');
+    }
+  };
+
   // 인증 확인이 완료되지 않았거나 로그인하지 않은 경우
   if (!localStorage.getItem('access')) {
     return (
@@ -573,16 +581,6 @@ export default function WikiRegisterPage() {
         )}
 
         <div className="form-actions">
-          {isEditMode && (
-            <button
-              type="button"
-              onClick={() => navigate(`/wiki/${id}`)}
-              disabled={isSubmitting || uploading || loading}
-              className="cancel-button"
-            >
-              취소
-            </button>
-          )}
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || uploading || loading}
@@ -590,8 +588,16 @@ export default function WikiRegisterPage() {
           >
             {isSubmitting 
               ? (isEditMode ? '수정 중' : '등록 중') 
-              : (isEditMode ? '도감 수정하기' : '도감 등록하기')
+              : (isEditMode ? '도감 수정' : '도감 등록')
             }
+          </button>
+          <button
+            type="button"
+            onClick={handleCancel}
+            disabled={isSubmitting || uploading || loading}
+            className="cancel-button"
+          >
+            취소
           </button>
         </div>
       </div>
