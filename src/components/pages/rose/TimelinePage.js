@@ -3,6 +3,16 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
 import './TimelinePage.css';
 
+const CARE_LABELS = {
+  watering: '💧',
+  fertilizer: '💊',
+  pesticide: '🪰',
+  adjuvant: '🧪',
+  fungicide: '🧼',
+  compost: '💩',
+  note: '📝'
+};
+
 export default function RoseTimelinePage() {
   const { roseId } = useParams();
   const location = useLocation();
@@ -16,7 +26,9 @@ export default function RoseTimelinePage() {
   const fetchTimeline = useCallback(async () => {
     try {
       const res = await axiosInstance.get(`/api/diaries/${roseId}/timeline`);
-      setTimeline(res.data);
+      console.log("응답:", res.data[0]);
+      const sortedData = res.data.sort((a, b) => new Date(b.recordedAt) - new Date(a.recordedAt));
+      setTimeline(sortedData);
     } catch (err) {
       console.error("장미 타임라인 조회 실패", err);
       setError('타임라인 조회 실패');
@@ -28,6 +40,13 @@ export default function RoseTimelinePage() {
   useEffect(() => {
     fetchTimeline();
   }, [fetchTimeline]);
+
+  const extractCareIcons = (entry) => {
+    return (entry.careTypes || [])
+      .map(key => CARE_LABELS[key])
+      .filter(Boolean)
+      .join('');
+  };
 
   if (loading) return <div className="timeline-loading">로딩 중...</div>;
   if (error) return <div className="timeline-error">{error}</div>;
@@ -42,8 +61,11 @@ export default function RoseTimelinePage() {
               <img src={entry.imageUrl} alt="타임라인 이미지" className="timeline-image" />
             )}
             <div className="timeline-text">
-              <p className="timeline-date">📅 {new Date(entry.recordedAt).toLocaleDateString('ko-KR')}</p>
-              <p className="timeline-note">📝 {entry.note || '메모 없음'}</p>
+              <p className="timeline-date">
+                {new Date(entry.recordedAt).toLocaleDateString('ko-KR')}
+                <span className="timeline-icons"> {extractCareIcons(entry)}</span>
+              </p>
+              <p className="timeline-note">{entry.note || '메모 없음'}</p>
             </div>
           </div>
         ))}
