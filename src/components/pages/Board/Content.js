@@ -33,7 +33,7 @@ function Content() {
 
   const fetchComments = useCallback(async () => {
     try {
-      const res = await axiosInstance.get(`/api/v1/board/${boardNo}/comments`);
+      const res = await axiosInstance.get(`/api/v1/board/${boardNo}/comments/list`);
       setComments(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("댓글 불러오기 오류:", err);
