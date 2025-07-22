@@ -104,7 +104,6 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
                 <button className="deleteIcon" onClick={() => handleDeleteComment(comment.id)}>삭제</button>
               </>
             )}
-            <button className="editButton" onClick={() => toggleReplyBox(comment.id)}>답글</button>
             {(userData?.userNick !== comment.userNick && userData?.userId !== comment.userId) && (
               <button className="editButton reportButton" onClick={async () => {
                 const alreadyReported = await checkAlreadyReportedComment(comment.id);
@@ -115,6 +114,7 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
                 setReportingCommentId(comment.id);
               }}>신고</button>
             )}
+            <button className="editButton" onClick={() => toggleReplyBox(comment.id)}>답글</button>
           </div>
         )}
       </div>

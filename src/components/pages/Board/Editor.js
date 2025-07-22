@@ -176,6 +176,13 @@ function Editor() {
         />
 
         <div className='uploadButtonBox'>
+          <button
+            type="button"
+            className="cancelButton"
+            onClick={() => navigate('/list')}
+          >
+            취소
+          </button>
           <input
             className={isFormValid ? 'uploadButton' : 'uploadButton-disable'}
             type="submit"

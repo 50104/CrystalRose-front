@@ -1,28 +1,23 @@
 /* 댓글 영역 전체 */
 .commentSection {
-  margin-top: 40px;
-  padding: 40px;
+  padding: 20px;
   max-width: 127vh;
-  margin: 40px auto 0;
+  margin: 10px auto 0;
   background: white;
   border-top: 2px solid #f1f5f9;
 }
 
 .commentSection h3 {
-  font-size: 20px;
   font-weight: 700;
   color: #1a202c;
-  margin-bottom: 24px;
   padding-bottom: 12px;
   border-bottom: 2px solid #f1f5f9;
 }
 
 /* 댓글 입력 박스 */
 .commentInputBox {
-  margin-bottom: 32px;
   background: white;
   border-radius: 8px;
-  padding: 20px;
 }
 
 .commentInputBox textarea {
@@ -55,7 +50,7 @@
 
 /* 댓글 항목 */
 .commentItem {
-  padding: 24px 0;
+  padding: 10px 0;
   border-bottom: 1px solid #f1f5f9;
   margin-bottom: 0;
 }
@@ -134,7 +129,7 @@
 .commentContent {
   margin-bottom: 8px;
   font-size: 15px;
-  line-height: 1.6;
+  line-height: 1;
   word-break: break-word;
   color: #2d3748;
 }
@@ -174,20 +169,18 @@
   margin-top: 16px;
   background: white;
   border-radius: 6px;
-  padding: 16px;
 }
 
 /* 대댓글 리스트 */
 .nestedCommentList {
   list-style: none;
   padding-left: 0;
-  margin-top: 16px;
 }
 
 .nestedCommentList .commentItem {
   margin-left: 24px;
   margin-bottom: 0;
-  padding: 16px 0 16px 20px;
+  padding: 10px 0 0px 10px;
   border-radius: 6px;
   border-bottom: none;
   position: relative;
@@ -295,4 +288,27 @@
   color: #a0aec0;
   font-style: italic;
   font-size: 14px;
+}
+
+@media (max-width: 480px) {
+  .rightButtons {
+    gap: 0px !important;
+  }
+
+  .commentSection {
+    padding: 10px !important;
+  }
+
+  .nestedCommentList .commentItem {
+    margin-left: 15px;
+    padding: 0px 0 0px 5px;
+  }
+
+  .commentHeader {
+    margin-bottom: 5px;
+  }
+
+  .nestedCommentList {
+    margin-top: 10px;
+  }
 }

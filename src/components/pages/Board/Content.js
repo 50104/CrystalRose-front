@@ -9,6 +9,10 @@ import styles from './CKEditor.module.css';
 import CommentList from './CommentList';
 import ReportModal from '../../common/ReportModal';
 import { reportPost, blockUser } from '@utils/api/report';
+import { format, parseISO } from 'date-fns';
+
+export const formatDateTime = (isoString) =>
+  isoString ? format(parseISO(isoString), 'yy/MM/dd HH:mm') : '-';
 
 function Content() {
   const { userData, loading } = useUserData();
@@ -24,12 +28,6 @@ function Content() {
     txt.innerHTML = html;
     return txt.value;
   }
-
-  const formatDateTime = (isoString) => {
-    if (!isoString) return "";
-    const date = new Date(isoString);
-    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-  };
 
   const fetchComments = useCallback(async () => {
     try {
@@ -154,39 +152,52 @@ function Content() {
           <div className='headerBox'>
             <div className='titleBox'>{content.boardTitle}</div>
             <div className='authorBox'>
-              <div className='authorInfo'>
-                <span className='authorName'>
-                  {content.writer
-                    ? (content.writer.userStatus === 'DELETED' ? '탈퇴한 사용자입니다' : content.writer.userNick)
-                    : '알 수 없는 사용자'}
-                </span>
-                {!loading && userData && content.writer 
-                && content.writer.userStatus !== 'DELETED' 
-                && userData.userNo !== content.writer.userNo && (
-                  <>
-                    <button className="contentButton" onClick={async () => {
-                      try {
-                        await blockUser(content.writer.userNo);
-                        alert("차단 완료");
-                      } catch (err) {
-                        alert('차단 실패: ' + err.response?.data?.message || '오류 발생');
-                      }
-                    }}>차단</button>
-                    <button className="contentButton" onClick={async () => {
-                      const alreadyReported = await checkAlreadyReported();
-                      if (alreadyReported) {
-                        alert("이미 신고한 게시글입니다.");
-                        return;
-                      }
-                      setReportingPostId(content.boardNo);
-                    }}>신고</button>
-                  </>
-                )}
-              </div>
-              <div className='postDate'>{formatDateTime(content.createdDate)}</div>
+              <span className='authorName'>
+                {content.writer
+                  ? (content.writer.userStatus === 'DELETED' ? '탈퇴한 사용자입니다' : content.writer.userNick)
+                  : '알 수 없는 사용자'}
+              </span>
+              <span className='authorDate'>
+                {content.createdDate
+                  ? `${formatDateTime(content.createdDate)}`
+                  : '-'}
+              </span>
             </div>
           </div>
-          <div className='boardContent'>{parse(content.boardContent)}          </div>
+          <div className='boardContent'>
+            {parse(content.boardContent)}
+          </div>
+        </div>
+
+        <div className='contentButtonBox'>
+          {!loading && userData && content.writer &&
+            content.writer.userStatus !== 'DELETED' &&
+            userData.userNo !== content.writer.userNo && (
+              <>
+                <button className="contentButton" onClick={async () => {
+                  try {
+                    await blockUser(content.writer.userNo);
+                    alert("차단 완료");
+                  } catch (err) {
+                    alert('차단 실패: ' + err.response?.data?.message || '오류 발생');
+                  }
+                }}>차단</button>
+                <button className="contentButton" onClick={async () => {
+                  const alreadyReported = await checkAlreadyReported();
+                  if (alreadyReported) {
+                    alert("이미 신고한 게시글입니다.");
+                    return;
+                  }
+                  setReportingPostId(content.boardNo);
+                }}>신고</button>
+              </>
+          )}
+          {userData && content.writer && userData.userNo === content.writer.userNo && (
+            <>
+              <input className='contentButton' type="submit" onClick={handleEdit} value="수정" />
+              <input className='contentButton' type="submit" onClick={handleDelete} value="삭제" />
+            </>
+          )}
         </div>
       </div>
 
@@ -198,14 +209,6 @@ function Content() {
         title="게시글 신고"
       />
 
-      <div className='contentButtonBox'>
-        {userData && content.writer && userData.userNo === content.writer.userNo && (
-          <>
-            <input className='contentButton' type="submit" onClick={handleEdit} value="수정" />
-            <input className='contentButton' type="submit" onClick={handleDelete} value="삭제" />
-          </>
-        )}
-      </div>
       <div className="commentSection">
         <h3>댓글</h3>
         <CommentList

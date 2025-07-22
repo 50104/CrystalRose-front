@@ -2,7 +2,7 @@
   flex-direction: column;
   align-items: center;
   max-width: 127vh;
-  padding: 40px;
+  padding: 20px;
   margin: 0 auto;
   background: white;
 }
@@ -11,9 +11,9 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   width: 100%;
-  padding-bottom: 16px;
+  padding-bottom: 10px;
   border-bottom: 2px solid #f1f5f9;
 }
 
@@ -31,18 +31,17 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4px;
-}
-
-.authorInfo {
-  display: flex;
-  align-items: center;
   gap: 8px;
 }
 
 .authorName {
   font-weight: 600;
   color: #4a5568;
+}
+
+.authorDate {
+  font-size: 13px;
+  color: #a0aec0;
 }
 
 .postDate {
@@ -100,4 +99,10 @@
 .authorInfo .contentButton:hover {
   background: #f7fafc;
   color: #4a5568;
+}
+
+@media (max-width: 480px) {
+  .contentBox {
+    padding: 10px;
+  }
 }

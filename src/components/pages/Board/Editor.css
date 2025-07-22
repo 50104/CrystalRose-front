@@ -3,6 +3,7 @@
     display: flex;
     justify-content: flex-end;
     margin-top: 10px;
+    gap: 10px;
 }
 
 .uploadButton {
@@ -74,4 +75,25 @@
     box-sizing: border-box;
     margin-bottom: 10px;
     flex: 7;
+}
+
+.cancelButton {
+  border: 1px solid #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  width: 65px;
+  height: 33px;
+  background-color: rgb(232, 222, 255);
+  color: rgb(0, 0, 0);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 175%;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.cancelButton:hover {
+  background-color: rgb(212, 194, 255);
 }
