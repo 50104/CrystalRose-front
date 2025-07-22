@@ -143,6 +143,15 @@
   box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.25);
 }
 
+.rose-form-select {
+  appearance: none; /* 기본 화살표 숨김 */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 140 140' width='10' height='10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='30,50 70,90 110,50' stroke='%23000' stroke-width='20' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+  padding-right: 28px;
+}
+
 .rose-form-textarea {
   resize: vertical;
   min-height: 120px;
