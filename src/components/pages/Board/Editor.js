@@ -7,15 +7,16 @@ import { axiosInstance } from '@utils/axios';
 import styles from './CKEditor.module.css';
 import './Editor.css';
 
-function CustomUploadAdapterPlugin(editor) {
+function CustomUploadAdapterPlugin(editor, tag) {
   editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-    return new CustomUploadAdapter(loader);
+    return new CustomUploadAdapter(loader, tag);
   };
 }
 
 class CustomUploadAdapter {
-  constructor(loader) {
+  constructor(loader, tag) {
     this.loader = loader;
+    this.tag = tag;
   }
 
   upload() {
@@ -23,6 +24,7 @@ class CustomUploadAdapter {
       new Promise((resolve, reject) => {
         const data = new FormData();
         data.append('file', file);
+        data.append('boardTag', this.tag);
 
         axiosInstance.post('/api/v1/board/image/upload', data, {
               headers: {'Content-Type': undefined}
@@ -45,9 +47,27 @@ function Editor() {
   const { userData, loading, isLogin } = useUserData();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const isAdmin = userData?.userRole?.toUpperCase() === 'ROLE_ADMIN';
+  const [tagOptions, setTagOptions] = useState(['질문', '일상']);
+  const [tag, setTag] = useState(() => {
+    return isAdmin ? '공지' : '일상';
+  });
   const [isFormValid, setIsFormValid] = useState(false);
   const navigate = useNavigate();
   const { boardNo } = useParams();
+
+  useEffect(() => {
+    if (userData) {
+      const role = userData.userRole?.toUpperCase();
+      if (role === 'ROLE_ADMIN') {
+        setTagOptions(['공지', '질문', '일상']);
+        setTag(prev => (prev === '일상' || prev === '질문' ? '공지' : prev));
+      } else {
+        setTagOptions(['질문', '일상']);
+        setTag(prev => (prev === '공지' ? '일상' : prev));
+      }
+    }
+  }, [userData]);
 
   useEffect(() => {
     if (boardNo) {
@@ -57,6 +77,7 @@ function Editor() {
           const data = response.data.data;
           setTitle(data.boardTitle || '');
           setContent(data.boardContent || '');
+          setTag(data.boardTag || '');
         } catch (error) {
           console.error('게시글 불러오기 오류:', error);
         }
@@ -77,6 +98,7 @@ function Editor() {
     const formData = new FormData();
     formData.append('boardTitle', title);
     formData.append('boardContent', content);
+    formData.append('boardTag', tag);
 
     if (userData?.userId) {
       formData.append('userId', userData.userId);
@@ -96,7 +118,12 @@ function Editor() {
       const savedBoardNo = response.data.data.boardNo;
       navigate(`/content/${savedBoardNo}`);
     } catch (error) {
-      console.error('글 업로드 오류', error);
+      if (error.response?.data?.message === '공지 작성 권한이 없습니다.') {
+        alert('공지 작성은 관리자만 가능합니다.');
+      } else {
+        console.error(error);
+        alert('게시글 저장 중 오류가 발생했습니다.');
+      }
     }
   };
 
@@ -106,14 +133,23 @@ function Editor() {
   return (
     <div className={`${styles.content} custom-editor`}>
       <form onSubmit={handleSubmit}>
-        <input
-          className='inputTitle'
-          name="boardTitle"
-          type="text"
-          placeholder="제목"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        /><br />
+        <div className="titleRow">
+          <select value={tag} onChange={(e) => setTag(e.target.value)} className='inputTag'>
+            {tagOptions.map(opt => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+
+          <input
+            className='inputTitle'
+            name="boardTitle"
+            type="text"
+            placeholder="제목"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          /><br />
+        </div>
+
         <CKEditor
           editor={ClassicEditor}
           data={content}

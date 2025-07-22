@@ -1,11 +1,3 @@
-.inputTitle {
-    width: 100%; /* 에디터와 같은 너비로 설정 */
-    border: 1px solid #ddd; /* 연한 테두리 색상 */
-    padding: 8px; /* 패딩 추가로 보기 좋게 */
-    box-sizing: border-box; /* 패딩 포함하여 너비 계산 */
-    margin-bottom: 10px; /* 아래 여백 추가 */
-}
-
 .uploadButtonBox {
     width: 100%;
     display: flex;
@@ -50,5 +42,36 @@
 }
 
 .custom-editor .ck-editor__editable_inline {
-    min-height: 500px;
+    min-height: 700px;
+}
+
+.titleRow {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.inputTag {
+    width: 100%;
+    border: 1px solid #ddd;
+    padding: 8px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    flex: 1;
+
+    appearance: none; /* 기본 화살표 숨김 */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 140 140' width='10' height='10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='30,50 70,90 110,50' stroke='%23000' stroke-width='20' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    padding-right: 28px;
+}
+
+.inputTitle {
+    width: 100%;
+    border: 1px solid #ddd;
+    padding: 8px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    flex: 7;
 }
