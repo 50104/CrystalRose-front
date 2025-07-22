@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { modifyUserData, useUserData } from '@utils/api/user';
+import { useUserData } from '@utils/api/user';
 import { logoutFunction } from '@utils/api/token';
 import './MyPage.css';
 import { getAccessToken } from '@utils/api/token';
 import { useNavigate } from 'react-router-dom';
 import { FaGear } from "react-icons/fa6";
 import { safeConvertToWebP } from '../../../utils/imageUtils';
+import { axiosInstance } from '../../../utils/axios';
 
 function MyPage() {
     const { userData, loading } = useUserData();
@@ -63,31 +64,37 @@ function MyPage() {
     };
 
     const handleModify = async () => {
-        const file = inputRef.current.files[0];
+      try {
+        const file = inputRef.current?.files?.[0];
         const finalFile = file ? await safeConvertToWebP(file) : null;
 
         const formData = new FormData();
         formData.append('userNick', userData.userNick);
         if (!isDelete && finalFile) {
-            formData.append("userProfileFile", finalFile);
+          formData.append('userProfileFile', finalFile);
         }
         formData.append('isDelete', String(isDelete));
 
-        try {
-            await modifyUserData(formData);
-            window.location.reload();
-        } catch (error) {
-            if (error.response?.data === 'access token expired') {
-                try {
-                    await getAccessToken();
-                    handleModify();
-                } catch (error) {
-                    console.error('토큰 갱신 실패:', error);
-                }
-            } else {
-                console.error('사용자 정보 수정 실패:', error);
-            }
+        const response = await axiosInstance.post('/api/user/modify', formData, {
+          headers: {
+            'Content-Type': undefined,
+          },
+        });
+
+        console.log('사용자 정보 수정 성공:', response.data);
+        window.location.reload();
+      } catch (error) {
+        if (error.response?.data === 'access token expired') {
+          try {
+            await getAccessToken();
+            handleModify();
+          } catch (refreshError) {
+            console.error('토큰 갱신 실패:', refreshError);
+          }
+        } else {
+          console.error('사용자 정보 수정 실패:', error);
         }
+      }
     };
 
     const navigate = useNavigate();

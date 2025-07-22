@@ -87,17 +87,3 @@ export const getUserData = async (setIsLogin) => {
     throw error;
   }
 };
-
-export const modifyUserData = async (data) => {
-  const response = await axiosInstance.post(
-    `/api/user/modify`,
-    data,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }
-  );
-
-  return response.data;
-};

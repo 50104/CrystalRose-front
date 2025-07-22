@@ -24,7 +24,9 @@ class CustomUploadAdapter {
         const data = new FormData();
         data.append('file', file);
 
-        axiosInstance.post('/api/v1/board/image/upload', data)
+        axiosInstance.post('/api/v1/board/image/upload', data, {
+              headers: {'Content-Type': undefined}
+          })
           .then(res => {
             if (res.data && res.data.url) {
               resolve({ default: res.data.url });
@@ -88,7 +90,9 @@ function Editor() {
         ? `/api/v1/board/save/${boardNo}`
         : `/api/v1/board/save`;
 
-      const response = await axiosInstance.post(url, formData);
+      const response = await axiosInstance.post(url, formData, {
+          headers: {'Content-Type': undefined}
+      });
       const savedBoardNo = response.data.data.boardNo;
       navigate(`/content/${savedBoardNo}`);
     } catch (error) {
@@ -130,10 +134,11 @@ function Editor() {
                 { language: 'css', label: 'CSS' },
                 { language: 'gradle', label: 'Gradle' }
               ]
-            },
+            }
           }}
           onChange={(event, editor) => setContent(editor.getData())}
         />
+
         <div className='uploadButtonBox'>
           <input
             className={isFormValid ? 'uploadButton' : 'uploadButton-disable'}

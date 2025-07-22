@@ -210,9 +210,7 @@ const UserUpdate = () => {
         })], { type: 'application/json' }));
         try {
             await axiosInstance.put(`/api/user/update`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
+                headers: {'Content-Type': undefined}
             });
             alert('업데이트 성공');
             window.location.href = '/myPage';

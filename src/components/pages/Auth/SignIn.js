@@ -71,7 +71,9 @@ function SignIn() {
             formData.append('userId', userId);
             formData.append('userPwd', userPwd);
 
-            const response = await noAuthAxios.post(`/api/v1/auth/login`, formData);
+            const response = await noAuthAxios.post(`/api/v1/auth/login`, formData, {
+                headers: {'Content-Type': undefined}
+            });
 
             const authorizationHeader = response.headers['authorization'];
             const accessToken = authorizationHeader?.split(' ')[1];

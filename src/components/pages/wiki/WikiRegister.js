@@ -100,11 +100,9 @@ export default function WikiRegisterPage() {
       const formData = new FormData();
       formData.append('file', finalFile);
 
-      const response = await axiosInstance.post(
-        `/api/v1/wiki/image/upload`,
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      );
+      const response = await axiosInstance.post(`/api/v1/wiki/image/upload`, formData, {
+        headers: {'Content-Type': undefined}
+      });
 
       const url = response.data.url;
       setFormData(prev => ({ ...prev, imageUrl: url }));
