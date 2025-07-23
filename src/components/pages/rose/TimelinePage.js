@@ -37,6 +37,21 @@ export default function RoseTimelinePage() {
     }
   }, [roseId]);
 
+  const handleDeleteEntry = (entry) => {
+    const confirmDelete = window.confirm('정말 이 기록을 삭제하시겠습니까?');
+    if (!confirmDelete) return;
+
+    axiosInstance.delete(`/api/diaries/delete/${entry.id}`)
+      .then(() => {
+        alert('기록이 삭제되었습니다.');
+        setTimeline(prev => prev.filter(item => item.id !== entry.id));
+      })
+      .catch(err => {
+        console.error('삭제 실패', err);
+        alert('삭제 중 오류가 발생했습니다.');
+      });
+  };
+
   useEffect(() => {
     fetchTimeline();
   }, [fetchTimeline]);
@@ -66,6 +81,14 @@ export default function RoseTimelinePage() {
                 <span className="timeline-icons"> {extractCareIcons(entry)}</span>
               </p>
               <p className="timeline-note">{entry.note || '메모 없음'}</p>
+              {entry.isMine && (
+                <button
+                  className="timeline-delete-button"
+                  onClick={() => handleDeleteEntry(entry)}
+                >
+                  삭제
+                </button>
+              )}
             </div>
           </div>
         ))}
