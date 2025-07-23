@@ -153,7 +153,6 @@
 
 .calendar-day[style*="background-image"] .day-event {
   background-color: rgba(255, 255, 255, 0.7);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .loading-indicator {
