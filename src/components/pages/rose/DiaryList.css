@@ -27,16 +27,16 @@
 .diary-roses-button {
   padding: 0.75rem 1.5rem;
   color: white;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  display: flex;
   text-decoration: none;
   border-radius: 0.5rem;
   font-weight: 600;
   font-size: 1rem;
   transition: background-color 0.2s;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .diary-register-button {
@@ -107,6 +107,11 @@
     flex-direction: row;
     gap: 0.5rem;
     width: 100%;
+  }
+
+  .diary-register-button,
+  .diary-roses-button {
+    flex: 1;
   }
 }
 

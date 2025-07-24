@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import CareLogRegister from './CareLogRegister';
 import './CareLogModal.css';
 
 const CARE_LABELS = {
@@ -12,6 +13,7 @@ const CARE_LABELS = {
 };
 
 export default function CareLogModal({ log, onClose, onEdit }) {
+  const [editing, setEditing] = useState(false); // 수정 모드
   const CARE_ORDER = [
     'watering',
     'fertilizer',
@@ -28,13 +30,33 @@ export default function CareLogModal({ log, onClose, onEdit }) {
 
   const displayDate = new Date(log.careDate + 'T00:00:00');
 
+  const handleSuccess = () => {
+    setEditing(false);
+    onEdit?.();
+  };
+
+  if (editing) {
+    return (
+      <div className="modal-backdrop" onClick={onClose}>
+        <div className="modal-box" onClick={e => e.stopPropagation()}>
+          <CareLogRegister
+            selectedDate={new Date(log.careDate)}
+            editData={log}
+            onSuccess={handleSuccess}
+            onCancel={() => setEditing(false)}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-box" onClick={e => e.stopPropagation()}>
-        <h2>{displayDate.toLocaleDateString('ko-KR', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
+        <h2>{displayDate.toLocaleDateString('ko-KR', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
         })} 관리 기록</h2>
         {entries.length > 0 ? (
           <ul>
@@ -50,7 +72,7 @@ export default function CareLogModal({ log, onClose, onEdit }) {
           </p>
         )}
         <div className="modal-buttons">
-          {onEdit && <button onClick={onEdit} className="edit-button">수정</button>}
+          <button onClick={() => setEditing(true)} className="edit-button">수정</button>
           <button onClick={onClose} className="close-button">닫기</button>
         </div>
       </div>

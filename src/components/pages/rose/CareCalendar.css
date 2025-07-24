@@ -385,7 +385,7 @@
   overflow-y: auto;
 }
 
-.modal-content .care-form-container {
+.modal-content {
   margin: 0;
   box-shadow: none;
   border-radius: 0;

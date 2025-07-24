@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
+import CareLogModal from './CareLogModal';
 import './TimelinePage.css';
 
 const CARE_LABELS = {
@@ -22,11 +23,11 @@ export default function RoseTimelinePage() {
   const [timeline, setTimeline] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedLog, setSelectedLog] = useState(null);
 
   const fetchTimeline = useCallback(async () => {
     try {
       const res = await axiosInstance.get(`/api/diaries/${roseId}/timeline`);
-      console.log("응답:", res.data[0]);
       const sortedData = res.data.sort((a, b) => new Date(b.recordedAt) - new Date(a.recordedAt));
       setTimeline(sortedData);
     } catch (err) {
@@ -52,9 +53,26 @@ export default function RoseTimelinePage() {
       });
   };
 
-  useEffect(() => {
-    fetchTimeline();
-  }, [fetchTimeline]);
+  const handleEntryClick = async (entry) => {
+    const date = entry.recordedAt;
+    try {
+      const res = await axiosInstance.get(`/api/diaries/carelogs/${roseId}?date=${date}`);
+      const careLog = res.data;
+      setSelectedLog({ ...careLog, recordedAt: date }); 
+    } catch (err) {
+      console.error('케어로그 단건 조회 실패', err);
+      alert('관리 기록을 불러오는 데 실패했습니다.');
+    }
+  };
+
+  const handleCloseModal = () => {
+    setSelectedLog(null);
+  };
+
+  const handleEditLog = () => {
+    alert('수정 기능은 추후 구현 예정입니다.');
+    setSelectedLog(null);
+  };
 
   const extractCareIcons = (entry) => {
     return (entry.careTypes || [])
@@ -62,6 +80,10 @@ export default function RoseTimelinePage() {
       .filter(Boolean)
       .join('');
   };
+
+  useEffect(() => {
+    fetchTimeline();
+  }, [fetchTimeline]);
 
   if (loading) return <div className="timeline-loading">로딩 중...</div>;
   if (error) return <div className="timeline-error">{error}</div>;
@@ -71,7 +93,13 @@ export default function RoseTimelinePage() {
       <h1 className="timeline-title">{roseName} 타임라인</h1>
       <div className="timeline-list">
         {timeline.map(entry => (
-          <div key={entry.id} className="timeline-entry">
+          <div
+            key={entry.id}
+            className={`timeline-entry ${entry.hasCareLog ? '' : 'disabled'}`}
+            onClick={() => {
+              if (entry.hasCareLog) handleEntryClick(entry);
+            }}
+          >
             {entry.imageUrl && (
               <img src={entry.imageUrl} alt="타임라인 이미지" className="timeline-image" />
             )}
@@ -84,7 +112,10 @@ export default function RoseTimelinePage() {
               {entry.isMine && (
                 <button
                   className="timeline-delete-button"
-                  onClick={() => handleDeleteEntry(entry)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteEntry(entry);
+                  }}
                 >
                   삭제
                 </button>
@@ -101,6 +132,14 @@ export default function RoseTimelinePage() {
           &larr; 목록으로 돌아가기
         </div>
       </div>
+
+      {selectedLog && (
+        <CareLogModal
+          log={selectedLog}
+          onClose={handleCloseModal}
+          onEdit={handleEditLog}
+        />
+      )}
     </div>
   );
 }

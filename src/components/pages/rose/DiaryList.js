@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
+import CareLogModal from './CareLogModal';
 import './DiaryList.css';
 
 const CARE_LABELS = {
@@ -18,6 +19,7 @@ export default function DiaryListPage() {
   const [careLogs, setCareLogs] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedLog, setSelectedLog] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,13 +31,10 @@ export default function DiaryListPage() {
 
         setDiaries(diaryRes.data);
 
-        // 날짜별 관리 항목 추출
         const logsByDate = {};
         for (const log of careLogRes.data) {
           const dateStr = new Date(log.careDate).toLocaleDateString('sv-SE');
-          logsByDate[dateStr] = Object.entries(log)
-            .filter(([key, value]) => CARE_LABELS[key] && value) // 관리 항목 필터
-            .map(([key]) => key); // key 목록 저장
+          logsByDate[dateStr] = log;
         }
         setCareLogs(logsByDate);
       } catch (err) {
@@ -49,13 +48,22 @@ export default function DiaryListPage() {
     fetchData();
   }, []);
 
+  const handleCardClick = (dateStr) => {
+    const log = careLogs[dateStr];
+    if (log) setSelectedLog(log); 
+  };
+
+  const handleCloseModal = () => {
+    setSelectedLog(null);
+  };
+
   if (loading) return <div className="diary-list-loading">로딩 중...</div>;
   if (error) return <div className="diary-list-error">{error}</div>;
 
   return (
     <div className="diary-list-container">
       <div className="diary-list-header">
-        <h1 className="diary-list-title">성장 기록</h1>
+        <h1 className="diary-list-title">전체 성장 기록</h1>
         <div className="diary-list-buttons">
           <Link to="/roses/list" className="diary-roses-button">내 장미</Link>
           <Link to="/diaries/register" className="diary-register-button">+ 기록 등록</Link>
@@ -68,10 +76,21 @@ export default function DiaryListPage() {
         <div className="diary-grid">
           {diaries.map(diary => {
             const dateStr = new Date(diary.recordedAt).toLocaleDateString('sv-SE');
-            const careItems = careLogs[dateStr] || [];
+            const careLog = careLogs[dateStr];
+            const careItems = careLog
+              ? Object.entries(careLog)
+                  .filter(([key, value]) => CARE_LABELS[key] && value)
+                  .map(([key]) => key)
+              : [];
 
             return (
-              <div className="diary-card" key={diary.id}>
+              <div
+                className={`diary-card ${careItems.length > 0 ? '' : 'disabled'}`}
+                key={diary.id}
+                onClick={() => {
+                  if (careItems.length > 0) handleCardClick(dateStr);
+                }}
+              >
                 {diary.imageUrl && (
                   <img src={diary.imageUrl} alt="성장기록 이미지" className="diary-image" />
                 )}
@@ -84,14 +103,19 @@ export default function DiaryListPage() {
                       </span>
                     )}
                   </p>
-                  <p className="diary-note">
-                    {diary.note || '메모 없음'}
-                  </p>
+                  <p className="diary-note">{diary.note || '메모 없음'}</p>
                 </div>
               </div>
             );
           })}
         </div>
+      )}
+
+      {selectedLog && (
+        <CareLogModal
+          log={selectedLog}
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );

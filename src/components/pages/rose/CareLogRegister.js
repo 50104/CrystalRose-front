@@ -78,7 +78,7 @@ export default function CareLogRegister({ selectedDate, editData, onSuccess, onC
   };
 
   return (
-    <div className="care-form-container">
+    <div>
       <h2 className="full-width">관리 기록 {editData ? '수정' : '등록'}</h2>
       <form onSubmit={handleSubmit} className="care-form">
         <input type="hidden" name="careDate" value={form.careDate} onChange={handleChange} required />
