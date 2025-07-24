@@ -76,6 +76,7 @@ function AppRoutes() {
         {/* 성장 기록 */}
         <Route path="/diaries/register" element={<DiaryRegister />} />
         <Route path="/diaries/register/:roseId" element={<DiaryRegister />} />
+        <Route path="/diaries/edit/:diaryId" element={<DiaryRegister mode="edit" />} />
         <Route path="/diaries/list" element={<DiaryList />} />
         <Route path="/diaries/:roseId/timeline" element={<TimelinePage />} />
         <Route path="/diaries/:roseId/timelapse" element={<TimelapsePage />} />

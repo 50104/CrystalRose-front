@@ -39,7 +39,7 @@ export default function RoseTimelinePage() {
   }, [roseId]);
 
   const handleDeleteEntry = (entry) => {
-    const confirmDelete = window.confirm('정말 이 기록을 삭제하시겠습니까?');
+    const confirmDelete = window.confirm('해당 기록을 삭제하시겠습니까?');
     if (!confirmDelete) return;
 
     axiosInstance.delete(`/api/diaries/delete/${entry.id}`)
@@ -70,7 +70,8 @@ export default function RoseTimelinePage() {
   };
 
   const handleEditLog = () => {
-    alert('수정 기능은 추후 구현 예정입니다.');
+    if (!selectedLog) return;
+    navigate(`/diaries/edit/${selectedLog.id}`, { state: selectedLog });
     setSelectedLog(null);
   };
 
@@ -101,7 +102,33 @@ export default function RoseTimelinePage() {
             }}
           >
             {entry.imageUrl && (
-              <img src={entry.imageUrl} alt="타임라인 이미지" className="timeline-image" />
+              <div className="timeline-image-wrapper">
+                <img src={entry.imageUrl} alt="타임라인 이미지" className="timeline-image"/>
+                {entry.isMine && (
+                  <>
+                    <div
+                      className="timeline-delete-circle mobile-only"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteEntry(entry);
+                      }}
+                      title="삭제"
+                    >
+                      ×
+                    </div>
+                    <div
+                      className="timeline-edit-button mobile-only"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/diaries/edit/${entry.id}`);
+                      }}
+                      title="수정"
+                    >
+                      수정
+                    </div>
+                  </>
+                )}
+              </div>
             )}
             <div className="timeline-text">
               <p className="timeline-date">
@@ -109,19 +136,33 @@ export default function RoseTimelinePage() {
                 <span className="timeline-icons"> {extractCareIcons(entry)}</span>
               </p>
               <p className="timeline-note">{entry.note || '메모 없음'}</p>
-              {entry.isMine && (
+            </div>
+            {entry.isMine && (
+              <div className="timeline-button-group">
                 <button
-                  className="timeline-delete-button"
+                  className="timeline-action-button delete"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDeleteEntry(entry);
                   }}
+                  title="삭제"
                 >
                   삭제
                 </button>
-              )}
-            </div>
+                <button
+                  className="timeline-action-button edit"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/diaries/edit/${entry.id}`);
+                  }}
+                  title="수정"
+                >
+                  수정
+                </button>
+              </div>
+            )}
           </div>
+
         ))}
       </div>
       <div className="timeline-navigation">
@@ -132,7 +173,6 @@ export default function RoseTimelinePage() {
           &larr; 목록으로 돌아가기
         </div>
       </div>
-
       {selectedLog && (
         <CareLogModal
           log={selectedLog}

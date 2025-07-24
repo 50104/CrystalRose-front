@@ -1,25 +1,61 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
 import './DiaryRegister.css';
 import { safeConvertToWebP } from '../../../utils/imageUtils';
 
-export default function DiaryRegister({ onSuccess }) {
+export default function DiaryRegister({ onSuccess, mode = 'register', initialData = null }) {
+  const { diaryId, roseId: paramRoseId } = useParams();
   const navigate = useNavigate();
-  const { roseId } = useParams();
-  const [roseList, setRoseList] = useState([]); 
+  const location = useLocation();
+
+  const [roseList, setRoseList] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
 
   const [formData, setFormData] = useState({
-    roseId: roseId || '', 
+    roseId: '',
     note: '',
     recordedAt: '',
     imageUrl: ''
   });
-  
+
+  const isEditMode = mode === 'edit' || location.pathname.includes('/edit/');
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (isEditMode && diaryId) {
+        try {
+          const res = await axiosInstance.get(`/api/diaries/${diaryId}`);
+          const data = res.data;
+          setFormData({
+            roseId: data.roseId,
+            note: data.note || '',
+            recordedAt: data.recordedAt?.slice(0, 10) || '',
+            imageUrl: data.imageUrl || ''
+          });
+          setImagePreview(data.imageUrl || null);
+        } catch (err) {
+          console.error("수정 데이터 불러오기 실패", err);
+          alert("수정할 데이터를 불러오지 못했습니다.");
+          navigate(-1);
+        }
+      } else if (paramRoseId) {
+        setFormData(prev => ({ ...prev, roseId: paramRoseId }));
+      }
+    };
+
+    loadData();
+  }, [isEditMode, diaryId, paramRoseId, navigate]);
+
+  useEffect(() => {
+    axiosInstance.get(`/api/roses/list`)
+      .then(res => setRoseList(res.data))
+      .catch(err => console.error("장미 목록 불러오기 실패", err));
+  }, []);
+
   const validateForm = () => {
     const requiredFields = [
       { field: 'roseId', name: '장미 선택' },
@@ -27,12 +63,10 @@ export default function DiaryRegister({ onSuccess }) {
       { field: 'recordedAt', name: '기록 날짜' },
       { field: 'imageUrl', name: '사진' }
     ];
-
     const missingFields = requiredFields.filter(({ field }) => !formData[field]);
-    
     if (missingFields.length > 0) {
-      const missingFieldNames = missingFields.map(({ name }) => name).join(', ');
-      alert(`다음 필수 항목을 입력해주세요: ${missingFieldNames}`);
+      const missingNames = missingFields.map(({ name }) => name).join(', ');
+      alert(`다음 항목을 입력해주세요: ${missingNames}`);
       return false;
     }
     return true;
@@ -42,15 +76,6 @@ export default function DiaryRegister({ onSuccess }) {
     return formData.roseId && formData.note && formData.recordedAt && formData.imageUrl;
   };
 
-  // 내 장미 목록 불러오기
-  useEffect(() => {
-    axiosInstance.get(`/api/roses/list`)
-      .then(res => {
-        setRoseList(res.data);
-      })
-      .catch(err => console.error("내 장미 목록 불러오기 실패", err));
-  }, []);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -59,22 +84,20 @@ export default function DiaryRegister({ onSuccess }) {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const finalFile = await safeConvertToWebP(file);
 
+    const finalFile = await safeConvertToWebP(file);
     setUploading(true);
     try {
-      const uploadForm = new FormData();
-      uploadForm.append('file', finalFile);
-
-      const res = await axiosInstance.post(`/api/diaries/image/upload`, uploadForm, {
+      const form = new FormData();
+      form.append('file', finalFile);
+      const res = await axiosInstance.post(`/api/diaries/image/upload`, form, {
         headers: {'Content-Type': undefined}
       });
-
       const url = res.data.url;
       setFormData(prev => ({ ...prev, imageUrl: url }));
       setImagePreview(url);
     } catch (err) {
-      console.error(err);
+      console.error('이미지 업로드 실패', err);
       setMessage({ type: 'error', text: '이미지 업로드 실패' });
     } finally {
       setUploading(false);
@@ -84,48 +107,42 @@ export default function DiaryRegister({ onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
     setIsSubmitting(true);
-    const roseIdToUse = formData.roseId;
 
-    const submitData = {
+    const payload = {
       ...formData,
-      recordedAt: formData.recordedAt?.trim() || null
+      recordedAt: formData.recordedAt.trim()
     };
 
     try {
-      await axiosInstance.post(`/api/diaries/register`, {
-        ...submitData,
-        roseId: roseIdToUse
-      });
-
-      setMessage({ type: 'success', text: '성장 기록 등록 성공' });
-      setFormData({
-        roseId: roseId || '',
-        note: '',
-        recordedAt: '',
-        imageUrl: ''
-      });
-      setImagePreview(null);
-
-      if (roseId) {
-        navigate(`/diaries/${roseIdToUse}/timeline`);
+      if (isEditMode && diaryId) {
+        await axiosInstance.put(`/api/diaries/update/${diaryId}`, payload);
+        setMessage({ type: 'success', text: '기록이 수정되었습니다.' });
       } else {
-        navigate('/diaries/list');
+        await axiosInstance.post(`/api/diaries/register`, payload);
+        setMessage({ type: 'success', text: '기록이 등록되었습니다.' });
       }
 
-      onSuccess?.();
+      setTimeout(() => {
+        if (formData.roseId) {
+          navigate(`/diaries/${formData.roseId}/timeline`);
+        } else {
+          navigate('/diaries/list');
+        }
+        onSuccess?.();
+      }, 800);
+
     } catch (err) {
-      console.error('Submit error:', err.response?.data || err.message);
-      setMessage({ type: 'error', text: '등록 실패' });
+      console.error('제출 실패', err);
+      setMessage({ type: 'error', text: '제출에 실패했습니다.' });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleCancel = () => {
-    if (roseId) {
-      navigate('/roses/list');
+    if (formData.roseId) {
+      navigate(`/diaries/${formData.roseId}/timeline`);
     } else {
       navigate('/diaries/list');
     }
@@ -133,12 +150,10 @@ export default function DiaryRegister({ onSuccess }) {
 
   return (
     <div className="diary-form-container">
-      <h1 className="diary-form-title">성장 기록 추가</h1>
-      
+      <h1 className="diary-form-title">{isEditMode ? '성장 기록 수정' : '성장 기록 추가'}</h1>
+
       {message && (
-        <div className={`diary-message ${message.type}`}>
-          {message.text}
-        </div>
+        <div className={`diary-message ${message.type}`}>{message.text}</div>
       )}
 
       <div className="diary-form-content">
@@ -146,14 +161,14 @@ export default function DiaryRegister({ onSuccess }) {
           <div className="diary-image-upload-section">
             <div className="diary-image-upload-container">
               {imagePreview ? (
-                <img 
-                  src={imagePreview} 
-                  alt="preview" 
+                <img
+                  src={imagePreview}
+                  alt="preview"
                   className="diary-image-preview"
                   onClick={() => document.getElementById('diary-image-input').click()}
                 />
               ) : (
-                <div 
+                <div
                   className="diary-image-placeholder"
                   onClick={() => document.getElementById('diary-image-input').click()}
                 >
@@ -175,15 +190,13 @@ export default function DiaryRegister({ onSuccess }) {
 
           <div className="diary-basic-info-section">
             <div className="diary-form-group">
-              <label className="diary-form-label">
-                장미 선택 <span className="diary-required">*</span>
-              </label>
-              <select 
-                name="roseId" 
-                value={formData.roseId} 
-                onChange={handleChange} 
+              <label className="diary-form-label">장미 선택 <span className="diary-required">*</span></label>
+              <select
+                name="roseId"
+                value={formData.roseId}
+                onChange={handleChange}
                 required
-                disabled={!!roseId}
+                disabled={!!paramRoseId}
                 className="diary-form-select"
               >
                 <option value="">장미를 선택하세요</option>
@@ -196,9 +209,7 @@ export default function DiaryRegister({ onSuccess }) {
             </div>
 
             <div className="diary-form-group">
-              <label className="diary-form-label">
-                기록 날짜 <span className="diary-required">*</span>
-              </label>
+              <label className="diary-form-label">기록 날짜 <span className="diary-required">*</span></label>
               <input
                 type="date"
                 name="recordedAt"
@@ -210,15 +221,13 @@ export default function DiaryRegister({ onSuccess }) {
             </div>
 
             <div className="diary-form-group">
-              <label className="diary-form-label">
-                기록 내용 <span className="diary-required">*</span>
-              </label>
-              <textarea 
-                name="note" 
-                value={formData.note} 
-                onChange={handleChange} 
+              <label className="diary-form-label">기록 내용 <span className="diary-required">*</span></label>
+              <textarea
+                name="note"
+                value={formData.note}
+                onChange={handleChange}
                 placeholder="오늘의 성장 기록을 작성해주세요"
-                required 
+                required
                 className="diary-form-textarea"
               />
             </div>
@@ -231,7 +240,7 @@ export default function DiaryRegister({ onSuccess }) {
             className="diary-submit-button"
             disabled={isSubmitting || uploading || !isFormValid()}
           >
-            {isSubmitting ? '등록 중...' : '기록 등록'}
+            {isSubmitting ? (isEditMode ? '수정 중' : '등록 중') : (isEditMode ? '기록 수정' : '기록 등록')}
           </button>
           <button
             onClick={handleCancel}

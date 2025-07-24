@@ -28,6 +28,7 @@
   flex-direction: column;
   gap: 1.5rem;
 }
+
 .timeline-entry {
   position: relative;
   display: flex;
@@ -44,9 +45,15 @@
   object-fit: cover;
   flex-shrink: 0;
   border-right: 1px solid #e5e7eb;
+  display: block;
+}
+
+.timeline-image-wrapper {
+  position: relative;
 }
 
 .timeline-text {
+  flex: 1;
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -65,17 +72,41 @@
   line-height: 1.5;
 }
 
-@media (max-width: 600px) {
-  .timeline-entry {
-    flex-direction: column;
-  }
+.timeline-button-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0.5rem;
+  padding: 1rem;
+  flex-shrink: 0;
+}
 
-  .timeline-image {
-    width: 100%;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid #e5e7eb;
-  }
+.timeline-action-button {
+  padding: 0.25rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: white;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.timeline-action-button.delete {
+  background-color: #ff8282;
+}
+
+.timeline-action-button.edit {
+  background-color: #818891;
+}
+
+.timeline-action-button.delete:hover {
+  background-color: #dc2626;
+}
+
+.timeline-action-button.edit:hover {
+  background-color: #374151;
 }
 
 .timeline-navigation {
@@ -87,6 +118,7 @@
 }
 
 .timeline-back-button {
+  cursor: pointer;
   color: #6b7280;
   text-decoration: none;
   font-size: 0.9rem;
@@ -101,50 +133,68 @@
   background-color: #f3f4f6;
 }
 
-.timeline-delete-button {
-  margin-top: 0.75rem;
-  background-color: #ffcfcf;
-  color: white;
-  border: none;
-  font-size: 0.9rem;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  box-sizing: border-box;
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  padding: 0.5rem 1rem;
-}
-
-.timeline-delete-button:hover {
-  background-color: #ffb7b7;
+.mobile-only {
+  display: none;
 }
 
 @media (max-width: 480px) {
+  .mobile-only {
+    display: block;
+  }
+
   .timeline-entry {
-    flex-direction: column;
+    flex-direction: column !important;
   }
 
   .timeline-image {
-    width: 100%;
-    height: auto;
-    border-right: none;
+    width: 100% !important;
+    height: auto !important;
+    border-right: none !important;
     border-bottom: 1px solid #e5e7eb;
   }
 
-  .timeline-delete-button {
-    position: absolute;
-    bottom: auto !important;
-    top: 8px;
-    right: 8px;
-    width: auto;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: #ff8686;
-    border: none;
-    font-size: 0.75rem;
+  .timeline-button-group {
+    display: none !important;
+  }
+
+  .timeline-edit-button {
     cursor: pointer;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
     padding: 0.25rem 0.5rem;
-    margin-top: 0;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .timeline-edit-button:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
+  .timeline-delete-circle {
+    cursor: pointer;
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: #ef4444;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-weight: bold;
+  }
+
+  .timeline-delete-circle:hover {
+    background-color: rgba(239, 68, 68, 0.8);
   }
 }
