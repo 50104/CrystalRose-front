@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { axiosInstance } from '@utils/axios';
 import CareLogModal from './CareLogModal';
 import CareLogRegister from './CareLogRegister';
+import { getAccessToken } from '@utils/api/token';
 import './CareCalendar.css';
 
 const CARE_LABELS = {
@@ -27,6 +28,23 @@ const CustomCalendar = () => {
   const containerRef = useRef(null);
   const monthRefs = useRef([]);
   const [isYearView, setIsYearView] = useState(false);
+
+  useEffect(() => {
+    const checkAndRefreshToken = async () => {
+      const token = localStorage.getItem('access');
+      if (!token) return;
+
+      try {
+        await getAccessToken();
+        console.log('달력 진입 시 access 토큰 재발급 성공');
+      } catch (error) {
+        console.error('달력 진입 시 토큰 재발급 실패', error);
+        localStorage.removeItem('access');
+        window.location.href = '/login';
+      }
+    };
+    checkAndRefreshToken();
+  }, []);
 
   const scrollToToday = useCallback(() => {
     const today = new Date();

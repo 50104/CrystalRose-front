@@ -33,6 +33,7 @@
   box-sizing: border-box;
   transition: border-color 0.2s ease;
   background: white;
+  margin-top: 10px;
 }
 
 .commentInputBox textarea:focus {

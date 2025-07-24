@@ -177,11 +177,13 @@
     gap: 5px;
     padding: 20px 15px;
     margin: 10px;
+    width: 100%;
   }
   
   .img-modify,
   .ect {
     max-width: 100%;
+    padding: 0px;
   }
   
   .user-img-wrapper {
