@@ -25,6 +25,7 @@
 
 .rose-register-button,
 .rose-diary-button {
+  cursor: pointer;
   padding: 0.75rem 1.5rem;
   color: white;
   text-decoration: none;
@@ -224,6 +225,7 @@
 }
 
 .rose-entry-action-link {
+  cursor: pointer;
   display: inline-block;
   padding: 0.35rem 0.4rem;
   background-color: #db2777;
@@ -252,6 +254,7 @@
 }
 
 .rose-edit-button {
+  cursor: pointer;
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
@@ -266,4 +269,27 @@
 
 .rose-edit-button:hover {
   background-color: rgba(0, 0, 0, 0.7);
+}
+
+.rose-delete-circle {
+  cursor: pointer;
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #ef4444;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-weight: bold;
+}
+
+.rose-delete-circle:hover {
+  background-color: rgba(239, 68, 68, 0.8);
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import './Footer.css';
 import { FaGithub } from "react-icons/fa";
-import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -13,12 +12,12 @@ function Footer() {
                 <p></p>
             </div>
             <div>
-                <Link to={"https://github.com/50104/CrystalRose-back"}>
+                <div style={{cursor: 'pointer'}} onClick={() => window.open("https://github.com/50104/CrystalRose-back", "_blank")}>
                     <FaGithub color="gray" size={30} style={{ marginRight: "10" }} />
-                </Link>
-                <Link to={"https://github.com/50104/CrystalRose-front"}>
+                </div>
+                <div style={{cursor: 'pointer'}} onClick={() => window.open("https://github.com/50104/CrystalRose-front", "_blank")}>
                     <FaGithub color="gray" size={30} />
-                </Link>
+                </div>
             </div>
         </div>
     </div>

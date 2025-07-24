@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
 import CareLogModal from './CareLogModal';
 import './DiaryList.css';
@@ -20,6 +20,7 @@ export default function DiaryListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedLog, setSelectedLog] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,8 +66,8 @@ export default function DiaryListPage() {
       <div className="diary-list-header">
         <h1 className="diary-list-title">전체 성장 기록</h1>
         <div className="diary-list-buttons">
-          <Link to="/roses/list" className="diary-roses-button">내 장미</Link>
-          <Link to="/diaries/register" className="diary-register-button">+ 기록 등록</Link>
+          <div style={{cursor: 'pointer'}} onClick={() => navigate('/roses/list')} className="diary-roses-button">내 장미</div>
+          <div style={{cursor: 'pointer'}} onClick={() => navigate('/diaries/register')} className="diary-register-button">+ 기록 등록</div>
         </div>
       </div>
 

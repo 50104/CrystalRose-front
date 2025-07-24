@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './WikiList.css';
 import { noAuthAxios, axiosInstance } from '@utils/axios';
 import { GetUser } from '@utils/api/user';
@@ -10,6 +10,7 @@ export default function WikiListPage() {
   const [error, setError] = useState(null);
   const [disabledWikiIds, setDisabledWikiIds] = useState([]);
   const { isLogin } = GetUser();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isLogin) return;
@@ -64,9 +65,9 @@ export default function WikiListPage() {
     <div className="wiki-list-container">
       <div className="wiki-list-header">
         <h1 className="wiki-list-title">장미 도감 목록</h1>
-        <Link to="/wiki/register" className="wiki-register-button">
+        <div onClick={() => navigate('/wiki/register')} className="wiki-register-button">
           + 도감 등록
-        </Link>
+        </div>
       </div>
       
       {wikiEntries.length === 0 ? (
@@ -76,27 +77,31 @@ export default function WikiListPage() {
       ) : (
         <div className="wiki-entries-grid">
           {Array.isArray(wikiEntries) && wikiEntries.map(entry => (
-            <Link key={entry.id} to={`/wiki/detail/${entry.id}`} className="wiki-entry-card-link">
-              <div key={entry.id} className="wiki-entry-card">
+            <div key={entry.id} className="wiki-entry-card-link" onClick={() => navigate(`/wiki/detail/${entry.id}`)}>
+              <div className="wiki-entry-card">
                 <div className="wiki-image-wrapper">
                   {entry.imageUrl && (
                     <img src={entry.imageUrl} alt={entry.name} className="wiki-entry-image" />
                   )}
 
                   {!disabledWikiIds.includes(entry.id) && (
-                    <Link
-                      to="/rose/register"
-                      state={{
-                        roseData: {
-                          wikiId: entry.id,
-                          varietyName: entry.name,
-                          imageUrl: ''
-                        }
+                    <div style={{cursor: 'pointer'}}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate('/rose/register', {
+                          state: {
+                            roseData: {
+                              wikiId: entry.id,
+                              varietyName: entry.name,
+                              imageUrl: ''
+                            }
+                          }
+                        });
                       }}
                       className="wiki-register-overlay-button"
                     >
                       내 장미로 등록
-                    </Link>
+                    </div>
                   )}
                   <div className="wiki-entry-content">
                     <div className="wiki-entry-header">
@@ -112,7 +117,7 @@ export default function WikiListPage() {
                   </div>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}
