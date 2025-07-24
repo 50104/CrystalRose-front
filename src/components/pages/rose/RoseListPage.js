@@ -104,7 +104,9 @@ export default function RoseListPage() {
                 )}
                 <Link 
                   to="/rose/register"
-                  state={{ roseData: rose }} 
+                  state={{ roseData: rose,
+                            wikiId: rose.wikiId,
+                            varietyName: rose.varietyName }} 
                   className="rose-edit-button"
                 >
                   수정

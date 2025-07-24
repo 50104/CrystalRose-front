@@ -10,9 +10,10 @@ export default function RoseRegister({ onSuccess }) {
   const navigate = useNavigate();
   const location = useLocation();
   const roseData = location.state?.roseData;
+  const isEditMode = !!roseData?.id;
 
   const [formData, setFormData] = useState({
-    wikiId: roseData?.wikiId || '',
+    wikiId: roseData?.wikiId?.toString() || '',
     nickname: roseData?.nickname || '',
     acquiredDate: roseData?.acquiredDate || '',
     locationNote: roseData?.locationNote || '',
@@ -25,7 +26,6 @@ export default function RoseRegister({ onSuccess }) {
   const [message, setMessage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState(roseData?.imageUrl || null);
-  const wikiName = roseData?.varietyName || '';
 
   const validateForm = () => {
     const requiredFields = [
@@ -33,9 +33,7 @@ export default function RoseRegister({ onSuccess }) {
       { field: 'nickname', name: '별명' },
       { field: 'acquiredDate', name: '획득 날짜' }
     ];
-
     const missingFields = requiredFields.filter(({ field }) => !formData[field]);
-
     if (missingFields.length > 0) {
       const missingNames = missingFields.map(({ name }) => name).join(', ');
       alert(`다음 필수 항목을 입력해주세요: ${missingNames}`);
@@ -44,9 +42,8 @@ export default function RoseRegister({ onSuccess }) {
     return true;
   };
 
-  const isFormValid = () => {
-    return formData.wikiId && formData.nickname && formData.acquiredDate;
-  };
+  const isFormValid = () =>
+    formData.wikiId && formData.nickname && formData.acquiredDate;
 
   useEffect(() => {
     noAuthAxios.get(`/api/v1/wiki/list`)
@@ -65,18 +62,28 @@ export default function RoseRegister({ onSuccess }) {
         .then(res => setDisabledWikiIds(res.data))
         .catch(err => console.error("등록된 장미 Wiki ID 조회 실패", err));
     }
-    if (roseData?.wikiId && !roseData.id) {
+
+    if (!isEditMode && roseData?.wikiId) {
       setFormData(prev => ({ ...prev, imageUrl: '' }));
       setImagePreview(null);
     }
-  }, [isLogin, roseData]);
+  }, [isLogin, roseData, isEditMode]);
+
+  useEffect(() => {
+    if (wikiList.length > 0 && isEditMode && roseData?.wikiId) {
+      setFormData(prev => ({
+        ...prev,
+        wikiId: roseData.wikiId.toString()
+      }));
+    }
+  }, [wikiList, isEditMode, roseData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === 'wikiId') {
       const selectedId = parseInt(value);
-      if (disabledWikiIds.includes(selectedId)) {
+      if (disabledWikiIds.includes(selectedId) && value !== formData.wikiId) {
         alert('이미 등록한 장미입니다.');
         return;
       }
@@ -94,14 +101,11 @@ export default function RoseRegister({ onSuccess }) {
     try {
       const uploadForm = new FormData();
       uploadForm.append('file', finalFile);
-
       const res = await axiosInstance.post(`/api/roses/image/upload`, uploadForm, {
-          headers: {'Content-Type': undefined}
+        headers: { 'Content-Type': undefined }
       });
-
-      const url = res.data.url;
-      setFormData(prev => ({ ...prev, imageUrl: url }));
-      setImagePreview(url);
+      setFormData(prev => ({ ...prev, imageUrl: res.data.url }));
+      setImagePreview(res.data.url);
     } catch (err) {
       console.error('이미지 업로드 실패:', err);
       setMessage({ type: 'error', text: '이미지 업로드에 실패했습니다.' });
@@ -112,28 +116,27 @@ export default function RoseRegister({ onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) return;
 
     try {
-      // 중복 체크 (이중 확인)
-      const checkRes = await axiosInstance.get(`/api/roses/check-duplicate`, {
-        params: { wikiId: formData.wikiId }
-      });
-
-      if (checkRes.data?.exists) {
-        alert('해당 품종의 장미는 이미 등록되어 있습니다.');
-        return;
+      if (!isEditMode || formData.wikiId !== roseData?.wikiId?.toString()) {
+        const checkRes = await axiosInstance.get(`/api/roses/check-duplicate`, {
+          params: { wikiId: parseInt(formData.wikiId) } 
+        });
+        if (checkRes.data?.exists) {
+          alert('이미 등록한 품종입니다.');
+          return;
+        }
       }
 
       setIsSubmitting(true);
 
-      if (roseData?.id) {
+      if (isEditMode) {
         await axiosInstance.put(`/api/roses/modify/${roseData.id}`, formData);
-        setMessage({ type: 'success', text: '수정 완료!' });
+        setMessage({ type: 'success', text: '수정을 완료했습니다' });
       } else {
         await axiosInstance.post(`/api/roses/mine`, formData);
-        setMessage({ type: 'success', text: '등록 성공!' });
+        setMessage({ type: 'success', text: '등록을 성공했습니다' });
       }
 
       setFormData({
@@ -144,7 +147,7 @@ export default function RoseRegister({ onSuccess }) {
       navigate("/roses/list");
     } catch (err) {
       console.error(err);
-      setMessage({ type: 'error', text: '등록 실패!' });
+      setMessage({ type: 'error', text: '등록을 실패했습니다' });
     } finally {
       setIsSubmitting(false);
     }
@@ -158,7 +161,7 @@ export default function RoseRegister({ onSuccess }) {
 
   return (
     <div className="rose-form-container">
-      <h1 className="rose-form-title">내 장미 추가</h1>
+      <h1 className="rose-form-title">내 장미 {isEditMode ? '수정' : '추가'}</h1>
 
       {message && (
         <div className={`rose-message ${message.type}`}>
@@ -203,39 +206,29 @@ export default function RoseRegister({ onSuccess }) {
               <label className="rose-form-label">
                 장미 선택 <span className="rose-required">*</span>
               </label>
-              {roseData?.wikiId ? (
-                <>
-                  <input
-                    type="text"
-                    value={wikiName}
-                    disabled
-                    className="rose-form-input"
-                  />
-                  <input type="hidden" name="wikiId" value={formData.wikiId} />
-                </>
-              ) : (
-                <select
-                  name="wikiId"
-                  value={formData.wikiId}
-                  onChange={handleChange}
-                  required
-                  className="rose-form-select"
-                >
-                  <option value="">장미를 선택하세요</option>
-                  {sortedWikiList.map(wiki => {
-                    const isDisabled = disabledWikiIds.includes(wiki.id);
-                    return (
-                      <option
-                        key={wiki.id}
-                        value={wiki.id}
-                        disabled={isDisabled}
-                      >
-                        {wiki.name} {isDisabled ? '(등록됨)' : ''}
-                      </option>
-                    );
-                  })}
-                </select>
-              )}
+              <select
+                name="wikiId"
+                value={formData.wikiId}
+                onChange={handleChange}
+                required
+                className="rose-form-select"
+              >
+                {!isEditMode && <option value="">장미를 선택하세요</option>}
+
+                {sortedWikiList.map(wiki => {
+                  const isCurrent = formData.wikiId === wiki.id.toString();
+                  const isDisabled = !isCurrent && disabledWikiIds.includes(wiki.id);
+                  return (
+                    <option
+                      key={wiki.id}
+                      value={wiki.id.toString()}
+                      disabled={isDisabled}
+                    >
+                      {wiki.name} {isDisabled ? '(등록됨)' : ''}
+                    </option>
+                  );
+                })}
+              </select>
             </div>
 
             <div className="rose-form-group">
@@ -247,7 +240,6 @@ export default function RoseRegister({ onSuccess }) {
                 name="nickname"
                 value={formData.nickname}
                 onChange={handleChange}
-                placeholder="장미의 별명을 입력하세요"
                 required
                 className="rose-form-input"
               />
@@ -274,7 +266,6 @@ export default function RoseRegister({ onSuccess }) {
                 value={formData.locationNote}
                 onChange={handleChange}
                 placeholder="기억하고 싶은 내용을 메모하세요"
-                required 
                 className="rose-form-textarea"
               />
             </div>
@@ -287,13 +278,13 @@ export default function RoseRegister({ onSuccess }) {
             className="rose-submit-button"
             disabled={isSubmitting || !isLogin || uploading || !isFormValid()}
           >
-            {isSubmitting ? '처리 중...' : roseData ? '수정' : '장미 등록'}
+            {isSubmitting ? '처리 중...' : isEditMode ? '수정' : '장미 등록'}
           </button>
           <button
             type="button"
             className="rose-cancel-button"
             onClick={() => {
-              if (roseData?.wikiId && !roseData.id) {
+              if (!isEditMode && roseData?.wikiId) {
                 navigate('/wiki/list');
               } else {
                 navigate('/roses/list');
