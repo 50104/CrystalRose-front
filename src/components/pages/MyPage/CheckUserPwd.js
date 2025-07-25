@@ -3,56 +3,62 @@ import { axiosInstance } from '@utils/axios';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useUserData } from '@utils/api/user';
 import InputBox from '@components/common/InputBox';
-import './CheckUserPwd.css'
+import './CheckUserPwd.css';
 
 const CheckUserPwd = () => {
-    const [userPwd, setUserPwd] = useState('');
-    const { userData, loading, isLogin } = useUserData();
-    const navigate = useNavigate();
+  const [userPwd, setUserPwd] = useState('');
+  const { userData, loading, isLogin } = useUserData();
+  const navigate = useNavigate();
 
-    const handlePasswordValidation = async () => {
-        if (!userData) {
-            alert('정보 불러오기 실패');
-            return;
-        }
-        try {
-            const response = await axiosInstance.post(`/api/user/validatePassword`, { 
-                userId: userData.userId,
-                userPwd 
-            });
-            if (response.data) {
-                navigate('/modifyUser');
-            } else {
-                alert('올바른 비밀번호가 아닙니다.');
-            }
-        } catch (error) {
-            alert('검증 시도 중 오류 발생');
-        }
-    };
-
-    if (loading) {
-        return <div>Loading...</div>;
+  const handlePasswordValidation = async () => {
+    if (!userData) {
+      alert('정보 불러오기 실패');
+      return;
     }
 
-    if (!isLogin) {
-        return <Navigate to="/login" />;
-    }
+    try {
+      const response = await axiosInstance.post(`/api/user/validatePassword`, {
+        userId: userData.userId,
+        userPwd,
+      });
 
-    return (
-    
-        <div id='pwd-check-wrapper'>
-            <div className='pwd-check-container'>
-                <div className='pwd-check-box'>
-                <div className='pwd-check-title'>{'정보수정'}</div>
-                    <div className='pwd-check-content-box'>
-                        <div className='pwd-check-content-input-box' type="hidden" value={userData.userId || ''} >
-                            <InputBox type="password" placeholder="비밀번호를 입력해주세요." value={userPwd} onChange={(e) => setUserPwd(e.target.value)} buttonTitle='확인' onButtonClick={handlePasswordValidation}/>
-                        </div>
-                    </div>
-                </div>
+      if (response.data) {
+        navigate('/modifyUser');
+      } else {
+        alert('올바른 비밀번호가 아닙니다.');
+      }
+    } catch (error) {
+      alert('검증 시도 중 오류 발생');
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (!isLogin) return <Navigate to="/login" />;
+
+  return (
+    <div id="pwd-check-wrapper">
+      <div className="pwd-check-container">
+        <div className="pwd-check-box">
+          <div className="pwd-check-title">정보수정</div>
+          <div className="pwd-check-content-box">
+            <div className="pwd-check-content-input-box">
+              <InputBox
+                type="password"
+                placeholder="비밀번호를 입력해주세요."
+                value={userPwd}
+                onChange={(e) => setUserPwd(e.target.value)}
+                buttonTitle="확인"
+                onButtonClick={handlePasswordValidation}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handlePasswordValidation();
+                }}
+              />
             </div>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default CheckUserPwd;
