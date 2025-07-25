@@ -1,74 +1,51 @@
-import { useEffect } from "react";
+import { jwtDecode } from 'jwt-decode';
 import { axiosInstance } from '@utils/axios';
-
-// refresh 토큰으로 access 토큰 재발급 이후 홈으로 이동
-export function GetAccess() {
-
-  useEffect(() => {
-    const fetchAccessToken = async () => {
-      try {
-        console.log('GetAccess: 토큰 재발급 시작');
-        const response = await axiosInstance.post('/reissue', {}, {
-          withCredentials: true
-        });
-
-        if (response.data.accessToken) {
-          localStorage.setItem('access', response.data.accessToken);
-          console.log('GetAccess: Access Token 저장 완료');
-          window.location.href = '/';
-        } else {
-          throw new Error('Access Token을 받지 못했습니다');
-        }
-      } catch (error) {
-        console.error('GetAccess: 토큰 획득 실패:', error);
-        window.location.href = '/login';
-      }
-    };
-    fetchAccessToken();
-  }, []);
-
-  return (
-    <div style={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      height: '100vh',
-      flexDirection: 'column'
-    }}>
-      <div>토큰 처리 중</div>
-      <div style={{ marginTop: '10px', fontSize: '14px', color: '#666' }}>
-        잠시만 기다려주세요
-      </div>
-    </div>
-  );
-}
 
 // access 토큰 재발급 요청 함수
 export const getAccessToken = async () => {
+  const token = localStorage.getItem('access');
+
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      const now = Math.floor(Date.now() / 1000);
+
+      if (decoded.exp > now + 30) { // 30초 여유
+        console.log('유효한 AT');
+        return token;
+      }
+    } catch (e) {
+      console.warn('JWT 디코딩 실패, 재발급 시도');
+    }
+  }
+
   try {
-    console.log('getAccessToken: 토큰 재발급 요청');
+    console.log('AT 재발급 요청');
     const response = await axiosInstance.post('/reissue', {}, {
-      withCredentials: true
+      withCredentials: true,
     });
-    
+
     if (response.data.accessToken) {
       localStorage.setItem('access', response.data.accessToken);
-      console.log('getAccessToken: 토큰 저장 완료');
+      console.log('AT 저장 완료');
       return response.data.accessToken;
     } else {
-      throw new Error('서버에서 Access 토큰을 반환하지 않음');
+      throw new Error('AT 반환 실패');
     }
   } catch (error) {
-    console.error('getAccessToken: 토큰 갱신 실패:', error);
-    
+    console.error('AT 갱신 실패:', error);
+
     if (error.response?.status === 400) {
       const errorMsg = error.response.data;
-      if (errorMsg.includes('refresh null') || 
-          errorMsg.includes('no cookies') || 
-          errorMsg.includes('refresh expired')) {
+      if (
+        errorMsg.includes('refresh null') ||
+        errorMsg.includes('no cookies') ||
+        errorMsg.includes('refresh expired')
+      ) {
         localStorage.removeItem('access');
       }
     }
+
     throw error;
   }
 };
