@@ -175,11 +175,13 @@ function Content() {
             userData.userNo !== content.writer.userNo && (
               <>
                 <button className="contentButton" onClick={async () => {
+                  const confirmBlock = window.confirm("차단하시겠습니까?");
+                  if (!confirmBlock) return;
                   try {
                     await blockUser(content.writer.userNo);
-                    alert("차단 완료");
+                    alert("차단내역은 마이페이지에서 확인할 수 있습니다");
                   } catch (err) {
-                    alert('차단 실패: ' + err.response?.data?.message || '오류 발생');
+                    alert(err.response?.data?.message || '오류 발생');
                   }
                 }}>차단</button>
                 <button className="contentButton" onClick={async () => {

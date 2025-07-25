@@ -147,6 +147,7 @@ function MyPage() {
                     </div>
                     <div className='ect'>
                         <a href="/my/chat/page">내 채팅</a>
+                        <a href="/mypage/blocks" className="admin-menu-item">차단 목록</a>
                         <div onClick={logoutFunction} className="cursor">로그아웃</div>
                     </div>
                 </>

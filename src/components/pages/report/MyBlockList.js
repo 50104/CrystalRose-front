@@ -21,6 +21,8 @@ export default function MyBlockList() {
   };
 
   const handleUnblock = async (id) => {
+    const confirmBlock = window.confirm("차단을 해제하시겠습니까?");
+    if (!confirmBlock) return;
     try {
       await axiosInstance.delete(`/api/v1/blocks/${id}`);
       setBlockedUsers(blockedUsers.filter(u => u.userNo !== id));
