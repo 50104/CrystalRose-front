@@ -7,6 +7,7 @@ import { jwtDecode } from 'jwt-decode';
 import { format, isSameDay, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import './StompChatPage.css';
+import { getAccessToken } from '@utils/api/token';
 
 const StompChatPage = () => {
   const { roomId } = useParams();
@@ -71,9 +72,7 @@ const StompChatPage = () => {
   const connectWebSocket = useCallback(async () => {
     if (stompClient?.connected) return;
     try {
-      const response = await axiosInstance.post('/reissue', {}, { withCredentials: true });
-      const accessToken = response.data.accessToken;
-      localStorage.setItem("access", accessToken);
+      const accessToken = await getAccessToken();
       const sock = new SockJS(getWsUrl());
       const client = Stomp.over(sock);
 
@@ -107,7 +106,7 @@ const StompChatPage = () => {
         },
         (error) => {
           console.error('웹소켓 오류:', error);
-          alert('실시간 채팅 서버에 연결할 수 없습니다.');
+          alert('실시간 채팅 서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.');
         }
       );
 
