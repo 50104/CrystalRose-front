@@ -109,7 +109,7 @@ export default function WikiListPage() {
                       <div className="wiki-entry-name-row">
                         <p className="wiki-entry-category">{entry.category}</p>
                         {entry.modificationStatus === 'PENDING' && (
-                          <span className="wiki-modification-badge modification-pending">수정 진행 중</span>
+                          <span className="wiki-modification-badge modification-pending">수정 검토 중</span>
                         )}
                       </div>
                     </div>

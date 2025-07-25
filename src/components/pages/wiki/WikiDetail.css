@@ -39,6 +39,8 @@
   padding: 0.5rem 1rem;
   border-radius: 0.375rem;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;  
 }
 
 .wiki-detail-edit-button:hover {
@@ -359,4 +361,25 @@
     max-width: none;
     margin: 0 4px;
   }
+}
+
+.wiki-detail-action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.wiki-detail-delete-button {
+  color: #fff;
+  background-color: #e1cfff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.wiki-detail-delete-button:hover {
+  background-color: #cd98ff;
 }

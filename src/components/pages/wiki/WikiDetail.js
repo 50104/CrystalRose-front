@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link as RouterLink } from 'react-router-dom';
 import './WikiDetail.css';
 import { noAuthAxios } from '@utils/axios';
+import { getAccessToken } from '@utils/api/token';
 
 export default function WikiDetailPage() {
   const { wikiId } = useParams();
@@ -17,7 +18,7 @@ export default function WikiDetailPage() {
   }, []);
 
   const getProgressValue = (value) => {
-    if (!value) return 0;
+    if (!value || value === "-" || value.toString().trim() === "") return 0;
     
     const valueStr = value.toString().toLowerCase();
     
@@ -106,6 +107,24 @@ export default function WikiDetailPage() {
     }
   };
 
+  const handleDeleteWiki = async () => {
+    if (window.confirm("정말 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.")) {
+      try {
+        const accessToken = await getAccessToken();
+        await noAuthAxios.delete(`/api/v1/admin/wiki/delete/${wikiId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        alert("삭제되었습니다.");
+        window.location.href = "/wiki/list";
+      } catch (err) {
+        console.error("도감 삭제 실패", err);
+        alert(err.response?.data?.message || "도감 삭제에 실패했습니다.");
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="wiki-detail-loading-container">
@@ -121,7 +140,7 @@ export default function WikiDetailPage() {
         <button onClick={retryFetch} className="wiki-detail-retry-button">
           다시 시도
         </button>
-        <RouterLink to="/wiki" className="wiki-detail-back-button">
+        <RouterLink to="/wiki/list" className="wiki-detail-back-button">
           목록으로 돌아가기
         </RouterLink>
       </div>
@@ -132,7 +151,7 @@ export default function WikiDetailPage() {
     return (
       <div className="wiki-detail-no-entry">
         해당 장미 도감 정보를 찾을 수 없습니다.
-        <RouterLink to="/wiki" className="wiki-detail-back-button">
+        <RouterLink to="/wiki/list" className="wiki-detail-back-button">
           목록으로 돌아가기
         </RouterLink>
       </div>
@@ -145,9 +164,24 @@ export default function WikiDetailPage() {
         <RouterLink to="/wiki/list" className="wiki-detail-back-button">
           &larr; 목록으로 돌아가기
         </RouterLink>
-        <RouterLink to={`/wiki/edit/${wikiId}`} className="wiki-detail-edit-button">
-          수정하기
-        </RouterLink>
+        <div className="wiki-detail-action-buttons">
+          <button className="wiki-detail-delete-button" onClick={handleDeleteWiki}>
+            삭제
+          </button>
+
+          <RouterLink 
+            to={`/wiki/edit/${wikiId}`} 
+            className="wiki-detail-edit-button"
+            onClick={(e) => {
+              if (wikiEntry.modificationStatus === 'PENDING') {
+                e.preventDefault();
+                alert('수정 검토 중입니다.');
+              }
+            }}
+          >
+            수정 요청
+          </RouterLink>
+        </div>
       </div>
 
       <div className="wiki-detail-header">
@@ -158,7 +192,7 @@ export default function WikiDetailPage() {
             <span className="wiki-detail-cultivar-code">{wikiEntry.cultivarCode}</span>
           )}
           {wikiEntry.modificationStatus === 'PENDING' && (
-            <span className="wiki-detail-modification-badge modification-pending">수정 진행 중</span>
+            <span className="wiki-detail-modification-badge modification-pending">수정 검토 중</span>
           )}
         </div>
       </div>

@@ -125,6 +125,30 @@ export default function WikiRegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.imageUrl.trim()) {
+      alert("사진을 업로드해주세요.");
+      return;
+    }
+
+    if (!formData.name.trim()) {
+      alert("품종명을 입력해주세요.");
+      document.querySelector('input[name="name"]')?.focus();
+      return;
+    }
+
+    if (!formData.category.trim()) {
+      alert("카테고리를 선택해주세요.");
+      document.querySelector('select[name="category"]')?.focus();
+      return;
+    }
+
+    if (isEditMode && !formData.description.trim()) {
+      alert("수정 사유를 입력해주세요.");
+      document.querySelector('textarea[name="description"]')?.focus();
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
@@ -153,14 +177,10 @@ export default function WikiRegisterPage() {
       }
 
       if (response.status === 200 || response.status === 201) {
-        const successMessage = isEditMode 
+        alert(isEditMode 
           ? '장미 도감 수정 요청이 제출되었습니다. 관리자 승인 후 반영됩니다.'
-          : '장미 도감이 성공적으로 등록되었습니다. 관리자 승인 후 게시됩니다.';
-        
-        setMessage({
-          type: 'success',
-          text: successMessage
-        });
+          : '장미 도감이 성공적으로 등록되었습니다. 관리자 승인 후 게시됩니다.'
+        );
 
         if (!isEditMode) { // 등록모드 폼 초기화
           setFormData({
@@ -184,9 +204,12 @@ export default function WikiRegisterPage() {
           setImagePreview(null);
         } else {
           setTimeout(() => {
-            navigate(`/wiki/${id}`);
+            navigate(`/wiki/detail/${id}`);
           }, 2000);
         }
+
+        navigate('/wiki/list');
+        return;
       } else {
         const errorMessage = isEditMode 
           ? '수정 중 오류가 발생했습니다. 다시 시도해주세요.'
@@ -312,7 +335,7 @@ export default function WikiRegisterPage() {
 
             <div className="form-group">
               <label className="form-label">
-                품종 코드 <span className="required">*</span>
+                품종 코드
               </label>
               <input
                 type="text"
@@ -326,7 +349,7 @@ export default function WikiRegisterPage() {
 
             <div className="form-group">
               <label className="form-label">
-                꽃잎 수 <span className="required">*</span>
+                꽃잎 수
               </label>
               <input
                 type="text"
@@ -340,7 +363,7 @@ export default function WikiRegisterPage() {
 
             <div className="form-group">
               <label className="form-label">
-                사용 용도 <span className="required">*</span>
+                사용 용도
               </label>
               <div className="checkbox-group">
                 {['울타리', '화분', '화단', '조경', '장미보더'].map(option => (
@@ -358,7 +381,7 @@ export default function WikiRegisterPage() {
 
             <div className="form-group">
               <label className="form-label">
-                추천 위치 <span className="required">*</span>
+                추천 위치
               </label>
               <div className="checkbox-group">
                 {['양지', '일부 그늘진 위치', '트인 공간 어디나'].map(option => (
@@ -401,7 +424,7 @@ export default function WikiRegisterPage() {
 
           <div className="form-group">
             <label className="form-label">
-              꽃 크기 <span className="required">*</span>
+              꽃 크기
             </label>
             <select
               name="flowerSize"
@@ -421,7 +444,7 @@ export default function WikiRegisterPage() {
 
           <div className="form-group">
             <label className="form-label">
-              향기 <span className="required">*</span>
+              향기
             </label>
             <select
               name="fragrance"
@@ -441,7 +464,7 @@ export default function WikiRegisterPage() {
 
           <div className="form-group">
             <label className="form-label">
-              내병성 <span className="required">*</span>
+              내병성
             </label>
             <select
               name="diseaseResistance" 
@@ -461,7 +484,7 @@ export default function WikiRegisterPage() {
 
           <div className="form-group">
             <label className="form-label">
-              내한성 <span className="required">*</span>
+              내한성
             </label>
             <select
               name="coldResistance"
@@ -481,7 +504,7 @@ export default function WikiRegisterPage() {
 
           <div className="form-group">
             <label className="form-label">
-              연속개화성 <span className="required">*</span>
+              연속개화성
             </label>
             <select
               name="continuousBlooming"
@@ -501,7 +524,7 @@ export default function WikiRegisterPage() {
 
           <div className="form-group">
             <label className="form-label">
-              다화성 <span className="required">*</span>
+              다화성
             </label>
             <select
               name="multiBlooming"
@@ -521,7 +544,7 @@ export default function WikiRegisterPage() {
 
           <div className="form-group">
             <label className="form-label">
-              수세 <span className="required">*</span>
+              수세
             </label>
             <select
               name="growthPower"
@@ -541,7 +564,7 @@ export default function WikiRegisterPage() {
 
           <div className="form-group">
             <label className="form-label">
-              생장 습성 <span className="required">*</span>
+              생장 습성
             </label>
             <select
               name="growthType" 
