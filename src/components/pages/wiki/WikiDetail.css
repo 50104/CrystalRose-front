@@ -48,12 +48,9 @@
 }
 
 .wiki-detail-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   margin-bottom: 2rem;
-  gap: 1rem;
-  flex-wrap: wrap;
+  text-align: center;       
+  flex-direction: column;  
 }
 
 .wiki-detail-title {
@@ -65,6 +62,8 @@
 
 .wiki-detail-header-info {
   display: flex;
+  justify-content: center; 
+  margin-top: 1rem;
   align-items: center;
   gap: 0.75rem;
   flex-wrap: wrap;

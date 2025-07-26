@@ -185,18 +185,21 @@ export default function WikiDetailPage() {
       </div>
 
       <div className="wiki-detail-header">
-        <h1 className="wiki-detail-title">{wikiEntry.name}</h1>
-        <div className="wiki-detail-header-info">
-          <span className="wiki-detail-category">{wikiEntry.category}</span>
-          {wikiEntry.cultivarCode && (
-            <span className="wiki-detail-cultivar-code">{wikiEntry.cultivarCode}</span>
-          )}
-          {wikiEntry.modificationStatus === 'PENDING' && (
-            <span className="wiki-detail-modification-badge modification-pending">수정 검토 중</span>
-          )}
+        <div className="wiki-detail-header-top">
+          <h1 className="wiki-detail-title">{wikiEntry.name}</h1>
+          <div className="wiki-detail-header-info">
+            <span className="wiki-detail-category">{wikiEntry.category}</span>
+            {wikiEntry.cultivarCode && (
+              <span className="wiki-detail-cultivar-code">{wikiEntry.cultivarCode}</span>
+            )}
+            {wikiEntry.modificationStatus === 'PENDING' && (
+              <span className="wiki-detail-modification-badge modification-pending">
+                수정 검토 중
+              </span>
+            )}
+          </div>
         </div>
       </div>
-
       <div className="wiki-detail-content-wrapper">
         <div className="wiki-detail-left-section">
           {wikiEntry.imageUrl && (
