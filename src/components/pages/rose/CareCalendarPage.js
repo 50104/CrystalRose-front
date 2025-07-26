@@ -422,7 +422,7 @@ const CustomCalendar = () => {
       {selected && <CareLogModal log={selected} onClose={() => setSelected(null)} onEdit={handleEdit} />}
       {showRegisterModal && selectedDate && (
         <div className="modal-backdrop" onClick={() => setShowRegisterModal(false)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
             <CareLogRegister 
               selectedDate={selectedDate}
               onSuccess={handleRegisterSuccess} 
@@ -433,7 +433,7 @@ const CustomCalendar = () => {
       )}
       {showEditModal && selected && (
         <div className="modal-backdrop" onClick={() => setShowEditModal(false)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
             <CareLogRegister 
               selectedDate={new Date(selected.careDate)}
               editData={selected}

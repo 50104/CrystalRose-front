@@ -377,18 +377,14 @@
   background-image: none !important;
 }
 
-.modal-content {
+.modal-box {
   background: white;
   border-radius: 0.5rem;
   max-width: 90vw;
   max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-content {
   margin: 0;
   box-shadow: none;
-  border-radius: 0;
+  overflow-y: auto;
 }
 
 
