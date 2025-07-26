@@ -253,22 +253,21 @@
   position: relative;
 }
 
-.rose-edit-button {
+.rose-edit-icon {
+  margin-left: 10px;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #000;
+  border-radius: 50%;
+  padding: 5px;
+  font-size: 1rem;
   cursor: pointer;
+  display: inline-block;
+  transition: background-color 0.2s;
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  text-decoration: none;
-  transition: background-color 0.2s ease;
 }
 
-.rose-edit-button:hover {
-  background-color: rgba(0, 0, 0, 0.7);
+.rose-edit-icon:hover {
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .rose-delete-circle {

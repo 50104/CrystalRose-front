@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './RoseListPage.css';
+import { HiOutlinePencilAlt } from 'react-icons/hi';
 import { axiosInstance } from '@utils/axios';
 
 export default function RoseListPage() {
@@ -123,17 +124,17 @@ export default function RoseListPage() {
                 >
                   ×
                 </div>
-                <div
-                  className="rose-edit-button"
-                  onClick={() => handleEditClick(rose)}
-                >
-                  수정
-                </div>
               </div>
-
               <div className="rose-entry-content">
                 <div className="rose-entry-details">
-                  <h2 className="rose-entry-nickname">{rose.nickname || '이름 없음'}</h2>
+                  <h2 className="rose-entry-nickname">
+                    {rose.nickname || '이름 없음'}
+                    <HiOutlinePencilAlt
+                      className="rose-edit-icon"
+                      onClick={() => handleEditClick(rose)}
+                      title="수정"
+                    />
+                  </h2>
                   <p className="rose-entry-variety">{rose.varietyName || '품종 정보 없음'}</p>
                 </div>
                 <div className="rose-entry-acquired-date">

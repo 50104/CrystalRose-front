@@ -3,6 +3,7 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
 import CareLogModal from './CareLogModal';
 import './TimelinePage.css';
+import { HiOutlinePencilAlt } from 'react-icons/hi';
 
 const CARE_LABELS = {
   watering: '💧',
@@ -116,16 +117,6 @@ export default function RoseTimelinePage() {
                     >
                       ×
                     </div>
-                    <div
-                      className="timeline-edit-button mobile-only"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/diaries/edit/${entry.id}`);
-                      }}
-                      title="수정"
-                    >
-                      수정
-                    </div>
                   </>
                 )}
               </div>
@@ -135,7 +126,19 @@ export default function RoseTimelinePage() {
                 {new Date(entry.recordedAt).toLocaleDateString('ko-KR')}
                 <span className="timeline-icons"> {extractCareIcons(entry)}</span>
               </p>
-              <p className="timeline-note">{entry.note || '메모 없음'}</p>
+              <p className="timeline-note">
+                {entry.note || '메모 없음'}
+                {entry.isMine && (
+                  <HiOutlinePencilAlt
+                    className="timeline-note-edit-icon"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/diaries/edit/${entry.id}`);
+                    }}
+                    title="수정"
+                  />
+                )}
+              </p>
             </div>
             {entry.isMine && (
               <div className="timeline-button-group">
@@ -148,16 +151,6 @@ export default function RoseTimelinePage() {
                   title="삭제"
                 >
                   삭제
-                </button>
-                <button
-                  className="timeline-action-button edit"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/diaries/edit/${entry.id}`);
-                  }}
-                  title="수정"
-                >
-                  수정
                 </button>
               </div>
             )}
