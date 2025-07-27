@@ -76,6 +76,7 @@
 
 .entry-info {
   flex: 1;
+  display: flex;
 }
 
 .entry-name {
@@ -85,16 +86,27 @@
   color: #111827;
 }
 
+.entry-date-container {
+  display: flex;
+  align-items: center;
+}
+
+.entry-date {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
 .entry-meta {
   display: flex;
   gap: 1rem;
   font-size: 0.875rem;
   color: #6b7280;
+  padding-left: 15px;
 }
 
 .entry-category {
   background-color: #f3f4f6;
-  padding: 0.125rem 0.5rem;
+  padding: 0.2rem 0.5rem;
   border-radius: 0.25rem;
   font-size: 0.75rem;
 }
@@ -204,9 +216,10 @@
 .new-entry-badge {
   background-color: #6366f1;
   color: white;
-  padding: 0.125rem 0.5rem;
+  padding: 0.2rem 0.5rem;
   font-size: 0.75rem;
   border-radius: 0.25rem;
+  align-items: center;
 }
 
 /* 수정 상세 정보 */
@@ -349,4 +362,89 @@
 .changes-summary p {
   margin: 0.25rem 0;
   color: #475569;
+}
+
+.entry-detail-box {
+  background-color: #f9fafb;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  margin-top: 1rem;
+}
+
+.entry-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.entry-detail-image img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 0.375rem;
+  border: 1px solid #e5e7eb;
+}
+
+.entry-detail-meta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.entry-detail-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.entry-detail-category {
+  font-size: 0.875rem;
+  color: #6b7280;
+  background-color: #f3f4f6;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  display: inline-block;
+  margin-top: 0.25rem;
+  margin-left: 10px;
+}
+
+.entry-detail-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1rem;
+}
+
+.entry-detail-row {
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+@media (max-width: 480px) {
+  .entry-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .entry-info {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .entry-meta {
+    padding-left: 0;
+    margin-top: 0.25rem;
+    flex-wrap: wrap;
+  }
+
+  .entry-actions {
+    align-self: flex-end;
+  }
+
+  .entry-name {
+    margin-bottom: 0.5rem;
+  }
 }

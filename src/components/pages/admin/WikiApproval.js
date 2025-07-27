@@ -12,6 +12,7 @@ export default function WikiApprovalPage() {
   const [message, setMessage] = useState(null);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [comparisonData, setComparisonData] = useState(null);
+  const [entryDetail, setEntryDetail] = useState(null);
 
   useEffect(() => {
     fetchPendingEntries();
@@ -59,6 +60,41 @@ export default function WikiApprovalPage() {
     }
   };
 
+  const renderEntryDetail = (detail) => {
+    if (!detail) return <p>상세 정보를 불러오는 중입니다...</p>;
+
+    return (
+      <div className="entry-detail-box">
+        <div className="entry-detail-header">
+          {detail.imageUrl && (
+            <div className="entry-detail-image">
+              <img src={detail.imageUrl} alt="도감 이미지" />
+            </div>
+          )}
+          <div className="entry-detail-meta">
+            <h3 className="entry-detail-title">{detail.name}</h3>
+            <p className="entry-detail-category">{detail.category}</p>
+          </div>
+        </div>
+
+        <div className="entry-detail-body">
+          <div className="entry-detail-row"><strong>품종 코드:</strong> {detail.cultivarCode || '없음'}</div>
+          <div className="entry-detail-row"><strong>꽃 크기:</strong> {detail.flowerSize || '없음'}</div>
+          <div className="entry-detail-row"><strong>꽃잎 수:</strong> {detail.petalCount ?? '없음'}</div>
+          <div className="entry-detail-row"><strong>향기:</strong> {detail.fragrance || '없음'}</div>
+          <div className="entry-detail-row"><strong>내병성:</strong> {detail.diseaseResistance || '없음'}</div>
+          <div className="entry-detail-row"><strong>내한성:</strong> {detail.coldResistance || '없음'}</div>
+          <div className="entry-detail-row"><strong>생장형태:</strong> {detail.growthType || '없음'}</div>
+          <div className="entry-detail-row"><strong>사용 용도:</strong> {detail.usageType || '없음'}</div>
+          <div className="entry-detail-row"><strong>추천 위치:</strong> {detail.recommendedPosition || '없음'}</div>
+          <div className="entry-detail-row"><strong>연속개화성:</strong> {detail.continuousBlooming || '없음'}</div>
+          <div className="entry-detail-row"><strong>다화성:</strong> {detail.multiBlooming || '없음'}</div>
+          <div className="entry-detail-row"><strong>수세:</strong> {detail.growthPower || '없음'}</div>
+        </div>
+      </div>
+    );
+  };
+
   const handleModificationApprove = async (id) => {
     try {
       await axiosInstance.patch(`/api/v1/admin/wiki/modifications/${id}/approve`);
@@ -94,10 +130,9 @@ export default function WikiApprovalPage() {
     if (selectedEntry?.id === entry.id) {
       setSelectedEntry(null);
       setComparisonData(null);
+      setEntryDetail(null);
     } else {
       setSelectedEntry(entry);
-      
-      // 수정 대기 중인 항목인 경우 비교 데이터를 가져옴
       if (activeTab === 'modifications') {
         try {
           const response = await axiosInstance.get(`/api/v1/admin/wiki/${entry.id}/original`);
@@ -105,6 +140,14 @@ export default function WikiApprovalPage() {
         } catch (err) {
           console.error('비교 데이터 조회 실패:', err);
           setComparisonData(null);
+        }
+      } else {
+        try {
+          const response = await axiosInstance.get(`/api/v1/admin/wiki/detail/${entry.id}`);
+          setEntryDetail(response.data);
+        } catch (err) {
+          console.error('도감 상세 조회 실패:', err);
+          setEntryDetail(null);
         }
       }
     }
@@ -267,7 +310,9 @@ export default function WikiApprovalPage() {
                       <h3 className="entry-name">{entry.name}</h3>
                       <div className="entry-meta">
                         <span className="entry-category">{entry.category}</span>
-                        <span className="entry-date">{formatDate(entry.createdDate)}</span>
+                        <div className="entry-date-container">
+                          <span className="entry-date">{formatDate(entry.createdDate)}</span>
+                        </div>
                         <span className="new-entry-badge">신규 등록</span>
                       </div>
                     </div>
@@ -292,10 +337,13 @@ export default function WikiApprovalPage() {
                       </button>
                     </div>
                   </div>
-                  
                   {selectedEntry?.id === entry.id && (
                     <div className="entry-details">
-                      <p>상세 정보를 조회하려면 API를 통해 추가 정보를 가져와야 합니다.</p>
+                      {entryDetail ? (
+                        renderEntryDetail(entryDetail)
+                      ) : (
+                        <p>상세 정보 불러오는 중</p>
+                      )}
                     </div>
                   )}
                 </div>

@@ -117,10 +117,10 @@ export default function WikiListPage() {
                     <div className="wiki-entry-header">
                     <h2 className="wiki-entry-name">{entry.name}</h2>
                       <div className="wiki-entry-name-row">
-                        <p className="wiki-entry-category">{entry.category}</p>
                         {entry.modificationStatus === 'PENDING' && (
                           <span className="wiki-modification-badge modification-pending">수정 검토 중</span>
                         )}
+                        <p className="wiki-entry-category">{entry.category}</p>
                       </div>
                     </div>
                     <p className="wiki-entry-description">{entry.description?.substring(0, 100)}{entry.description?.length > 100 ? '...' : ''}</p>
