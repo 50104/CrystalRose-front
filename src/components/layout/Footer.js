@@ -6,22 +6,32 @@ function Footer() {
   return (
     <div className="footer_div">
       <div className="footer_info">
-            <div>
-                <div className="footer_info_title"></div>
-                <p></p>
-                <p></p>
-            </div>
-            <div>
-                <div style={{cursor: 'pointer'}} onClick={() => window.open("https://github.com/50104/CrystalRose-back", "_blank")}>
-                    <FaGithub color="gray" size={30} style={{ marginRight: "10" }} />
-                </div>
-                <div style={{cursor: 'pointer'}} onClick={() => window.open("https://github.com/50104/CrystalRose-front", "_blank")}>
-                    <FaGithub color="gray" size={30} />
-                </div>
-            </div>
+        <div>
+          <div className="footer_info_title">CrystalRose</div>
+          <p>© 2025 dodorose</p>
         </div>
+        <div className="footer_icons">
+          <FaGithub
+            color="gray"
+            size={30}
+            style={{ cursor: 'pointer', marginRight: '10px' }}
+            onClick={() =>
+              window.open("https://github.com/50104/CrystalRose-back", "_blank")
+            }
+          />
+          <FaGithub
+            color="gray"
+            size={30}
+            style={{ cursor: 'pointer' }}
+            onClick={() =>
+              window.open("https://github.com/50104/CrystalRose-front", "_blank")
+            }
+          />
+        </div>
+      </div>
     </div>
   );
 }
+
 
 export default Footer;
