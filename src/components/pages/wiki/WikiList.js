@@ -13,12 +13,23 @@ export default function WikiListPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isLogin) return;
+    const fetchMyWikiIds = async () => {
+      try {
+        const res = await axiosInstance.get('/api/roses/mine/wiki-ids');
+        setDisabledWikiIds(res.data);
+      } catch (err) {
+        console.error('내 장미 도감 ID 목록 조회 실패', err);
+      }
+    };
 
-    axiosInstance.get('/api/roses/mine/wiki-ids')
-      .then(res => setDisabledWikiIds(res.data))
-      .catch(err => console.error('내 장미 도감 ID 목록 조회 실패', err));
-    fetchWikiEntries();
+    const init = async () => {
+      if (isLogin) {
+        await fetchMyWikiIds();
+      }
+      await fetchWikiEntries();
+    };
+
+    init();
   }, [isLogin]);
 
   const fetchWikiEntries = async () => {
@@ -83,8 +94,7 @@ export default function WikiListPage() {
                   {entry.imageUrl && (
                     <img src={entry.imageUrl} alt={entry.name} className="wiki-entry-image" />
                   )}
-
-                  {!disabledWikiIds.includes(entry.id) && (
+                  {isLogin && !disabledWikiIds.includes(entry.id) && (
                     <div style={{cursor: 'pointer'}}
                       onClick={(e) => {
                         e.stopPropagation();
