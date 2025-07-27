@@ -43,7 +43,7 @@ export default function RoseRegister({ onSuccess }) {
   };
 
   const isFormValid = () =>
-    formData.wikiId && formData.nickname && formData.acquiredDate;
+    formData.wikiId && formData.nickname && formData.acquiredDate && formData.imageUrl && formData.locationNote;
 
   useEffect(() => {
     noAuthAxios.get(`/api/v1/wiki/list`)
@@ -260,7 +260,9 @@ export default function RoseRegister({ onSuccess }) {
             </div>
 
             <div className="rose-form-group">
-              <label className="rose-form-label">메모</label>
+              <label className="rose-form-label">
+                메모 <span className="rose-required">*</span>
+              </label>
               <textarea
                 name="locationNote"
                 value={formData.locationNote}
