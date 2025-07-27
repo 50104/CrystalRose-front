@@ -60,7 +60,7 @@ export default function TimelapsePage() {
     return () => clearInterval(intervalRef.current);
   }, [isPlaying, diaryList]);
 
-  if (diaryList.length === 0) return <div className="timelapse-loading">로딩 중...</div>;
+  if (diaryList.length === 0) return <div className="timelapse-loading">불러오는 중</div>;
 
   const visibleThumbnails = getVisibleThumbnails();
 

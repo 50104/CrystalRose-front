@@ -199,7 +199,7 @@ export default function WikiApprovalPage() {
   if (loading) {
     return (
       <div className="loading-container">
-        <div className="loading-text">로딩 중...</div>
+        <div className="loading-text">불러오는 중</div>
       </div>
     );
   }

@@ -35,7 +35,7 @@ export default function MyBlockList() {
     fetchBlocked();
   }, []);
 
-  if (loading) return <div className={styles.loading}>로딩 중...</div>;
+  if (loading) return <div className={styles.loading}>불러오는 중</div>;
   if (error) return <div className={styles.error}>{error}</div>;
 
   return (

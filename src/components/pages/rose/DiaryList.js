@@ -58,7 +58,7 @@ export default function DiaryListPage() {
     setSelectedLog(null);
   };
 
-  if (loading) return <div className="diary-list-loading">로딩 중...</div>;
+  if (loading) return <div className="diary-list-loading">불러오는 중</div>;
   if (error) return <div className="diary-list-error">{error}</div>;
 
   return (

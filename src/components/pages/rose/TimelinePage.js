@@ -40,7 +40,7 @@ export default function RoseTimelinePage() {
   }, [roseId]);
 
   const handleDeleteEntry = (entry) => {
-    const confirmDelete = window.confirm('해당 기록을 삭제하시겠습니까?');
+    const confirmDelete = window.confirm('해당 기록을 목록에서 삭제하시겠습니까?');
     if (!confirmDelete) return;
 
     axiosInstance.delete(`/api/diaries/delete/${entry.id}`)
@@ -87,7 +87,7 @@ export default function RoseTimelinePage() {
     fetchTimeline();
   }, [fetchTimeline]);
 
-  if (loading) return <div className="timeline-loading">로딩 중...</div>;
+  if (loading) return <div className="timeline-loading">불러오는 중</div>;
   if (error) return <div className="timeline-error">{error}</div>;
 
   return (

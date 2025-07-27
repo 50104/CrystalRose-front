@@ -127,7 +127,7 @@ function Editor() {
     }
   };
 
-  if (loading) return <div>로딩 중...</div>;
+  if (loading) return <div>불러오는 중</div>;
   if (!isLogin) return <div>로그인이 필요합니다.</div>;
 
   return (

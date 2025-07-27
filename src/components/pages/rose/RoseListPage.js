@@ -33,7 +33,7 @@ export default function RoseListPage() {
   };
 
   const handleDeleteRose = async (roseId) => {
-    const confirmDelete = window.confirm('장미를 삭제하시겠습니까?');
+    const confirmDelete = window.confirm('장미를 목록에서 삭제하시겠습니까?');
     if (!confirmDelete) return;
 
     try {
@@ -71,7 +71,7 @@ export default function RoseListPage() {
   if (loading) {
     return (
       <div className="rose-list-loading-container">
-        <div className="rose-list-loading-text">로딩 중...</div>
+        <div className="rose-list-loading-text">불러오는 중</div>
       </div>
     );
   }

@@ -45,7 +45,7 @@ export default function WikiListPage() {
   if (loading) {
     return (
       <div className="wiki-list-loading-container">
-        <div className="wiki-list-loading-text">로딩 중...</div>
+        <div className="wiki-list-loading-text">불러오는 중</div>
       </div>
     );
   }

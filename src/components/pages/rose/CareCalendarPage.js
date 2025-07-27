@@ -414,7 +414,7 @@ const CustomCalendar = () => {
           ))}
           {loading && (
             <div className="loading-indicator">
-              <div className="spinner">로딩 중...</div>
+              <div className="spinner">불러오는 중</div>
             </div>
           )}
         </div>

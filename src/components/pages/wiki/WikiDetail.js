@@ -108,7 +108,7 @@ export default function WikiDetailPage() {
   };
 
   const handleDeleteWiki = async () => {
-    if (window.confirm("정말 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.")) {
+    if (window.confirm("도감을 목록에서 삭제하시겠습니까?")) {
       try {
         const accessToken = await getAccessToken();
         await noAuthAxios.delete(`/api/v1/admin/wiki/delete/${wikiId}`, {
@@ -128,7 +128,7 @@ export default function WikiDetailPage() {
   if (loading) {
     return (
       <div className="wiki-detail-loading-container">
-        <div className="wiki-detail-loading-text">로딩 중...</div>
+        <div className="wiki-detail-loading-text">불러오는 중</div>
       </div>
     );
   }
