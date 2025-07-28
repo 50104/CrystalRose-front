@@ -34,6 +34,8 @@ import TimelapsePage from '../components/pages/rose/TimelapsePage';
 import CareLogRegister from '../components/pages/rose/CareLogRegister';
 import CareLogCalendarPage from '../components/pages/rose/CareCalendarPage';
 import AdminPage from '../components/pages/admin/AdminPage';
+import WikiApprovalEntriesPage from '../components/pages/admin/WikiApprovalEntriesPage';
+import WikiApprovalModificationsPage from '../components/pages/admin/WikiApprovalModificationsPage';
 
 function AppRoutes() {
   return (
@@ -63,7 +65,6 @@ function AppRoutes() {
         <Route path="/editor/:boardNo" element={<Editor />} />
 
         {/* 장미 위키 */}
-        <Route path="/admin/wiki" element={<WikiApprove />} />
         <Route path="/wiki/register" element={<WikiRegister />} />
         <Route path="/wiki/edit/:id" element={<WikiRegister />} />
         <Route path="/wiki/list" element={<WikiList />} />
@@ -97,6 +98,12 @@ function AppRoutes() {
         <Route path="/mypage/blocks" element={<MyBlockList />} />
         <Route path="/admin/reports" element={<AdminReport />} />
         <Route path="/admin/comment-reports" element={<AdminCommentReport />} />
+
+        {/* 장미 관리 */}
+        <Route path="/admin/wiki" element={<WikiApprove />} />
+        <Route path="/admin/wiki/entries" element={<WikiApprovalEntriesPage />} />
+        <Route path="/admin/wiki/modifications" element={<WikiApprovalModificationsPage />} />
+    
 
         {/* 404 페이지 */}
         <Route path="/*" element={<NotFound />} />
