@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useUserData } from '@utils/api/user';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { safeConvertToWebP } from '../../../utils/imageUtils';
 import { axiosInstance } from '@utils/axios';
 import styles from './CKEditor.module.css';
 import './Editor.css';
@@ -19,26 +20,27 @@ class CustomUploadAdapter {
     this.tag = tag;
   }
 
-  upload() {
-    return this.loader.file.then(file =>
-      new Promise((resolve, reject) => {
-        const data = new FormData();
-        data.append('file', file);
-        data.append('boardTag', this.tag);
+  async upload() {
+    const file = await this.loader.file;
+    const finalFile = await safeConvertToWebP(file);
 
-        axiosInstance.post('/api/v1/board/image/upload', data, {
-              headers: {'Content-Type': undefined}
-          })
-          .then(res => {
-            if (res.data && res.data.url) {
-              resolve({ default: res.data.url });
-            } else {
-              reject('이미지 업로드 실패');
-            }
-          })
-          .catch(reject);
+    return new Promise((resolve, reject) => {
+      const data = new FormData();
+      data.append('file', finalFile);
+      data.append('boardTag', this.tag);
+
+      axiosInstance.post('/api/v1/board/image/upload', data, {
+        headers: { 'Content-Type': undefined }
       })
-    );
+        .then(res => {
+          if (res.data && res.data.url) {
+            resolve({ default: res.data.url });
+          } else {
+            reject('이미지 업로드 실패');
+          }
+        })
+        .catch(reject);
+    });
   }
   abort() {}
 }
