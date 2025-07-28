@@ -173,7 +173,7 @@ export default function DiaryRegister({ onSuccess, mode = 'register', initialDat
                   onClick={() => document.getElementById('diary-image-input').click()}
                 >
                   <div className="diary-upload-icon">📷</div>
-                  <p>클릭하여 이미지 업로드</p>
+                  <p>클릭하여 이미지 업로드 <span className="diary-required">*</span></p>
                 </div>
               )}
               <input

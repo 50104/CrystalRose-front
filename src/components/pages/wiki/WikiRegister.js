@@ -125,8 +125,8 @@ export default function WikiRegisterPage() {
 
   const dataToSubmit = {
     ...formData,
-    usageType: formData.usageType.join(','),
-    recommendedPosition: formData.recommendedPosition.join(',')
+    usageType: formData.usageType.join(', '),
+    recommendedPosition: formData.recommendedPosition.join(', ')
   };
 
   const handleSubmit = async (e) => {
@@ -306,7 +306,7 @@ export default function WikiRegisterPage() {
                   onClick={() => document.getElementById('image-input').click()}
                 >
                   <div className="upload-icon">📷</div>
-                  <p>클릭하여 이미지 업로드</p>
+                  <p>클릭하여 이미지 업로드 <span className="required">*</span></p>
                 </div>
               )}
               <input

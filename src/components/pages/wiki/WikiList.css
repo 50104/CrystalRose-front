@@ -87,6 +87,14 @@
 }
 
 @media (max-width: 430px) {
+  .pc-only {
+    display: none !important;
+  }
+
+  .mobile-only {
+    display: block !important;
+  }
+
   .wiki-list-container {
     padding: 0.5rem;
     overflow-x: hidden;
@@ -165,6 +173,14 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+}
+
+.pc-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
 }
 
 .wiki-entry-card {

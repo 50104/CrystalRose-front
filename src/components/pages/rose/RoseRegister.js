@@ -186,7 +186,7 @@ export default function RoseRegister({ onSuccess }) {
                   onClick={() => document.getElementById('rose-image-input').click()}
                 >
                   <div className="rose-upload-icon">📷</div>
-                  <p>클릭하여 이미지 업로드</p>
+                  <p>클릭하여 이미지 업로드 <span className="diary-required">*</span></p>
                 </div>
               )}
               <input

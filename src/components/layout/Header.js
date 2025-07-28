@@ -65,13 +65,16 @@ const Header = ({ updateAvailable, reloadPage }) => {
             <li><a href="/groupchatting/list">그룹채팅</a></li>
           </ul>
           <ul className="mobile-only">
-            <li></li>
-            {userRole === 'ROLE_ADMIN' && (
-              <a href="/admin"><div>관리자 페이지</div></a>
-            )}
-            {userRole !== 'ROLE_ADMIN' && userRole !== 'ROLE_WRITER' && (
-              <a href="/mypage"><div>마이페이지</div></a>
-            )}
+            <li>
+              {userRole === 'ROLE_ADMIN' && (
+                <a href="/admin"><div>관리자 페이지</div></a>
+              )}
+            </li>
+            <li>
+              {userRole !== 'ROLE_ADMIN' && userRole !== 'ROLE_WRITER' && (
+                <a href="/mypage"><div>마이페이지</div></a>
+              )}
+            </li>
           </ul>
         </div>
       </div>
