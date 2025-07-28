@@ -308,13 +308,7 @@ export default function WikiApprovalPage() {
                   <div className="entry-header">
                     <div className="entry-info">
                       <h3 className="entry-name">{entry.name}</h3>
-                      <div className="entry-meta">
-                        <span className="entry-category">{entry.category}</span>
-                        <div className="entry-date-container">
-                          <span className="entry-date">{formatDate(entry.createdDate)}</span>
-                        </div>
-                        <span className="new-entry-badge">신규 등록</span>
-                      </div>
+                      <span className="entry-date">{formatDate(entry.createdDate)}</span>
                     </div>
                     <div className="entry-actions">
                       <button 
@@ -324,7 +318,7 @@ export default function WikiApprovalPage() {
                         }}
                         className="approve-button"
                       >
-                        승인
+                        등록 승인
                       </button>
                       <button 
                         onClick={(e) => {
@@ -333,7 +327,7 @@ export default function WikiApprovalPage() {
                         }}
                         className="reject-button"
                       >
-                        거부
+                        등록 거부
                       </button>
                     </div>
                   </div>
@@ -369,11 +363,7 @@ export default function WikiApprovalPage() {
                 >
                   <div className="entry-header">
                     <div className="entry-info">
-                      <h3 className="entry-name">{modification.name}</h3>
-                      <div className="entry-meta">
-                        <span className="entry-category">{modification.category}</span>
-                        <span className="entry-date">{formatDate(modification.updatedDate || modification.createdDate)}</span>
-                      </div>
+                      <h3 className="entry-name">{modification.name}</h3><span className="entry-date">{formatDate(modification.updatedDate || modification.createdDate)}</span>
                     </div>
                     <div className="entry-actions">
                       <button 

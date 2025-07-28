@@ -86,29 +86,9 @@
   color: #111827;
 }
 
-.entry-date-container {
-  display: flex;
-  align-items: center;
-}
-
 .entry-date {
   font-size: 0.875rem;
   color: #6b7280;
-}
-
-.entry-meta {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.875rem;
-  color: #6b7280;
-  padding-left: 15px;
-}
-
-.entry-category {
-  background-color: #f3f4f6;
-  padding: 0.2rem 0.5rem;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
 }
 
 .entry-actions {
@@ -210,16 +190,6 @@
 .tab-button.active {
   color: #6366f1;
   border-bottom-color: #6366f1;
-}
-
-/* 배지 */
-.new-entry-badge {
-  background-color: #6366f1;
-  color: white;
-  padding: 0.2rem 0.5rem;
-  font-size: 0.75rem;
-  border-radius: 0.25rem;
-  align-items: center;
 }
 
 /* 수정 상세 정보 */
@@ -431,13 +401,7 @@
 
   .entry-info {
     width: 100%;
-    flex-direction: column;
-  }
-
-  .entry-meta {
-    padding-left: 0;
-    margin-top: 0.25rem;
-    flex-wrap: wrap;
+    align-self: flex-start;
   }
 
   .entry-actions {
@@ -446,5 +410,12 @@
 
   .entry-name {
     margin-bottom: 0.5rem;
+  }
+
+  .entry-date {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;
   }
 }
