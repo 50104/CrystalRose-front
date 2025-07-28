@@ -394,15 +394,12 @@ const CustomCalendar = () => {
                       {isCurrentMonth && dayData.logs.length > 0 && (
                         <div className="day-event">
                           {
-                            Array.from(
-                              new Set(
-                                dayData.logs.flatMap(log =>
-                                  Object.entries(log)
-                                    .filter(([key, value]) => CARE_LABELS[key] && value)
-                                    .map(([key]) => key)
-                                )
+                            Object.keys(CARE_LABELS)
+                              .filter(key =>
+                                dayData.logs.some(log => log[key])
                               )
-                            ).map(key => CARE_LABELS[key]).join('')
+                              .map(key => CARE_LABELS[key])
+                              .join('')
                           }
                         </div>
                       )}
