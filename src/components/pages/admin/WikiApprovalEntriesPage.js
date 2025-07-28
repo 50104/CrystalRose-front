@@ -30,17 +30,17 @@ export default function NewEntryApproval({
 
         <div className="entry-detail-body">
           <div className="entry-detail-row"><strong>품종 코드:</strong> {detail.cultivarCode || '없음'}</div>
-          <div className="entry-detail-row"><strong>꽃 크기:</strong> {detail.flowerSize || '없음'}</div>
+          <div className="entry-detail-row"><strong>생장습성:</strong> {detail.growthType || '없음'}</div>
           <div className="entry-detail-row"><strong>꽃잎 수:</strong> {detail.petalCount ?? '없음'}</div>
-          <div className="entry-detail-row"><strong>향기:</strong> {detail.fragrance || '없음'}</div>
-          <div className="entry-detail-row"><strong>내병성:</strong> {detail.diseaseResistance || '없음'}</div>
-          <div className="entry-detail-row"><strong>내한성:</strong> {detail.coldResistance || '없음'}</div>
-          <div className="entry-detail-row"><strong>생장형태:</strong> {detail.growthType || '없음'}</div>
-          <div className="entry-detail-row"><strong>사용 용도:</strong> {detail.usageType || '없음'}</div>
-          <div className="entry-detail-row"><strong>추천 위치:</strong> {detail.recommendedPosition || '없음'}</div>
+          <div className="entry-detail-row"><strong>꽃 크기:</strong> {detail.flowerSize || '없음'}</div>
           <div className="entry-detail-row"><strong>연속개화성:</strong> {detail.continuousBlooming || '없음'}</div>
+          <div className="entry-detail-row"><strong>향기:</strong> {detail.fragrance || '없음'}</div>
           <div className="entry-detail-row"><strong>다화성:</strong> {detail.multiBlooming || '없음'}</div>
           <div className="entry-detail-row"><strong>수세:</strong> {detail.growthPower || '없음'}</div>
+          <div className="entry-detail-row"><strong>내한성:</strong> {detail.coldResistance || '없음'}</div>
+          <div className="entry-detail-row"><strong>내병성:</strong> {detail.diseaseResistance || '없음'}</div>
+          <div className="entry-detail-row"><strong>사용 용도:</strong> {detail.usageType || '없음'}</div>
+          <div className="entry-detail-row"><strong>추천 위치:</strong> {detail.recommendedPosition || '없음'}</div>
         </div>
       </div>
     );

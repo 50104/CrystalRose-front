@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './WikiRegister.css';
 import { axiosInstance } from '@utils/axios';
 import { safeConvertToWebP } from '../../../utils/imageUtils';
+import RatingSelector from './WikiSelector';
 
 export default function WikiRegisterPage() {
   const { id } = useParams();
@@ -322,266 +323,173 @@ export default function WikiRegisterPage() {
           </div>
 
           <div className="basic-info-section">
-            <div className="form-group">
-              <label className="form-label">
-                품종명 <span className="required">*</span>
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="form-input"
-                required
-              />
-            </div>
+            <div className="basic-info-container">
+              <div className="form-group">
+                <label className="form-label">
+                  품종명 <span className="required">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="form-input"
+                  required
+                />
+              </div>
 
-            <div className="form-group">
-              <label className="form-label">
-                품종 코드
-              </label>
-              <input
-                type="text"
-                name="cultivarCode"  
-                value={formData.cultivarCode}
-                onChange={handleChange}
-                className="form-input"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">
-                꽃잎 수
-              </label>
-              <input
-                type="text"
-                name="petalCount"
-                value={formData.petalCount}
-                onChange={handleChange}
-                className="form-input"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">
-                사용 용도
-              </label>
-              <div className="checkbox-group">
-                {['울타리', '화분', '화단', '조경', '장미보더'].map(option => (
-                  <label key={option} className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={Array.isArray(formData.usageType) && formData.usageType.includes(option)}
-                      onChange={() => handleCheckboxChange('usageType', option)}
-                    />
-                    {option}
-                  </label>
-                ))}
+              <div className="form-group">
+                <label className="form-label">
+                  카테고리 <span className="required">*</span>
+                </label>
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className="form-select"
+                  required
+                >
+                  <option value="">선택하세요</option>
+                  <option value="오스틴">오스틴</option>
+                  <option value="에버로즈">에버로즈</option>
+                  <option value="가와모토">가와모토</option>
+                  <option value="델바">델바</option>
+                  <option value="와바라">와바라</option>
+                  <option value="로사오리엔티스">로사오리엔티스</option>
+                  <option value="기타">기타</option>
+                </select>
               </div>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">
-                추천 위치
-              </label>
-              <div className="checkbox-group">
-                {['양지', '일부 그늘진 위치', '트인 공간 어디나'].map(option => (
-                  <label key={option} className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={Array.isArray(formData.recommendedPosition) && formData.recommendedPosition.includes(option)}
-                      onChange={() => handleCheckboxChange('recommendedPosition', option)}
-                    />
-                    {option}
-                  </label>
-                ))}
+            <div className="basic-info-container">
+              <div className="form-group">
+                <label className="form-label">
+                  품종 코드
+                </label>
+                <input
+                  type="text"
+                  name="cultivarCode"  
+                  value={formData.cultivarCode}
+                  onChange={handleChange}
+                  className="form-input"
+                  required
+                />
               </div>
+
+              <div className="form-group">
+                <label className="form-label">
+                  생장 습성
+                </label>
+                <select
+                  name="growthType" 
+                  value={formData.growthType}
+                  onChange={handleChange}
+                  className="form-select"
+                  required
+                >
+                  <option value="">선택하세요</option>
+                  <option value="직립성 관목형">직립성 관목형</option>
+                  <option value="약하게 퍼지는 관목형">약하게 퍼지는 관목형</option>
+                  <option value="반직립성 관목형">반직립성 관목형</option>
+                  <option value="포복형">포복형</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="form-grid-3x3">
+              <div className="form-group">
+                <label className="form-label">
+                  꽃잎 수
+                </label>
+                <input
+                  type="text"
+                  name="petalCount"
+                  value={formData.petalCount}
+                  onChange={handleChange}
+                  className="form-input"
+                  required
+                />
+              </div>
+              <RatingSelector
+                label="꽃 크기"
+                name="flowerSize"
+                value={formData.flowerSize}
+                onChange={(val) => setFormData((prev) => ({ ...prev, flowerSize: val }))}
+              />
+              <RatingSelector
+                label="연속개화성"
+                name="continuousBlooming"
+                value={formData.continuousBlooming}
+                onChange={(val) => setFormData((prev) => ({ ...prev, continuousBlooming: val }))}
+              />
+              <RatingSelector
+                label="향기"
+                name="fragrance"
+                value={formData.fragrance}
+                onChange={(val) => setFormData((prev) => ({ ...prev, fragrance: val }))}
+              />
+              <RatingSelector
+                label="다화성"
+                name="multiBlooming"
+                value={formData.multiBlooming}
+                onChange={(val) => setFormData((prev) => ({ ...prev, multiBlooming: val }))}
+              />
+              <RatingSelector
+                label="수세"
+                name="growthPower"
+                value={formData.growthPower}
+                onChange={(val) => setFormData((prev) => ({ ...prev, growthPower: val }))}
+              />
+              <RatingSelector
+                label="내한성"
+                name="coldResistance"
+                value={formData.coldResistance}
+                onChange={(val) => setFormData((prev) => ({ ...prev, coldResistance: val }))}
+              />
+              <RatingSelector
+                label="내병성"
+                name="diseaseResistance"
+                value={formData.diseaseResistance}
+                onChange={(val) => setFormData((prev) => ({ ...prev, diseaseResistance: val }))}
+              />
             </div>
           </div>
         </div>
-
-        <div className="form-grid-3x3">
+        
+        <div className="basic-info-container">
           <div className="form-group">
             <label className="form-label">
-              카테고리 <span className="required">*</span>
+              사용 용도
             </label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="form-select"
-              required
-            >
-              <option value="">선택하세요</option>
-              <option value="오스틴">오스틴</option>
-              <option value="에버로즈">에버로즈</option>
-              <option value="가와모토">가와모토</option>
-              <option value="델바">델바</option>
-              <option value="와바라">와바라</option>
-              <option value="로사오리엔티스">로사오리엔티스</option>
-              <option value="기타">기타</option>
-            </select>
+            <div className="checkbox-group">
+              {['화분', '장미보더', '화단', '울타리', '조경'].map(option => (
+                <label key={option} className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={Array.isArray(formData.usageType) && formData.usageType.includes(option)}
+                    onChange={() => handleCheckboxChange('usageType', option)}
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
           </div>
-
           <div className="form-group">
             <label className="form-label">
-              꽃 크기
+              추천 위치
             </label>
-            <select
-              name="flowerSize"
-              value={formData.flowerSize}
-              onChange={handleChange}
-              className="form-select"
-              required
-            >
-              <option value="">선택하세요</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              향기
-            </label>
-            <select
-              name="fragrance"
-              value={formData.fragrance}
-              onChange={handleChange}
-              className="form-select"
-              required
-            >
-              <option value="">선택하세요</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              내병성
-            </label>
-            <select
-              name="diseaseResistance" 
-              value={formData.diseaseResistance}
-              onChange={handleChange}
-              className="form-select"
-              required
-            >
-              <option value="">선택하세요</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              내한성
-            </label>
-            <select
-              name="coldResistance"
-              value={formData.coldResistance}
-              onChange={handleChange}
-              className="form-select"
-              required
-            >
-              <option value="">선택하세요</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              연속개화성
-            </label>
-            <select
-              name="continuousBlooming"
-              value={formData.continuousBlooming}
-              onChange={handleChange}
-              className="form-select"
-              required
-            >
-              <option value="">선택하세요</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              다화성
-            </label>
-            <select
-              name="multiBlooming"
-              value={formData.multiBlooming}
-              onChange={handleChange}
-              className="form-select"
-              required
-            >
-              <option value="">선택하세요</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              수세
-            </label>
-            <select
-              name="growthPower"
-              value={formData.growthPower}
-              onChange={handleChange}
-              className="form-select"
-              required
-            >
-              <option value="">선택하세요</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              생장 습성
-            </label>
-            <select
-              name="growthType" 
-              value={formData.growthType}
-              onChange={handleChange}
-              className="form-select"
-              required
-            >
-              <option value="">선택하세요</option>
-              <option value="직립성 관목형">직립성 관목형</option>
-              <option value="약하게 퍼지는 관목형">약하게 퍼지는 관목형</option>
-              <option value="반직립성 관목형">반직립성 관목형</option>
-              <option value="포복형">포복형</option>
-            </select>
+            <div className="checkbox-group">
+              {['일부 그늘진 위치', '트인 공간 어디나', '양지'].map(option => (
+                <label key={option} className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={Array.isArray(formData.recommendedPosition) && formData.recommendedPosition.includes(option)}
+                    onChange={() => handleCheckboxChange('recommendedPosition', option)}
+                  />
+                  {option}
+                </label>
+              ))}
+            </div>
           </div>
         </div>
 

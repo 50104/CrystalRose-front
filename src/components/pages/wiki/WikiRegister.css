@@ -56,6 +56,7 @@
 
 .form-group {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 0.25rem;
 }
@@ -188,17 +189,16 @@ img {
 .top-section {
   display: flex;
   gap: 2rem;
-  margin-bottom: 2rem;
   align-items: flex-start;
 }
 
 .image-upload-section {
-  flex: 0 0 350px;
+  flex: 0 0 425px;
 }
 
 .image-upload-container {
-  width: 350px;
-  height: 350px;
+  width: 425px;
+  height: 425px;
   position: relative;
 }
 
@@ -273,9 +273,8 @@ img {
 
 .form-grid-3x3 {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
-  margin-bottom: 2rem;
 }
 
 @media (max-width: 1024px) {
@@ -338,4 +337,9 @@ img {
   min-height: 120px;
   max-width: 100%;
   resize: vertical;
+}
+
+.basic-info-container {
+  display: flex;
+  gap: 1.5rem;
 }

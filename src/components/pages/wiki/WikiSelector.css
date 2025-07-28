@@ -1,0 +1,40 @@
+.bar-selector {
+  display: flex;
+  margin-top: 0.25rem;
+  border-radius: 8px;
+  overflow: hidden; 
+  border: 1px solid #ccc;
+}
+
+.bar-segment {
+  flex: 1;
+  padding: 0.5rem 0;
+  background-color: #f3f4f6;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-right: 1px solid #ccc;
+}
+
+.bar-segment:last-child {
+  border-right: none;
+}
+
+.bar-segment:hover {
+  background-color: #e5e7eb;
+}
+
+.bar-segment.selected {
+  background-color: #e2d6ff;
+}
+
+.bar-segment.first {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.bar-segment.last {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
