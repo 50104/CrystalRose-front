@@ -17,8 +17,8 @@ export default function WikiRegisterPage() {
     fragrance: '',
     diseaseResistance: '',
     growthType: '',
-    usageType: '',
-    recommendedPosition: '',
+    usageType: [],
+    recommendedPosition: [],
     imageUrl: '',
     continuousBlooming: '', 
     multiBlooming: '',      
@@ -66,8 +66,8 @@ export default function WikiRegisterPage() {
         fragrance: wikiData.fragrance || '',
         diseaseResistance: wikiData.diseaseResistance || '',
         growthType: wikiData.growthType || '',
-        usageType: wikiData.usageType || '',
-        recommendedPosition: wikiData.recommendedPosition || '',
+        usageType: wikiData.usageType ? wikiData.usageType.split(',') : [],
+        recommendedPosition: wikiData.recommendedPosition ? wikiData.recommendedPosition.split(',') : [],
         imageUrl: wikiData.imageUrl || '',
         continuousBlooming: wikiData.continuousBlooming || '',
         multiBlooming: wikiData.multiBlooming || '',
@@ -123,6 +123,12 @@ export default function WikiRegisterPage() {
     }));
   };
 
+  const dataToSubmit = {
+    ...formData,
+    usageType: formData.usageType.join(','),
+    recommendedPosition: formData.recommendedPosition.join(',')
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -157,7 +163,7 @@ export default function WikiRegisterPage() {
       if (isEditMode) { // 수정
         response = await axiosInstance.put(
           `/api/v1/wiki/modify/${id}`, 
-          formData,
+          dataToSubmit,
           {
             headers: {
               'Content-Type': 'application/json'
@@ -167,7 +173,7 @@ export default function WikiRegisterPage() {
       } else { // 등록
         response = await axiosInstance.post(
           `/api/v1/wiki/register`, 
-          formData,
+          dataToSubmit,
           {
             headers: {
               'Content-Type': 'application/json'
@@ -233,10 +239,7 @@ export default function WikiRegisterPage() {
 
   const handleCheckboxChange = (field, value) => {
     setFormData(prevState => {
-      const rawValue = prevState[field];
-      const currentValues = typeof rawValue === 'string' 
-        ? rawValue.split(',') 
-        : [];
+      const currentValues = Array.isArray(prevState[field]) ? prevState[field] : [];
 
       const updatedValues = currentValues.includes(value)
         ? currentValues.filter(v => v !== value)
@@ -244,7 +247,7 @@ export default function WikiRegisterPage() {
 
       return {
         ...prevState,
-        [field]: updatedValues.join(',')
+        [field]: updatedValues
       };
     });
   };
@@ -370,7 +373,7 @@ export default function WikiRegisterPage() {
                   <label key={option} className="checkbox-label">
                     <input
                       type="checkbox"
-                      checked={typeof formData.usageType === 'string' && formData.usageType.split(',').includes(option)}
+                      checked={Array.isArray(formData.usageType) && formData.usageType.includes(option)}
                       onChange={() => handleCheckboxChange('usageType', option)}
                     />
                     {option}
@@ -388,7 +391,7 @@ export default function WikiRegisterPage() {
                   <label key={option} className="checkbox-label">
                     <input
                       type="checkbox"
-                      checked={typeof formData.recommendedPosition === 'string' && formData.recommendedPosition.split(',').includes(option)}
+                      checked={Array.isArray(formData.recommendedPosition) && formData.recommendedPosition.includes(option)}
                       onChange={() => handleCheckboxChange('recommendedPosition', option)}
                     />
                     {option}
