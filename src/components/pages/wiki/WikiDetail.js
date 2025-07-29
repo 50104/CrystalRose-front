@@ -228,86 +228,6 @@ export default function WikiDetailPage() {
 
           <div className="wiki-detail-specs">
             <div className="wiki-detail-progress-section">
-              {wikiEntry.fragrance && (
-                <div className="wiki-detail-progress-item">
-                  <div className="progress-label">향기</div>
-                  <div className="progress-container">
-                    <div 
-                      className="progress-bar" 
-                      style={{
-                        '--target-width': `${getProgressValue(wikiEntry.fragrance)}%`,
-                        animationDelay: '0.3s'
-                      }}
-                    ></div>
-                  </div>
-                  <div className="progress-value">{wikiEntry.fragrance}</div>
-                </div>
-              )}
-
-              {wikiEntry.growthPower && (
-                <div className="wiki-detail-progress-item">
-                  <div className="progress-label">수세</div>
-                  <div className="progress-container">
-                    <div 
-                      className="progress-bar" 
-                      style={{
-                        '--target-width': `${getProgressValue(wikiEntry.growthPower)}%`,
-                        animationDelay: '0.5s'
-                      }}
-                    ></div>
-                  </div>
-                  <div className="progress-value">{wikiEntry.growthPower}</div>
-                </div>
-              )}
-
-              {wikiEntry.diseaseResistance && (
-                <div className="wiki-detail-progress-item">
-                  <div className="progress-label">내병성</div>
-                  <div className="progress-container">
-                    <div 
-                      className="progress-bar" 
-                      style={{
-                        '--target-width': `${getProgressValue(wikiEntry.diseaseResistance)}%`,
-                        animationDelay: '0.2s'
-                      }}
-                    ></div>
-                  </div>
-                  <div className="progress-value">{wikiEntry.diseaseResistance}</div>
-                </div>
-              )}
-
-              {wikiEntry.coldResistance && (
-                <div className="wiki-detail-progress-item">
-                  <div className="progress-label">내한성</div>
-                  <div className="progress-container">
-                    <div 
-                      className="progress-bar" 
-                      style={{
-                        '--target-width': `${getProgressValue(wikiEntry.coldResistance)}%`,
-                        animationDelay: '0.4s'
-                      }}
-                    ></div>
-                  </div>
-                  <div className="progress-value">{wikiEntry.coldResistance}</div>
-                </div>
-              )}
-
-              {wikiEntry.multiBlooming && (
-                <div className="wiki-detail-progress-item">
-                  <div className="progress-label">다화성</div>
-                  <div className="progress-container">
-                    <div 
-                      className="progress-bar" 
-                      style={{
-                        '--target-width': `${getProgressValue(wikiEntry.multiBlooming)}%`,
-                        animationDelay: '0.7s'
-                      }}
-                    ></div>
-                  </div>
-                  <div className="progress-value">{wikiEntry.multiBlooming}</div>
-                </div>
-              )}
-
               {wikiEntry.flowerSize && (
                 <div className="wiki-detail-progress-item">
                   <div className="progress-label">꽃 크기</div>
@@ -337,6 +257,86 @@ export default function WikiDetailPage() {
                     ></div>
                   </div>
                   <div className="progress-value">{wikiEntry.continuousBlooming}</div>
+                </div>
+              )}
+
+              {wikiEntry.fragrance && (
+                <div className="wiki-detail-progress-item">
+                  <div className="progress-label">향기</div>
+                  <div className="progress-container">
+                    <div 
+                      className="progress-bar" 
+                      style={{
+                        '--target-width': `${getProgressValue(wikiEntry.fragrance)}%`,
+                        animationDelay: '0.3s'
+                      }}
+                    ></div>
+                  </div>
+                  <div className="progress-value">{wikiEntry.fragrance}</div>
+                </div>
+              )}
+
+              {wikiEntry.multiBlooming && (
+                <div className="wiki-detail-progress-item">
+                  <div className="progress-label">다화성</div>
+                  <div className="progress-container">
+                    <div 
+                      className="progress-bar" 
+                      style={{
+                        '--target-width': `${getProgressValue(wikiEntry.multiBlooming)}%`,
+                        animationDelay: '0.7s'
+                      }}
+                    ></div>
+                  </div>
+                  <div className="progress-value">{wikiEntry.multiBlooming}</div>
+                </div>
+              )}
+
+              {wikiEntry.growthPower && (
+                <div className="wiki-detail-progress-item">
+                  <div className="progress-label">수세</div>
+                  <div className="progress-container">
+                    <div 
+                      className="progress-bar" 
+                      style={{
+                        '--target-width': `${getProgressValue(wikiEntry.growthPower)}%`,
+                        animationDelay: '0.5s'
+                      }}
+                    ></div>
+                  </div>
+                  <div className="progress-value">{wikiEntry.growthPower}</div>
+                </div>
+              )}
+
+              {wikiEntry.coldResistance && (
+                <div className="wiki-detail-progress-item">
+                  <div className="progress-label">내한성</div>
+                  <div className="progress-container">
+                    <div 
+                      className="progress-bar" 
+                      style={{
+                        '--target-width': `${getProgressValue(wikiEntry.coldResistance)}%`,
+                        animationDelay: '0.4s'
+                      }}
+                    ></div>
+                  </div>
+                  <div className="progress-value">{wikiEntry.coldResistance}</div>
+                </div>
+              )}
+
+              {wikiEntry.diseaseResistance && (
+                <div className="wiki-detail-progress-item">
+                  <div className="progress-label">내병성</div>
+                  <div className="progress-container">
+                    <div 
+                      className="progress-bar" 
+                      style={{
+                        '--target-width': `${getProgressValue(wikiEntry.diseaseResistance)}%`,
+                        animationDelay: '0.2s'
+                      }}
+                    ></div>
+                  </div>
+                  <div className="progress-value">{wikiEntry.diseaseResistance}</div>
                 </div>
               )}
             </div>
