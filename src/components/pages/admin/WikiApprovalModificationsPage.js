@@ -113,7 +113,9 @@ export default function ModificationApproval({
             >
               <div className="entry-header">
                 <div className="entry-info">
-                  <h3 className="entry-name">{modification.name}</h3>
+                  <h3 className="entry-name">
+                    {modification.originalName || modification.name}
+                  </h3>
                   <span className="entry-date">{formatDate(modification.updatedDate || modification.createdDate)}</span>
                 </div>
                 <div className="entry-actions">

@@ -100,7 +100,7 @@ export default function RoseListPage() {
       {roses.length === 0 ? (
         <div className="rose-list-no-entries">
           등록된 장미가 없습니다.
-          <br />
+          <br /><br />
           <div onClick={() => navigate('/rose/register')} className="rose-entry-action-link">
             첫 번째 장미 등록하기
           </div>
