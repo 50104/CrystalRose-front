@@ -1,0 +1,161 @@
+/* 월간 캘린더 스타일 */
+.custom-calendar-container {
+  max-width: 980px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* font-family: 'Pretendard', sans-serif; */
+}
+
+.custom-calendar-container::-webkit-scrollbar {
+  display: none;
+}
+
+.calendar-month {
+  padding-top: 1rem;
+  margin-top: 0;
+  border-top: 1px solid #f0f0f0;
+}
+
+.calendar-month:last-child {
+  border-bottom: none;
+}
+
+.month-header {
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 1rem 0;
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+  color: rgb(0, 0, 0);
+}
+
+.month-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  margin-bottom: 1px;
+  background-color: #e5e7eb;
+  overflow: hidden;
+}
+
+.weekday {
+  background-color: #f9fafb;
+  padding: 0.75rem;
+  text-align: center;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background-color: #f4f4f4;
+  overflow: hidden;
+}
+
+.calendar-day {
+  background-color: #ffffff;
+  min-height: 120px;
+  padding: 0.5rem;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-day:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+
+.calendar-day.other-month {
+  opacity: 0.7;
+}
+
+.calendar-day.other-month .day-number,
+.calendar-day.other-month .day-event {
+  visibility: hidden;
+}
+
+.calendar-day.today {
+  border: 2px solid #6b46c1;
+}
+
+.calendar-day.other-month.today .day-number {
+  visibility: hidden;
+}
+
+.calendar-day .day-number {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #333;
+}
+
+.calendar-day.has-image .day-number {
+  background-color: transparent;
+  color: white;
+  font-weight: 800;
+}
+
+/* .calendar-day.today .day-number {
+  background-color: #9f38ffde;
+  color: white;
+} */
+
+.calendar-day[style*="background-image"] .day-event {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* 모바일 월간 캘린더 스타일 */
+@media screen and (max-width: 430px) {
+  .custom-calendar-container {
+    height: calc(100vh - 150px) !important;
+    margin: 0 !important;
+    padding: 0.25rem !important;
+    border-radius: 0 !important;
+    max-width: 100% !important;
+    margin-top: 60px !important;
+  }
+
+  .calendar-month {
+    padding-top: 0.5rem !important;
+  }
+
+  .month-header {
+    margin-bottom: 0.5rem !important;
+    padding: 0.5rem 0 !important;
+  }
+
+  .month-header h2 {
+    font-size: 1.1rem !important;
+  }
+
+  .weekday {
+    padding: 0.4rem 0.2rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  .calendar-day {
+    min-height: 60px !important;
+    padding: 0.2rem !important;
+  }
+}

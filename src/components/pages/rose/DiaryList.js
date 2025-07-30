@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
-import CareLogModal from './CareLogModal';
+import CareLogModal from '../calendar/CareLogModal';
 import './DiaryList.css';
 
 const CARE_LABELS = {

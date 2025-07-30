@@ -31,11 +31,11 @@ import RoseListPage from '../components/pages/rose/RoseListPage';
 import DiaryList from '../components/pages/rose/DiaryList';
 import TimelinePage from '../components/pages/rose/TimelinePage';
 import TimelapsePage from '../components/pages/rose/TimelapsePage';
-import CareLogRegister from '../components/pages/rose/CareLogRegister';
-import CareLogCalendarPage from '../components/pages/rose/CareCalendarPage';
 import AdminPage from '../components/pages/admin/AdminPage';
 import WikiApprovalEntriesPage from '../components/pages/admin/WikiApprovalEntriesPage';
 import WikiApprovalModificationsPage from '../components/pages/admin/WikiApprovalModificationsPage';
+import CareLogRegister from '../components/pages/calendar/CareLogRegister';
+import CalendarMain from '../components/pages/calendar/CalendarMain';
 
 function AppRoutes() {
   return (
@@ -86,7 +86,7 @@ function AppRoutes() {
         <Route path="/carelogs/register" element={<CareLogRegister />} />
 
         {/* 전체 달력 */}
-        <Route path="/carelogs/calendar" element={<CareLogCalendarPage />} />
+        <Route path="/carelogs/calendar" element={<CalendarMain />} />
 
         {/* 채팅 관련 */}
         <Route path="/memberList" element={<MemberList />} />

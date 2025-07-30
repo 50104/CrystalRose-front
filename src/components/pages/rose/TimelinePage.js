@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
-import CareLogModal from './CareLogModal';
 import './TimelinePage.css';
 import { HiOutlinePencilAlt } from 'react-icons/hi';
+import CareLogModal from '../calendar/CareLogModal';
 
 const CARE_LABELS = {
   watering: '💧',
