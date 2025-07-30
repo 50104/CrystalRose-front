@@ -210,7 +210,7 @@ const CustomCalendar = () => {
       const offset = targetTop - containerTop;
 
       containerRef.current.scrollTo({
-        top: containerRef.current.scrollTop + offset,
+        top: containerRef.current.scrollTop + offset + 2,
         behavior: 'smooth'
       });
     }

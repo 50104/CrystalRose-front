@@ -48,7 +48,7 @@ const MonthlyCalendar = ({
         const containerTop = containerEl.getBoundingClientRect().top;
         const targetTop = targetEl.getBoundingClientRect().top;
         const offset = targetTop - containerTop;
-        containerEl.scrollTop = containerEl.scrollTop + offset;
+        containerEl.scrollTop = containerEl.scrollTop + offset + 2;
       }
     }, 30);
   }, [scrollToToday, loadMonthData, setMonths, monthRefs, containerRef]);
