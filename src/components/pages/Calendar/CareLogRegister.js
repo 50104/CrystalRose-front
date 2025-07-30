@@ -53,11 +53,13 @@ export default function CareLogRegister({ selectedDate, editData, onSuccess, onC
     
     try {
       if (editData) {
-        await axiosInstance.put(`/api/diaries/carelogs/${editData.id}`, form);
+        const { data } = await axiosInstance.put(`/api/diaries/carelogs/${editData.id}`, form);
         alert('관리 기록이 수정되었습니다.');
+        onSuccess?.(data);
       } else {
-        await axiosInstance.post('/api/diaries/carelogs/register', form);
+        const { data } = await axiosInstance.post('/api/diaries/carelogs/register', form);
         alert('관리 기록이 등록되었습니다.');
+        onSuccess?.(data);
       }
       
       setForm({

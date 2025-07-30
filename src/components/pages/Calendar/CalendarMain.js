@@ -192,7 +192,10 @@ const CustomCalendar = () => {
   };
 
   const handleEdit = () => {
-    setShowEditModal(true);
+    if (selected) {
+      refreshMonth(new Date(selected.careDate));
+    }
+    setSelected(null);
   };
 
   const scrollToToday = useCallback(() => {
@@ -299,7 +302,13 @@ const CustomCalendar = () => {
         />
       )}
 
-      {selected && <CareLogModal log={selected} onClose={() => setSelected(null)} onEdit={handleEdit} />}
+      {selected && (
+        <CareLogModal 
+          log={selected} 
+          onClose={() => setSelected(null)} 
+          onEdit={handleEdit} 
+        />
+      )}
       {showRegisterModal && selectedDate && (
         <div className="modal-backdrop" onClick={() => setShowRegisterModal(false)}>
           <div className="modal-box" onClick={e => e.stopPropagation()}>

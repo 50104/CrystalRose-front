@@ -13,7 +13,7 @@ const CARE_LABELS = {
 };
 
 export default function CareLogModal({ log, onClose, onEdit }) {
-  const [editing, setEditing] = useState(false); // 수정 모드
+  const [editing, setEditing] = useState(false);
   const CARE_ORDER = [
     'watering',
     'fertilizer',
@@ -33,6 +33,11 @@ export default function CareLogModal({ log, onClose, onEdit }) {
   const handleSuccess = () => {
     setEditing(false);
     onEdit?.();
+    onClose?.();
+  };
+
+  const handleCancel = () => {
+    setEditing(false);
   };
 
   if (editing) {
@@ -43,7 +48,7 @@ export default function CareLogModal({ log, onClose, onEdit }) {
             selectedDate={new Date(log.careDate)}
             editData={log}
             onSuccess={handleSuccess}
-            onCancel={() => setEditing(false)}
+            onCancel={handleCancel}
           />
         </div>
       </div>
