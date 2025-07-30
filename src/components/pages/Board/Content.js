@@ -144,6 +144,8 @@ function Content() {
   };
 
   if (!content) return <div>Loading...</div>;
+  const isNotice = content.boardTag === '공지';
+  const isAdminWriter = content.writer?.userNick?.toLowerCase() === 'admin';
 
   return (
     <div>
@@ -172,7 +174,8 @@ function Content() {
         <div className='contentButtonBox'>
           {!loading && userData && content.writer &&
             content.writer.userStatus !== 'DELETED' &&
-            userData.userNo !== content.writer.userNo && (
+            userData.userNo !== content.writer.userNo &&
+            !isNotice && !isAdminWriter && (
               <>
                 <button className="contentButton" onClick={async () => {
                   const confirmBlock = window.confirm("차단하시겠습니까?");
@@ -211,6 +214,7 @@ function Content() {
         title="게시글 신고"
       />
 
+    {content.boardTag !== '공지' && (
       <div className="commentSection">
         <h3>댓글</h3>
         <CommentList
@@ -233,6 +237,7 @@ function Content() {
           </div>
         </div>
       </div>
+    )}
     </div>
   );
 }
