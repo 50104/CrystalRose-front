@@ -29,6 +29,13 @@ const CustomCalendar = () => {
   const [isYearView, setIsYearView] = useState(false);
   const containerRef = useRef(null);
   const monthRefs = useRef([]);
+  const [calendarKey, setCalendarKey] = useState(Date.now());
+
+  useEffect(() => {
+    if (!isYearView) {
+      setCalendarKey(Date.now());
+    }
+  }, [isYearView]);
 
   // 토큰 체크
   useEffect(() => {
@@ -289,6 +296,7 @@ const CustomCalendar = () => {
         />
       ) : (
         <MonthlyCalendar
+          key={calendarKey}
           {...commonProps}
           months={months}
           setMonths={setMonths}

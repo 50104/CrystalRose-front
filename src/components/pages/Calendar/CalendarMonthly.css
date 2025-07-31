@@ -98,7 +98,7 @@
 }
 
 .calendar-day.today {
-  border: 2px solid #6b46c1;
+  border: 3px solid #6b46c1;
 }
 
 .calendar-day.other-month.today .day-number {
@@ -157,5 +157,9 @@
   .calendar-day {
     min-height: 60px !important;
     padding: 0.2rem !important;
+  }
+
+  .calendar-day.today {
+    border: 2px solid #6b46c1;
   }
 }
