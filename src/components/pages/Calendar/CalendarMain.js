@@ -101,13 +101,12 @@ const CustomCalendar = () => {
       ? rawLogs.filter(log => log.careDate === dateKey)
       : [];
 
-    const diaryList = diaries[monthKey];
-    const dayDiary = Array.isArray(diaryList)
-      ? diaryList.find(diary => {
-          const diaryDate = new Date(diary.recordedAt);
-          return getDateKey(diaryDate) === dateKey;
-        })
-      : null;
+    const dayDiary = Object.values(diaries)
+      .flat()
+      .find(diary => {
+        const diaryDate = new Date(diary.recordedAt);
+        return getDateKey(diaryDate) === dateKey;
+      }) || null;
 
     return { logs: dayLogs, diary: dayDiary };
   };

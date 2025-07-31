@@ -34,8 +34,8 @@ import TimelapsePage from '../components/pages/rose/TimelapsePage';
 import AdminPage from '../components/pages/admin/AdminPage';
 import WikiApprovalEntriesPage from '../components/pages/admin/WikiApprovalEntriesPage';
 import WikiApprovalModificationsPage from '../components/pages/admin/WikiApprovalModificationsPage';
-import CareLogRegister from '../components/pages/calendar/CareLogRegister';
 import CalendarMain from '../components/pages/calendar/CalendarMain';
+import CareLogRegister from '../components/pages/calendar/CareLogRegister';
 
 function AppRoutes() {
   return (
