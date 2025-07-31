@@ -3,7 +3,7 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
 import './TimelinePage.css';
 import { HiOutlinePencilAlt } from 'react-icons/hi';
-import CareLogModal from '../calendar/CareLogModal';
+import CareLogModal from '../calendar_care/CareLogModal';
 
 const CARE_LABELS = {
   watering: '💧',

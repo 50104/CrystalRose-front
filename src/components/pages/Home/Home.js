@@ -1,8 +1,8 @@
 import React from 'react';
+import CalendarMain from '../calendar_care/CalendarMain';
 // import RoseRanking from './RoseRanking';
 // import RoseReview from './RoseReview.js';
 // import RoseToday from './RoseToday';
-import CalendarMain from '../calendar/CalendarMain';
 
 function Home() {
   return (

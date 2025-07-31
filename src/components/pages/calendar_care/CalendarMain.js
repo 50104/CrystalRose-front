@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { axiosInstance } from '@utils/axios';
-import CareLogModal from './CareLogModal';
-import CareLogRegister from './CareLogRegister';
 import { getAccessToken } from '@utils/api/token';
-import MonthlyCalendar from './CalendarMonthly';
 import YearlyCalendar from './CalendarYearly';
 import './CalendarMain.css';
+import MonthlyCalendar from './CalendarMonthly';
+import CareLogModal from './CareLogModal';
+import CareLogRegister from './CareLogRegister';
 
 const CARE_LABELS = {
   watering: '💧',
@@ -17,7 +17,7 @@ const CARE_LABELS = {
   note: '📝'
 };
 
-const CustomCalendar = () => {
+const CalendarMain = () => {
   const [months, setMonths] = useState([]);
   const [logs, setLogs] = useState({});
   const [diaries, setDiaries] = useState({});
@@ -310,7 +310,7 @@ const CustomCalendar = () => {
       )}
 
       {selected && (
-        <CareLogModal 
+        <CareLogModal
           log={selected} 
           onClose={() => setSelected(null)} 
           onEdit={handleEdit} 
@@ -319,7 +319,7 @@ const CustomCalendar = () => {
       {showRegisterModal && selectedDate && (
         <div className="modal-backdrop" onClick={() => setShowRegisterModal(false)}>
           <div className="modal-box" onClick={e => e.stopPropagation()}>
-            <CareLogRegister 
+            <CareLogRegister
               selectedDate={selectedDate}
               onSuccess={handleRegisterSuccess} 
               onCancel={() => setShowRegisterModal(false)}
@@ -343,4 +343,4 @@ const CustomCalendar = () => {
   );
 };
 
-export default CustomCalendar;
+export default CalendarMain;
