@@ -258,3 +258,17 @@
     border-bottom: none;
   }
 }
+
+.pin-icon {
+  vertical-align: middle;
+}
+
+.pin-toggle-btn {
+  right: 0;
+  margin-left: auto;
+  font-size: 12px;
+  background-color: #f3f3f3;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}

@@ -1,26 +1,89 @@
 import React, { useEffect, useState } from 'react';
 import Pagination from './Pagination';
-import { noAuthAxios } from '@utils/axios';
+import { noAuthAxios, axiosInstance } from '@utils/axios';
 import { format, parseISO } from 'date-fns';
 import './List.css';
+import { jwtDecode } from 'jwt-decode';
 
 function formatDate(date) {
   return date ? format(parseISO(date), 'yy/MM/dd HH:mm') : '-';
 }
 
 function List() {
+  const [fixedPosts, setFixedPosts] = useState([]);
   const [contents, setContents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('access');
+    if (token) {
+      const decoded = jwtDecode(token);
+      if (decoded.userRole === 'ROLE_ADMIN') {
+        setIsAdmin(true);
+      }
+    }
+  }, [isAdmin]);
+  
+  const toggleFixedPost = async (id) => {
+    try {
+      await axiosInstance.put(`/api/v1/admin/board/${id}/fix`);
+      
+      const res = await noAuthAxios.get(`/api/v1/board/list?page=${currentPage}`);
+      const result = res.data;
+
+      setFixedPosts(result.fixedList || []);
+      setContents(Array.isArray(result.content) ? result.content : []);
+    } catch (err) {
+      console.error('에러 내용:', err.response || err);
+      alert(err.response?.data?.message || '고정/해제 실패');
+    }
+  };
 
   useEffect(() => {
     noAuthAxios.get(`/api/v1/board/list?page=${currentPage}`)
       .then(res => {
-        setContents(Array.isArray(res.data.content) ? res.data.content : []);
-        setTotalPage(res.data.totalPage ?? 1);
+        const data = res.data;
+        setFixedPosts(data.fixedList || []);
+        setContents(Array.isArray(data.content) ? data.content : []);
+        setTotalPage(data.totalPage ?? 1);
       })
       .catch(err => console.error(err));
   }, [currentPage]);
+
+  const renderRow = (c, isFixed = false) => (
+    <a key={c.boardNo} href={`/content/${c.boardNo}`} className="table-row">
+      <div className="col-category desktop-only">
+        <span className="category-tag">{c.boardTag}</span>
+      </div>
+      <div className="col-title">
+        <span className="category-tag mobile-only">{c.boardTag}</span>
+        <span className="title-text">{c.boardTitle}</span>
+        {isFixed && <span className="pin-icon">📌</span>}
+        {c.commentCount > 0 && <span className="comment-count">[{c.commentCount}]</span>}
+        {isAdmin && (
+          <button
+            className="pin-toggle-btn"
+            onClick={(e) => {
+              e.preventDefault();
+              toggleFixedPost(c.boardNo);
+            }}
+          >
+            {isFixed ? '해제' : '고정'}
+          </button>
+        )}
+        <div className="title-meta mobile-only">
+          <span className="col-author">{c.writerStatus === 'DELETED' ? '탈퇴한 사용자' : c.writerNick}</span>
+          <span className="col-date">{formatDate(c.createdDate)}</span>
+        </div>
+      </div>
+      <div className="col-author desktop-only">{c.writerStatus === 'DELETED' ? '탈퇴한 사용자' : c.writerNick}</div>
+      <div className="col-date desktop-only">{formatDate(c.createdDate)}</div>
+      <div className="col-views desktop-only">{c.viewCount || 0}</div>
+      <div className="col-likes desktop-only">{c.recommendCount || 0}</div>
+    </a>
+  );
 
   return (
     <div className="list-container">
@@ -44,31 +107,8 @@ function List() {
         </div>
 
         <div className="table-body">
-          {contents.map(c => (
-            <a key={c.boardNo} href={`/content/${c.boardNo}`} className="table-row">
-              <div className="col-category desktop-only">
-                <span className="category-tag">{c.boardTag}</span>
-              </div>
-
-              <div className="col-title">
-                <span className="category-tag mobile-only">{c.boardTag}</span>
-                <span className="title-text">{c.boardTitle}</span>
-                {c.commentCount > 0 && <span className="comment-count">[{c.commentCount}]</span>}
-
-                <div className="title-meta mobile-only">
-                  <span className="col-author">{c.writerStatus === 'DELETED' ? '탈퇴한 사용자' : c.writerNick}</span>
-                  <span className="col-date">{formatDate(c.createdDate)}</span>
-                </div>
-              </div>
-
-              <div className="col-author desktop-only">
-                {c.writerStatus === 'DELETED' ? '탈퇴한 사용자' : c.writerNick}
-              </div>
-              <div className="col-date desktop-only">{formatDate(c.createdDate)}</div>
-              <div className="col-views desktop-only">{c.viewCount || 0}</div>
-              <div className="col-likes desktop-only">{c.recommendCount || 0}</div>
-            </a>
-          ))}
+          {fixedPosts.map(post => renderRow(post, true))}
+          {contents.map(post => renderRow(post))}
         </div>
       </div>
 
