@@ -106,3 +106,9 @@
     padding: 10px;
   }
 }
+
+.contentButton.recommended {
+  background-color: #bb84ff2e;
+  color: #000;
+  font-size: 13px;
+}

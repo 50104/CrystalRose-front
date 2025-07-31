@@ -22,6 +22,15 @@ function Content() {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [reportingPostId, setReportingPostId] = useState(null);
+  const [isRecommended, setIsRecommended] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+
+  useEffect(() => {
+    if (content) {
+      setLikeCount(content.likeCount || 0);
+      setIsRecommended(content.recommended || false);
+    }
+  }, [content]);
 
   function decodeHtml(html) {
     const txt = document.createElement("textarea");
@@ -143,6 +152,25 @@ function Content() {
     }
   };
 
+  const handleRecommendToggle = async () => {
+    try {
+      const res = await axiosInstance.post(`/api/v1/board/recommend/${boardNo}`);
+      if (res.data?.message.includes('추천 완료')) {
+        setIsRecommended(true);
+        setLikeCount((prev) => prev + 1);
+        alert("게시글을 추천했습니다");
+      } else if (res.data?.message.includes('추천 취소')) {
+        setIsRecommended(false);
+        setLikeCount((prev) => Math.max(prev - 1, 0));
+        alert("게시글 추천을 취소했습니다");
+      }
+    } catch (err) {
+      const message = err?.response?.data?.message || '오류가 발생했습니다. 다시 시도해주세요.';
+      alert(message);
+      console.error("추천 토글 오류:", err);
+    }
+  };
+
   if (!content) return <div>Loading...</div>;
   const isNotice = content.boardTag === '공지';
   const isAdminWriter = content.writer?.userNick?.toLowerCase() === 'admin';
@@ -172,6 +200,12 @@ function Content() {
         </div>
 
         <div className='contentButtonBox'>
+          <button
+            className={`contentButton ${isRecommended ? 'recommended' : ''}`}
+            onClick={handleRecommendToggle}
+          >
+            {isRecommended ? '추천 취소' : '추천'} ({likeCount})
+          </button>
           {!loading && userData && content.writer &&
             content.writer.userStatus !== 'DELETED' &&
             userData.userNo !== content.writer.userNo &&

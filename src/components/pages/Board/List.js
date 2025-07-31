@@ -66,7 +66,7 @@ function List() {
               </div>
               <div className="col-date desktop-only">{formatDate(c.createdDate)}</div>
               <div className="col-views desktop-only">{c.viewCount || 0}</div>
-              <div className="col-likes desktop-only">{c.likeCount || 0}</div>
+              <div className="col-likes desktop-only">{c.recommendCount || 0}</div>
             </a>
           ))}
         </div>
