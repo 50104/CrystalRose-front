@@ -87,3 +87,13 @@ export const getUserData = async (setIsLogin) => {
     throw error;
   }
 };
+
+export const fetchUser = async () => {
+  const token = localStorage.getItem('access');
+  if (!token) {
+    throw new Error('로그인이 필요한 요청입니다.');
+  }
+
+  const res = await axiosInstance.get('/api/user/data');
+  return res.data;
+};

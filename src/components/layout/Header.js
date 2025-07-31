@@ -1,12 +1,26 @@
 import logo from '@assets/images/branding/50104.png';
+import { useEffect, useState } from 'react';
+import { fetchUser } from '@utils/api/user';
 import { logoutFunction } from '@utils/api/token';
-import { GetUser } from '@utils/api/user';
-import { useEffect } from 'react';
-
 import './Header.css';
 
 const Header = ({ updateAvailable, reloadPage }) => {
-  const { isLogin, userRole, userNick } = GetUser();
+  const [userData, setUserData] = useState(null);
+  const [isLogin, setIsLogin] = useState(false);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const data = await fetchUser();
+        setUserData(data);
+        setIsLogin(true);
+      } catch (error) {
+        console.error('사용자 정보 불러오기 실패:', error);
+        setIsLogin(false);
+      }
+    };
+    loadUser();
+  }, []);
 
   // 버전 업데이트 알림 상태에 따라 body에 클래스 추가/제거
   useEffect(() => {
@@ -39,11 +53,11 @@ const Header = ({ updateAvailable, reloadPage }) => {
           </>
         ) : (
           <>
-            {userRole === 'ROLE_ADMIN' && (
-              <a href="/admin"><div>{userNick}님 관리자 페이지</div></a>
+            {userData?.userRole === 'ROLE_ADMIN' && (
+              <a href="/admin"><div>{userData.userNick}님 관리자 페이지</div></a>
             )}
-            {userRole !== 'ROLE_ADMIN' && userRole !== 'ROLE_WRITER' && (
-              <a href="/mypage"><div>{userNick}님 마이페이지</div></a>
+            {userData?.userRole !== 'ROLE_ADMIN' && userData?.userRole !== 'ROLE_WRITER' && (
+              <a href="/mypage"><div>{userData.userNick}님 마이페이지</div></a>
             )}
             <div onClick={logoutFunction} className="cursor">로그아웃</div>
           </>
@@ -66,12 +80,12 @@ const Header = ({ updateAvailable, reloadPage }) => {
           </ul>
           <ul className="mobile-only">
             <li>
-              {userRole === 'ROLE_ADMIN' && (
+              {userData?.userRole === 'ROLE_ADMIN' && (
                 <a href="/admin"><div>관리자 페이지</div></a>
               )}
             </li>
             <li>
-              {userRole !== 'ROLE_ADMIN' && userRole !== 'ROLE_WRITER' && (
+              {userData?.userRole !== 'ROLE_ADMIN' && userData?.userRole !== 'ROLE_WRITER' && (
                 <a href="/mypage"><div>마이페이지</div></a>
               )}
             </li>
