@@ -64,8 +64,14 @@ const MonthlyCalendar = ({
       const lastMonth = months[months.length - 1];
       const nextMonth = new Date(lastMonth.getFullYear(), lastMonth.getMonth() + 1, 1);
 
-      setMonths(prev => [...prev, nextMonth]);
-      loadMonthData(nextMonth);
+      const exists = months.some(m =>
+        m.getFullYear() === nextMonth.getFullYear() && m.getMonth() === nextMonth.getMonth()
+      );
+
+      if (!exists) {
+        setMonths(prev => [...prev, nextMonth]);
+        loadMonthData(nextMonth);
+      }
     }
 
     // 상단 근처에 도달하면 이전 달 추가
