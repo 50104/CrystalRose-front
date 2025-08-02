@@ -10,9 +10,45 @@ export default function RoseListPage() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  const SCROLL_POSITION_KEY = 'roseListScrollPosition'; // 스크롤 위치 저장 키
+
   useEffect(() => {
     fetchMyRoses();
   }, []);
+
+  // 스크롤 위치 복원
+  useEffect(() => {
+    if (!loading && roses.length > 0) {
+      const savedScrollPosition = sessionStorage.getItem(SCROLL_POSITION_KEY);
+      if (savedScrollPosition) {
+        setTimeout(() => {
+          window.scrollTo(0, parseInt(savedScrollPosition, 10));
+        }, 100);
+      }
+    }
+  }, [loading, roses]);
+
+  // 스크롤 위치 저장
+  useEffect(() => {
+    const saveScrollPosition = () => {
+      sessionStorage.setItem(SCROLL_POSITION_KEY, window.pageYOffset.toString());
+    };
+
+    window.addEventListener('beforeunload', saveScrollPosition);
+
+    return () => {
+      window.removeEventListener('beforeunload', saveScrollPosition);
+    };
+  }, []);
+
+  const handleNavigateWithScroll = (path, state = null) => {
+    sessionStorage.setItem(SCROLL_POSITION_KEY, window.pageYOffset.toString());
+    if (state) {
+      navigate(path, { state });
+    } else {
+      navigate(path);
+    }
+  };
 
   const fetchMyRoses = async () => {
     setLoading(true);
@@ -47,6 +83,7 @@ export default function RoseListPage() {
   };
 
   const handleEditClick = (rose) => {
+    sessionStorage.setItem(SCROLL_POSITION_KEY, window.pageYOffset.toString());
     navigate('/rose/register', {
       state: {
         roseData: rose,
@@ -92,8 +129,8 @@ export default function RoseListPage() {
       <div className="rose-list-header">
         <h1 className="rose-list-title">내 장미 목록</h1>
         <div className="rose-list-buttons">
-          <div onClick={() => navigate('/diaries/list')} className="rose-diary-button">성장기록</div>
-          <div onClick={() => navigate('/rose/register')} className="rose-register-button">+ 장미 등록</div>
+          <div onClick={() => handleNavigateWithScroll('/diaries/list')} className="rose-diary-button">성장기록</div>
+          <div onClick={() => handleNavigateWithScroll('/rose/register')} className="rose-register-button">+ 장미 등록</div>
         </div>
       </div>
 
@@ -101,7 +138,7 @@ export default function RoseListPage() {
         <div className="rose-list-no-entries">
           등록된 장미가 없습니다.
           <br /><br />
-          <div onClick={() => navigate('/rose/register')} className="rose-entry-action-link">
+          <div onClick={() => handleNavigateWithScroll('/rose/register')} className="rose-entry-action-link">
             첫 번째 장미 등록하기
           </div>
         </div>
@@ -146,10 +183,10 @@ export default function RoseListPage() {
                   </div>
                 )}
                 <div className="rose-entry-actions">
-                  <div onClick={() => navigate(`/diaries/register/${rose.id}`)} className="rose-entry-action-link">+ 기록 추가</div>
+                  <div onClick={() => handleNavigateWithScroll(`/diaries/register/${rose.id}`)} className="rose-entry-action-link">+ 기록 추가</div>
                   <div className="rose-entry-actions-row">
-                    <div onClick={() => navigate(`/diaries/${rose.id}/timeline`, { state: { nickname: rose.nickname } })} className="rose-entry-action-link secondary">타임라인</div>
-                    <div onClick={() => navigate(`/diaries/${rose.id}/timelapse`, { state: { nickname: rose.nickname } })} className="rose-entry-action-link secondary">타임랩스</div>
+                    <div onClick={() => handleNavigateWithScroll(`/diaries/${rose.id}/timeline`, { nickname: rose.nickname })} className="rose-entry-action-link secondary">타임라인</div>
+                    <div onClick={() => handleNavigateWithScroll(`/diaries/${rose.id}/timelapse`, { nickname: rose.nickname })} className="rose-entry-action-link secondary">타임랩스</div>
                   </div>
                 </div>
               </div>

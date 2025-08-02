@@ -12,6 +12,8 @@ export default function WikiListPage() {
   const { isLogin } = GetUser();
   const navigate = useNavigate();
 
+  const SCROLL_POSITION_KEY = 'wikiListScrollPosition'; // 스크롤 위치 저장 키
+
   useEffect(() => {
     const fetchMyWikiIds = async () => {
       try {
@@ -31,6 +33,49 @@ export default function WikiListPage() {
 
     init();
   }, [isLogin]);
+
+  // 스크롤 위치 복원
+  useEffect(() => {
+    if (!loading && wikiEntries.length > 0) {
+      const savedScrollPosition = sessionStorage.getItem(SCROLL_POSITION_KEY);
+      if (savedScrollPosition) {
+        setTimeout(() => {
+          window.scrollTo(0, parseInt(savedScrollPosition, 10));
+        }, 100);
+      }
+    }
+  }, [loading, wikiEntries]);
+
+  // 스크롤 위치 저장
+  useEffect(() => {
+    const saveScrollPosition = () => {
+      sessionStorage.setItem(SCROLL_POSITION_KEY, window.pageYOffset.toString());
+    };
+    window.addEventListener('beforeunload', saveScrollPosition);
+
+    return () => {
+      window.removeEventListener('beforeunload', saveScrollPosition);
+    };
+  }, []);
+
+  const handleDetailNavigation = (entryId) => {
+    sessionStorage.setItem(SCROLL_POSITION_KEY, window.pageYOffset.toString());
+    navigate(`/wiki/detail/${entryId}`);
+  };
+
+  const handleRoseRegistration = (e, entry) => {
+    e.stopPropagation();
+    sessionStorage.setItem(SCROLL_POSITION_KEY, window.pageYOffset.toString());
+    navigate('/rose/register', {
+      state: {
+        roseData: {
+          wikiId: entry.id,
+          varietyName: entry.name,
+          imageUrl: ''
+        }
+      }
+    });
+  };
 
   const fetchWikiEntries = async () => {
     setLoading(true);
@@ -88,7 +133,7 @@ export default function WikiListPage() {
       ) : (
         <div className="wiki-entries-grid">
           {Array.isArray(wikiEntries) && wikiEntries.map(entry => (
-            <div key={entry.id} className="wiki-entry-card-link" onClick={() => navigate(`/wiki/detail/${entry.id}`)}>
+            <div key={entry.id} className="wiki-entry-card-link" onClick={() => handleDetailNavigation(entry.id)}>
               <div className="wiki-entry-card">
                 <div className="wiki-image-wrapper">
                   {entry.imageUrl && (
@@ -96,18 +141,7 @@ export default function WikiListPage() {
                   )}
                   {isLogin && !disabledWikiIds.includes(entry.id) && (
                     <div style={{cursor: 'pointer'}}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate('/rose/register', {
-                          state: {
-                            roseData: {
-                              wikiId: entry.id,
-                              varietyName: entry.name,
-                              imageUrl: ''
-                            }
-                          }
-                        });
-                      }}
+                      onClick={(e) => handleRoseRegistration(e, entry)}
                       className="wiki-register-overlay-button"
                     >
                       내 장미로 등록

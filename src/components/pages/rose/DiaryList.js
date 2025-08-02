@@ -22,6 +22,37 @@ export default function DiaryListPage() {
   const [selectedLog, setSelectedLog] = useState(null);
   const navigate = useNavigate();
 
+  const SCROLL_POSITION_KEY = 'diaryListScrollPosition'; // 스크롤 위치 저장 키
+
+  // 스크롤 위치 복원
+  useEffect(() => {
+    if (!loading && diaries.length > 0) {
+      const savedScrollPosition = sessionStorage.getItem(SCROLL_POSITION_KEY);
+      if (savedScrollPosition) {
+        setTimeout(() => {
+          window.scrollTo(0, parseInt(savedScrollPosition, 10));
+        }, 100);
+      }
+    }
+  }, [loading, diaries]);
+
+  // 스크롤 위치 저장
+  useEffect(() => {
+    const saveScrollPosition = () => {
+      sessionStorage.setItem(SCROLL_POSITION_KEY, window.pageYOffset.toString());
+    };
+    window.addEventListener('beforeunload', saveScrollPosition);
+
+    return () => {
+      window.removeEventListener('beforeunload', saveScrollPosition);
+    };
+  }, []);
+
+  const handleNavigateWithScroll = (path) => {
+    sessionStorage.setItem(SCROLL_POSITION_KEY, window.pageYOffset.toString());
+    navigate(path);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -66,8 +97,11 @@ export default function DiaryListPage() {
       <div className="diary-list-header">
         <h1 className="diary-list-title">전체 성장 기록</h1>
         <div className="diary-list-buttons">
-          <div style={{cursor: 'pointer'}} onClick={() => navigate('/roses/list')} className="diary-roses-button">내 장미</div>
-          <div style={{cursor: 'pointer'}} onClick={() => navigate('/diaries/register')} className="diary-register-button">+ 기록 등록</div>
+          <div style={{cursor: 'pointer'}} onClick={() => {
+            sessionStorage.removeItem(SCROLL_POSITION_KEY);
+            navigate('/roses/list');
+          }} className="diary-roses-button">내 장미</div>
+          <div style={{cursor: 'pointer'}} onClick={() => handleNavigateWithScroll('/diaries/register')} className="diary-register-button">+ 기록 등록</div>
         </div>
       </div>
 

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import Pagination from './Pagination';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { noAuthAxios, axiosInstance } from '@utils/axios';
 import { format, parseISO } from 'date-fns';
-import './List.css';
 import { jwtDecode } from 'jwt-decode';
+import Pagination from './Pagination';
+import './List.css';
 
 function formatDate(date) {
   return date ? format(parseISO(date), 'yy/MM/dd HH:mm') : '-';
@@ -12,9 +13,12 @@ function formatDate(date) {
 function List() {
   const [fixedPosts, setFixedPosts] = useState([]);
   const [contents, setContents] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [isAdmin, setIsAdmin] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
   useEffect(() => {
     const token = localStorage.getItem('access');
@@ -24,15 +28,13 @@ function List() {
         setIsAdmin(true);
       }
     }
-  }, [isAdmin]);
-  
+  }, []);
+
   const toggleFixedPost = async (id) => {
     try {
       await axiosInstance.put(`/api/v1/admin/board/${id}/fix`);
-      
       const res = await noAuthAxios.get(`/api/v1/board/list?page=${currentPage}`);
       const result = res.data;
-
       setFixedPosts(result.fixedList || []);
       setContents(Array.isArray(result.content) ? result.content : []);
     } catch (err) {
@@ -52,8 +54,12 @@ function List() {
       .catch(err => console.error(err));
   }, [currentPage]);
 
+  const handlePageChange = (page) => {
+    navigate(`/list?page=${page}`);
+  };
+
   const renderRow = (c, isFixed = false) => (
-    <a key={c.boardNo} href={`/content/${c.boardNo}`} className="table-row">
+    <a key={c.boardNo} href={`/content/${c.boardNo}?page=${currentPage}`} className="table-row">
       <div className="col-category desktop-only">
         <span className="category-tag">{c.boardTag}</span>
       </div>
@@ -125,7 +131,7 @@ function List() {
         </div>
       </div>
 
-      <Pagination currentPage={currentPage} totalPage={totalPage} onPageChange={setCurrentPage} />
+      <Pagination currentPage={currentPage} totalPage={totalPage} onPageChange={handlePageChange} />
     </div>
   );
 }

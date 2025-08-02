@@ -26,6 +26,41 @@ export default function RoseTimelinePage() {
   const [error, setError] = useState(null);
   const [selectedLog, setSelectedLog] = useState(null);
 
+  const SCROLL_POSITION_KEY = `timelineScrollPosition_${roseId}`; // 스크롤 위치 저장 키
+
+  // 스크롤 위치 복원
+  useEffect(() => {
+    if (!loading && timeline.length > 0) {
+      const savedScrollPosition = sessionStorage.getItem(SCROLL_POSITION_KEY);
+      if (savedScrollPosition) {
+        setTimeout(() => {
+          window.scrollTo(0, parseInt(savedScrollPosition, 10));
+        }, 100);
+      }
+    }
+  }, [loading, timeline, SCROLL_POSITION_KEY]);
+
+  // 스크롤 위치 저장
+  useEffect(() => {
+    const saveScrollPosition = () => {
+      sessionStorage.setItem(SCROLL_POSITION_KEY, window.pageYOffset.toString());
+    };
+    window.addEventListener('beforeunload', saveScrollPosition);
+
+    return () => {
+      window.removeEventListener('beforeunload', saveScrollPosition);
+    };
+  }, [SCROLL_POSITION_KEY]);
+
+  const handleNavigateWithScroll = (path, state = null) => {
+    sessionStorage.setItem(SCROLL_POSITION_KEY, window.pageYOffset.toString());
+    if (state) {
+      navigate(path, { state });
+    } else {
+      navigate(path);
+    }
+  };
+
   const fetchTimeline = useCallback(async () => {
     try {
       const res = await axiosInstance.get(`/api/diaries/${roseId}/timeline`);
@@ -72,6 +107,7 @@ export default function RoseTimelinePage() {
 
   const handleEditLog = () => {
     if (!selectedLog) return;
+    sessionStorage.setItem(SCROLL_POSITION_KEY, window.pageYOffset.toString());
     navigate(`/diaries/edit/${selectedLog.id}`, { state: selectedLog });
     setSelectedLog(null);
   };
@@ -133,7 +169,7 @@ export default function RoseTimelinePage() {
                     className="timeline-note-edit-icon"
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/diaries/edit/${entry.id}`);
+                      handleNavigateWithScroll(`/diaries/edit/${entry.id}`);
                     }}
                     title="수정"
                   />
@@ -161,7 +197,10 @@ export default function RoseTimelinePage() {
       <div className="timeline-navigation">
         <div
           className="timeline-back-button"
-          onClick={() => navigate('/roses/list')}
+          onClick={() => {
+            sessionStorage.removeItem(SCROLL_POSITION_KEY);
+            navigate('/roses/list');
+          }}
         >
           &larr; 목록으로 돌아가기
         </div>
