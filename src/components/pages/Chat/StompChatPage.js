@@ -106,7 +106,6 @@ const StompChatPage = () => {
         },
         (error) => {
           console.error('웹소켓 오류:', error);
-          alert('실시간 채팅 서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.');
         }
       );
 

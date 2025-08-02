@@ -24,6 +24,25 @@ function Content() {
   const [reportingPostId, setReportingPostId] = useState(null);
   const [isRecommended, setIsRecommended] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [prevPost, setPrevPost] = useState(null);
+  const [nextPost, setNextPost] = useState(null);
+
+  useEffect(() => {
+    const fetchPrevNextPost = async () => {
+      try {
+        const [prevRes, nextRes] = await Promise.all([
+          axiosInstance.get(`/api/v1/board/prev/${boardNo}`),
+          axiosInstance.get(`/api/v1/board/next/${boardNo}`)
+        ]);
+        setPrevPost(prevRes.status === 200 ? prevRes.data : null);
+        setNextPost(nextRes.status === 200 ? nextRes.data : null);
+      } catch (err) {
+        console.error('이전/다음글 불러오기 오류', err);
+      }
+    };
+
+    if (boardNo) fetchPrevNextPost();
+  }, [boardNo]);
 
   useEffect(() => {
     if (content) {
@@ -272,6 +291,21 @@ function Content() {
         </div>
       </div>
     )}
+      <div className="prev-next-nav">
+        {/* <button className="contentButton" onClick={() => navigate('/list')}>
+          ← 목록으로 돌아가기
+        </button> */}
+        {nextPost && (
+          <button className="contentButton" onClick={() => navigate(`/content/${nextPost.boardNo}`)}>
+            다음글: {nextPost.boardTitle}
+          </button>
+        )}
+        {prevPost && (
+          <button className="contentButton" onClick={() => navigate(`/content/${prevPost.boardNo}`)}>
+            이전글: {prevPost.boardTitle}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
