@@ -91,8 +91,12 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
     <li key={comment.id} className="commentItem">
       <div className="commentHeader">
         <div className="leftBox">
-          <span className="commentUser">
-            {comment.userStatus === 'DELETED' ? '탈퇴한 사용자입니다' : comment.userNick}
+          <span
+            className={`commentUser ${
+              comment.userStatus === 'DELETED' ? 'deletedUser' : ''
+            }`}
+          >
+            {comment.userStatus === 'DELETED' ? '탈퇴한 사용자' : comment.userNick}
           </span>
           <span className="commentDate">{formatDateTime(comment.createdDate)}</span>
         </div>
@@ -142,7 +146,13 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
         ) : (
           <>
             {comment.parentId && comment.parentNickname && (
-              <span className="replyTo">@{comment.parentNickname} </span>
+              <span
+                className={`replyTo ${
+                  comment.parentStatus === 'DELETED' ? 'deletedUser' : ''
+                }`}
+              >
+                @{comment.parentStatus === 'DELETED' ? '탈퇴한 사용자' : comment.parentNickname}{' '}
+              </span>
             )}
             {comment.content}
           </>

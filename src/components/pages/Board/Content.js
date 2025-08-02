@@ -184,7 +184,7 @@ function Content() {
             <div className='authorBox'>
               <span className='authorName'>
                 {content.writer
-                  ? (content.writer.userStatus === 'DELETED' ? '탈퇴한 사용자입니다' : content.writer.userNick)
+                  ? (content.writer.userStatus === 'DELETED' ? '탈퇴한 사용자' : content.writer.userNick)
                   : '알 수 없는 사용자'}
               </span>
               <span className='authorDate'>

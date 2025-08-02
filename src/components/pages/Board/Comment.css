@@ -67,6 +67,12 @@
   font-size: 14px;
 }
 
+.commentUser.deletedUser {
+  font-style: italic;
+  font-weight: normal;
+  color: rgb(148, 148, 148);
+}
+
 /* 상단: 작성자 + 시간 */
 .commentHeader {
   display: flex;
@@ -222,6 +228,12 @@
   font-size: 12px;
   margin-right: 6px;
   display: inline-block;
+}
+
+.deletedUser {
+  font-style: italic;
+  font-weight: normal;
+  color: rgb(148, 148, 148);
 }
 
 /* 수정 버튼 */
