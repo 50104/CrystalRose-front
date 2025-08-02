@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link as RouterLink } from 'react-router-dom';
-import './WikiDetail.css';
-import { noAuthAxios } from '@utils/axios';
+import { useUserData } from '../../../utils/api/user';
 import { getAccessToken } from '@utils/api/token';
+import { noAuthAxios } from '@utils/axios';
+import { jwtDecode } from 'jwt-decode';
+import './WikiDetail.css';
 
 export default function WikiDetailPage() {
   const { wikiId } = useParams();
@@ -10,6 +12,18 @@ export default function WikiDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const { isLogin } = useUserData();
+
+  useEffect(() => {
+    const token = localStorage.getItem('access');
+    if (token) {
+      const decoded = jwtDecode(token);
+      if (decoded.userRole === 'ROLE_ADMIN') {
+        setIsAdmin(true);
+      }
+    }
+  }, [isAdmin]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 480);
@@ -165,22 +179,25 @@ export default function WikiDetailPage() {
           &larr; 목록으로 돌아가기
         </RouterLink>
         <div className="wiki-detail-action-buttons">
-          <button className="wiki-detail-delete-button" onClick={handleDeleteWiki}>
-            삭제
-          </button>
-
-          <RouterLink 
-            to={`/wiki/edit/${wikiId}`} 
-            className="wiki-detail-edit-button"
-            onClick={(e) => {
-              if (wikiEntry.modificationStatus === 'PENDING') {
-                e.preventDefault();
-                alert('수정 검토 중입니다.');
-              }
-            }}
-          >
-            수정 요청
-          </RouterLink>
+          {isAdmin && (
+            <button className="wiki-detail-delete-button" onClick={handleDeleteWiki}>
+              삭제
+            </button>
+          )}
+          {isLogin && (
+            <RouterLink 
+              to={`/wiki/edit/${wikiId}`} 
+              className="wiki-detail-edit-button"
+              onClick={(e) => {
+                if (wikiEntry.modificationStatus === 'PENDING') {
+                  e.preventDefault();
+                  alert('수정 검토 중입니다.');
+                }
+              }}
+            >
+              수정 요청
+            </RouterLink>
+          )}
         </div>
       </div>
 
