@@ -237,6 +237,7 @@
     line-height: 1.4;
     white-space: normal;
     word-break: break-word;
+    max-width: 49%;
   }
 
   .title-meta {
@@ -256,6 +257,10 @@
 
   .table-row:last-child {
     border-bottom: none;
+  }
+
+  .pin-toggle-btn {
+    margin-left: 7px !important;
   }
 }
 

@@ -64,7 +64,7 @@ function List() {
         {c.commentCount > 0 && <span className="comment-count">[{c.commentCount}]</span>}
         {isAdmin && (
           <button
-            className="pin-toggle-btn"
+            className="pin-toggle-btn desktop-only"
             onClick={(e) => {
               e.preventDefault();
               toggleFixedPost(c.boardNo);
@@ -74,7 +74,20 @@ function List() {
           </button>
         )}
         <div className="title-meta mobile-only">
-          <span className="col-author">{c.writerStatus === 'DELETED' ? '탈퇴한 사용자' : c.writerNick}</span>
+          <span className="col-author">
+            {c.writerStatus === 'DELETED' ? '탈퇴한 사용자' : c.writerNick}
+            {isAdmin && (
+              <button
+                className="pin-toggle-btn"
+                onClick={(e) => {
+                  e.preventDefault();
+                  toggleFixedPost(c.boardNo);
+                }}
+              >
+                {isFixed ? '해제' : '고정'}
+              </button>
+            )}
+          </span>
           <span className="col-date">{formatDate(c.createdDate)}</span>
         </div>
       </div>
