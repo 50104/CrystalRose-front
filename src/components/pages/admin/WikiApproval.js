@@ -71,9 +71,11 @@ export default function WikiApprovalPage() {
     }
   };
 
-  const handleModificationReject = async (id) => {
+  const handleModificationReject = async (id, rejectionReason) => {
     try {
-      await axiosInstance.patch(`/api/v1/admin/wiki/modifications/${id}/reject`);
+      await axiosInstance.patch(`/api/v1/admin/wiki/modifications/${id}/reject`, {
+        reason: rejectionReason
+      });
       setPendingModifications(pendingModifications.filter(modification => modification.id !== id));
       setMessage({ type: 'success', text: '도감 수정이 거부되었습니다.' });
     } catch (err) {

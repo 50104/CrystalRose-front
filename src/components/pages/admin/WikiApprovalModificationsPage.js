@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './WikiApproval.css';
 import './WikiApprovalModifications.css';
 
@@ -11,6 +11,25 @@ export default function ModificationApproval({
   onReject, 
   formatDate 
 }) {
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [showRejectInputForId, setShowRejectInputForId] = useState(null);
+
+  const handleRejectClick = (modificationId) => {
+    if (showRejectInputForId === modificationId) {
+      setShowRejectInputForId(null);
+      setRejectionReason('');
+    } else {
+      setShowRejectInputForId(modificationId);
+    }
+  };
+
+  const submitRejection = (modificationId) => {
+    if (!rejectionReason.trim()) return alert('거부 사유를 입력해주세요.');
+    onReject(modificationId, rejectionReason);
+    setShowRejectInputForId(null);
+    setRejectionReason('');
+  };
+
   const getFieldChanges = (comparisonData) => {
     if (!comparisonData || !comparisonData.originalData || !comparisonData.modifiedData) return {};
     
@@ -32,14 +51,14 @@ export default function ModificationApproval({
       { key: 'growthPower', label: '수세' },
       { key: 'imageUrl', label: '이미지' }
     ];
-    
+
     const original = comparisonData.originalData;
     const modified = comparisonData.modifiedData;
-    
+
     fields.forEach(field => {
       const originalValue = original[field.key] || '';
       const currentValue = modified[field.key] || '';
-      
+
       if (originalValue !== currentValue) {
         changes[field.key] = {
           label: field.label,
@@ -48,18 +67,17 @@ export default function ModificationApproval({
         };
       }
     });
-    
     return changes;
   };
 
   const renderChanges = (comparisonData) => {
     const changes = getFieldChanges(comparisonData);
     const changeKeys = Object.keys(changes);
-    
+
     if (changeKeys.length === 0) {
       return <p>변경된 내용이 없습니다.</p>;
     }
-    
+
     return (
       <div className="changes-list">
         <div className="changes-summary">
@@ -98,11 +116,9 @@ export default function ModificationApproval({
   return (
     <>
       <h2 className="pending-title">수정 대기 중인 도감</h2>
-      
+
       {pendingModifications.length === 0 ? (
-        <div className="no-entries">
-          수정 대기 중인 도감이 없습니다.
-        </div>
+        <div className="no-entries">수정 대기 중인 도감이 없습니다.</div>
       ) : (
         <div className="entries-list">
           {pendingModifications.map(modification => (
@@ -131,7 +147,7 @@ export default function ModificationApproval({
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
-                      onReject(modification.id);
+                      handleRejectClick(modification.id);
                     }}
                     className="reject-button"
                   >
@@ -139,7 +155,20 @@ export default function ModificationApproval({
                   </button>
                 </div>
               </div>
-              
+              {showRejectInputForId === modification.id && (
+                <div className="rejection-reason-box">
+                  <textarea 
+                    placeholder="거부 사유를 입력해주세요"
+                    value={rejectionReason}
+                    onChange={(e) => setRejectionReason(e.target.value)}
+                  />
+                  <button onClick={(e) => {
+                    e.stopPropagation();
+                    submitRejection(modification.id);
+                  }}>제출</button>
+                </div>
+              )}
+
               {selectedEntry?.id === modification.id && (
                 <div className="entry-details">
                   <div className="modification-details">
@@ -148,9 +177,7 @@ export default function ModificationApproval({
                       {comparisonData ? (
                         renderChanges(comparisonData)
                       ) : (
-                        <div className="loading-changes">
-                          변경 사항을 불러오는 중
-                        </div>
+                        <div className="loading-changes">변경 사항을 불러오는 중</div>
                       )}
                     </div>
                   </div>

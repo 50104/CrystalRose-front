@@ -36,6 +36,7 @@ import WikiApprovalEntriesPage from '../components/pages/admin/WikiApprovalEntri
 import WikiApprovalModificationsPage from '../components/pages/admin/WikiApprovalModificationsPage';
 import CalendarMain from '../components/pages/calendar_care/CalendarMain';
 import CareLogRegister from '../components/pages/calendar_care/CareLogRegister';
+import MyRejectedModificationsPage from '../components/pages/MyPage/MyRejectedModificationsPage';
 
 function AppRoutes() {
   return (
@@ -49,6 +50,7 @@ function AppRoutes() {
         <Route path="/checkUserPwd" element={<CheckUserPwd />} />
         <Route path="/modifyUser" element={<UserUpdate />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/mypage/wiki/rejected" element={<MyRejectedModificationsPage />} />
 
         {/* 로그인,회원가입 */}
         <Route path="/login" element={<SignIn />} />
@@ -103,7 +105,6 @@ function AppRoutes() {
         <Route path="/admin/wiki" element={<WikiApprove />} />
         <Route path="/admin/wiki/entries" element={<WikiApprovalEntriesPage />} />
         <Route path="/admin/wiki/modifications" element={<WikiApprovalModificationsPage />} />
-    
 
         {/* 404 페이지 */}
         <Route path="/*" element={<NotFound />} />
