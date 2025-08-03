@@ -14,7 +14,7 @@ import UserUpdate from '@components/pages/MyPage/UserUpdate';
 import Content from '@components/pages/Board/Content';
 import List from '@components/pages/Board/List';
 import Editor from '@components/pages/Board/Editor';
-import MemberList from '@components/pages/Chat/MemberList';
+// import MemberList from '@components/pages/Chat/MemberList';
 import StompChatPage from '@components/pages/Chat/StompChatPage';
 import GroupChattingList from '@components/pages/Chat/GroupCattingList';
 import MyChatPage from '@components/pages/Chat/MyChatPage';
@@ -89,7 +89,7 @@ function AppRoutes() {
         <Route path="/carelogs/calendar" element={<CalendarMain />} />
 
         {/* 채팅 관련 */}
-        <Route path="/memberList" element={<MemberList />} />
+        {/* <Route path="/memberList" element={<MemberList />} /> */}
         <Route path="/chatpage/:roomId" element={<StompChatPage />} />
         <Route path="/groupChatting/list" element={<GroupChattingList />} />
         <Route path="/my/chat/page" element={<MyChatPage />} />
