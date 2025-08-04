@@ -2,8 +2,8 @@
 .modification-details {
   background-color: #f9fafb;
   padding: 1rem;
-  border-radius: 0.25rem;
-  border-left: 3px solid #6366f1;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
 }
 
 .modification-info {
