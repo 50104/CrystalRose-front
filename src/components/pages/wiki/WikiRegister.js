@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './WikiRegister.css';
 import { axiosInstance } from '@utils/axios';
 import { safeConvertToWebP } from '../../../utils/imageUtils';
@@ -7,8 +7,12 @@ import RatingSelector from './WikiSelector';
 
 export default function WikiRegisterPage() {
   const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
-  const isEditMode = Boolean(id);
+
+  const isEditMode = location.pathname.includes('/edit/');
+  const isResubmitMode = location.pathname.includes('/resubmit/');
+
   const [formData, setFormData] = useState({
     name: '',
     category: '',
@@ -42,21 +46,16 @@ export default function WikiRegisterPage() {
     }
   }, [navigate]);
 
-  // 수정 모드일 때 기존 데이터 로드
-  useEffect(() => {
-    if (isEditMode && id) {
-      loadWikiData(id);
-    }
-  }, [isEditMode, id]);
-
-  const loadWikiData = async (wikiId) => {
+  const loadWikiData = useCallback(async (wikiId) => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get(
-        `/api/v1/wiki/detail/${wikiId}`
-      );
-      
+      const endpoint = isResubmitMode
+        ? `/api/v1/wiki/user/modification/${wikiId}/resubmit`
+        : `/api/v1/wiki/detail/${wikiId}`;
+
+      const response = await axiosInstance.get(endpoint);
       const wikiData = response.data;
+
       setFormData({
         name: wikiData.name || '',
         category: wikiData.category || '',
@@ -66,29 +65,33 @@ export default function WikiRegisterPage() {
         fragrance: wikiData.fragrance || '',
         diseaseResistance: wikiData.diseaseResistance || '',
         growthType: wikiData.growthType || '',
-        usageType: wikiData.usageType ? wikiData.usageType.split(',') : [],
-        recommendedPosition: wikiData.recommendedPosition ? wikiData.recommendedPosition.split(',') : [],
+        usageType: wikiData.usageType?.split(',').map(v => v.trim()) || [],
+        recommendedPosition: wikiData.recommendedPosition?.split(',').map(v => v.trim()) || [],
         imageUrl: wikiData.imageUrl || '',
         continuousBlooming: wikiData.continuousBlooming || '',
         multiBlooming: wikiData.multiBlooming || '',
         growthPower: wikiData.growthPower || '',
         coldResistance: wikiData.coldResistance || '',
-        description: '' // 수정 시에는 새로운 사유를 입력받음
+        description: ''
       });
 
       if (wikiData.imageUrl) {
         setImagePreview(wikiData.imageUrl);
       }
-    } catch (error) {
-      console.error('도감 데이터 로딩 실패:', error);
-      setMessage({ 
-        type: 'error', 
-        text: '도감 정보를 불러오는데 실패했습니다.' 
-      });
+    } catch (err) {
+      console.error('보완 제출 데이터 로딩 실패:', err);
+      setMessage({ type: 'error', text: '보완 데이터를 불러오는데 실패했습니다.' });
     } finally {
       setLoading(false);
     }
-  };
+  }, [isResubmitMode]);
+
+  // 페이지 로드 시 도감 데이터 불러오기
+  useEffect(() => {
+    if ((isEditMode || isResubmitMode) && id) {
+      loadWikiData(id);
+    }
+  }, [id, isEditMode, isResubmitMode, loadWikiData]);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -123,12 +126,6 @@ export default function WikiRegisterPage() {
     }));
   };
 
-  const dataToSubmit = {
-    ...formData,
-    usageType: formData.usageType.join(', '),
-    recommendedPosition: formData.recommendedPosition.join(', ')
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -149,18 +146,23 @@ export default function WikiRegisterPage() {
       return;
     }
 
-    if (isEditMode && !formData.description.trim()) {
+    if ((isEditMode || isResubmitMode) && !formData.description.trim()) {
       alert("수정 사유를 입력해주세요.");
       document.querySelector('textarea[name="description"]')?.focus();
       return;
     }
 
+    const dataToSubmit = {
+      ...formData,
+      usageType: formData.usageType.join(', '),
+      recommendedPosition: formData.recommendedPosition.join(', ')
+    };
+
     setIsSubmitting(true);
-    
     try {
       let response;
-      
-      if (isEditMode) { // 수정
+
+      if (isEditMode) {
         response = await axiosInstance.put(
           `/api/v1/wiki/modify/${id}`, 
           dataToSubmit,
@@ -170,7 +172,17 @@ export default function WikiRegisterPage() {
             }
           }
         );
-      } else { // 등록
+      } else if (isResubmitMode) {
+        response = await axiosInstance.patch(
+          `/api/v1/wiki/user/modification/${id}/resubmit`, 
+          dataToSubmit,
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+      } else {
         response = await axiosInstance.post(
           `/api/v1/wiki/register`, 
           dataToSubmit,
@@ -182,13 +194,15 @@ export default function WikiRegisterPage() {
         );
       }
 
-      if (response.status === 200 || response.status === 201) {
+      if ([200, 201].includes(response.status)) {
         alert(isEditMode 
           ? '장미 도감 수정 요청이 제출되었습니다. 관리자 승인 후 반영됩니다.'
-          : '장미 도감이 성공적으로 등록되었습니다. 관리자 승인 후 게시됩니다.'
+          : isResubmitMode
+            ? '장미 도감 보완 제출이 완료되었습니다. 관리자 재검토 후 반영됩니다.'
+            : '장미 도감이 성공적으로 등록되었습니다. 관리자 승인 후 게시됩니다.'
         );
 
-        if (!isEditMode) { // 등록모드 폼 초기화
+        if (!isEditMode && !isResubmitMode) {
           setFormData({
             name: '',
             category: '',
@@ -198,8 +212,8 @@ export default function WikiRegisterPage() {
             fragrance: '',
             diseaseResistance: '',
             growthType: '',
-            usageType: '',
-            recommendedPosition: '',
+            usageType: [],
+            recommendedPosition: [],
             imageUrl: '',
             continuousBlooming: '',
             multiBlooming: '',
@@ -208,30 +222,15 @@ export default function WikiRegisterPage() {
             description: ''
           });
           setImagePreview(null);
-        } else {
-          setTimeout(() => {
-            navigate(`/wiki/detail/${id}`);
-          }, 2000);
         }
 
         navigate('/wiki/list');
-        return;
       } else {
-        const errorMessage = isEditMode 
-          ? '수정 중 오류가 발생했습니다. 다시 시도해주세요.'
-          : '등록 중 오류가 발생했습니다. 다시 시도해주세요.';
-        
-        setMessage({
-          type: 'error',
-          text: errorMessage
-        });
+        setMessage({ type: 'error', text: '제출 중 오류가 발생했습니다.' });
       }
     } catch (error) {
-      setMessage({
-        type: 'error',
-        text: '서버 연결 오류가 발생했습니다.'
-      });
-      console.error('Error submitting form:', error);
+      setMessage({ type: 'error', text: '서버 연결 오류가 발생했습니다.' });
+      console.error('제출 오류:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -255,6 +254,8 @@ export default function WikiRegisterPage() {
   const handleCancel = () => {
     if (isEditMode && id) {
       navigate(`/wiki/detail/${id}`);
+    } else if (isResubmitMode) {
+      navigate('/mypage/wiki/rejected');
     } else {
       navigate('/wiki/list');
     }
@@ -274,7 +275,7 @@ export default function WikiRegisterPage() {
   return (
     <div className="form-container">
       <h1 className="form-title">
-        {isEditMode ? '장미 도감 수정' : '장미 도감 등록'}
+        {isEditMode ? '장미 도감 수정' : isResubmitMode ? '장미 도감 보완 제출' : '장미 도감 등록'}
       </h1>
       
       {loading && (
@@ -492,18 +493,18 @@ export default function WikiRegisterPage() {
           </div>
         </div>
 
-        {isEditMode && (
+        {(isEditMode || isResubmitMode) && (
           <div className="modification-reason-section">
             <div className="form-group">
               <label className="form-label">
-                수정 사유 <span className="required">*</span>
+                {isResubmitMode ? '보완 내용' : '수정 사유'} <span className="required">*</span>
               </label>
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
                 className="form-textarea"
-                placeholder="수정 사유를 입력해주세요"
+                placeholder={isResubmitMode ? '보완한 내용을 입력해주세요' : '수정 사유를 입력해주세요'}
                 rows="4"
                 required
               />
@@ -518,8 +519,8 @@ export default function WikiRegisterPage() {
             className="submit-button"
           >
             {isSubmitting 
-              ? (isEditMode ? '수정 중' : '등록 중') 
-              : (isEditMode ? '도감 수정' : '도감 등록')
+              ? (isEditMode ? '수정 중' : isResubmitMode ? '보완 제출 중' : '등록 중') 
+              : (isEditMode ? '도감 수정' : isResubmitMode ? '보완 제출' : '도감 등록')
             }
           </button>
           <button
