@@ -5,6 +5,25 @@ import { axiosInstance } from '@utils/axios';
 import { safeConvertToWebP } from '../../../utils/imageUtils';
 import RatingSelector from './WikiSelector';
 
+const initialFormData = {
+  name: '',
+  category: '',
+  cultivarCode: '',
+  flowerSize: '',
+  petalCount: '',
+  fragrance: '',
+  diseaseResistance: '',
+  growthType: '',
+  usageType: [],
+  recommendedPosition: [],
+  imageUrl: '',
+  continuousBlooming: '',
+  multiBlooming: '',
+  growthPower: '',
+  coldResistance: '',
+  description: ''
+};
+
 export default function WikiRegisterPage() {
   const { id } = useParams();
   const location = useLocation();
@@ -13,32 +32,13 @@ export default function WikiRegisterPage() {
   const isEditMode = location.pathname.includes('/edit/');
   const isResubmitMode = location.pathname.includes('/resubmit/');
 
-  const [formData, setFormData] = useState({
-    name: '',
-    category: '',
-    cultivarCode: '',
-    flowerSize: '',
-    petalCount: '',
-    fragrance: '',
-    diseaseResistance: '',
-    growthType: '',
-    usageType: [],
-    recommendedPosition: [],
-    imageUrl: '',
-    continuousBlooming: '', 
-    multiBlooming: '',      
-    growthPower: '',        
-    coldResistance: '',
-    description: ''     
-  });
-
+  const [formData, setFormData] = useState(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // 로그인 상태 확인
   useEffect(() => {
     const token = localStorage.getItem('access');
     if (!token) {
@@ -50,7 +50,7 @@ export default function WikiRegisterPage() {
     setLoading(true);
     try {
       const endpoint = isResubmitMode
-        ? `/api/v1/wiki/user/modification/${wikiId}/resubmit`
+        ? `/api/v1/wiki/user/modification/${wikiId}`
         : `/api/v1/wiki/detail/${wikiId}`;
 
       const response = await axiosInstance.get(endpoint);
@@ -86,7 +86,6 @@ export default function WikiRegisterPage() {
     }
   }, [isResubmitMode]);
 
-  // 페이지 로드 시 도감 데이터 불러오기
   useEffect(() => {
     if ((isEditMode || isResubmitMode) && id) {
       loadWikiData(id);
@@ -104,7 +103,7 @@ export default function WikiRegisterPage() {
       formData.append('file', finalFile);
 
       const response = await axiosInstance.post(`/api/v1/wiki/image/upload`, formData, {
-        headers: {'Content-Type': undefined}
+        headers: { 'Content-Type': undefined }
       });
 
       const url = response.data.url;
@@ -126,31 +125,18 @@ export default function WikiRegisterPage() {
     }));
   };
 
+  const validateForm = () => {
+    if (!formData.imageUrl.trim()) return "사진을 업로드해주세요.";
+    if (!formData.name.trim()) return "품종명을 입력해주세요.";
+    if (!formData.category.trim()) return "카테고리를 선택해주세요.";
+    if ((isEditMode || isResubmitMode) && !formData.description.trim()) return isResubmitMode ? "보완한 내용을 입력해주세요." : "수정 사유를 입력해주세요.";
+    return null;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!formData.imageUrl.trim()) {
-      alert("사진을 업로드해주세요.");
-      return;
-    }
-
-    if (!formData.name.trim()) {
-      alert("품종명을 입력해주세요.");
-      document.querySelector('input[name="name"]')?.focus();
-      return;
-    }
-
-    if (!formData.category.trim()) {
-      alert("카테고리를 선택해주세요.");
-      document.querySelector('select[name="category"]')?.focus();
-      return;
-    }
-
-    if ((isEditMode || isResubmitMode) && !formData.description.trim()) {
-      alert("수정 사유를 입력해주세요.");
-      document.querySelector('textarea[name="description"]')?.focus();
-      return;
-    }
+    const validationError = validateForm();
+    if (validationError) return alert(validationError);
 
     const dataToSubmit = {
       ...formData,
@@ -161,66 +147,23 @@ export default function WikiRegisterPage() {
     setIsSubmitting(true);
     try {
       let response;
-
       if (isEditMode) {
-        response = await axiosInstance.put(
-          `/api/v1/wiki/modify/${id}`, 
-          dataToSubmit,
-          {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }
-        );
+        response = await axiosInstance.put(`/api/v1/wiki/modify/${id}`, dataToSubmit);
       } else if (isResubmitMode) {
-        response = await axiosInstance.patch(
-          `/api/v1/wiki/user/modification/${id}/resubmit`, 
-          dataToSubmit,
-          {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }
-        );
+        response = await axiosInstance.patch(`/api/v1/wiki/user/modification/${id}/resubmit`, dataToSubmit);
       } else {
-        response = await axiosInstance.post(
-          `/api/v1/wiki/register`, 
-          dataToSubmit,
-          {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }
-        );
+        response = await axiosInstance.post(`/api/v1/wiki/register`, dataToSubmit);
       }
 
       if ([200, 201].includes(response.status)) {
-        alert(isEditMode 
+        alert(isEditMode
           ? '장미 도감 수정 요청이 제출되었습니다. 관리자 승인 후 반영됩니다.'
           : isResubmitMode
             ? '장미 도감 보완 제출이 완료되었습니다. 관리자 재검토 후 반영됩니다.'
-            : '장미 도감이 성공적으로 등록되었습니다. 관리자 승인 후 게시됩니다.'
-        );
+            : '장미 도감이 성공적으로 등록되었습니다. 관리자 승인 후 게시됩니다.');
 
         if (!isEditMode && !isResubmitMode) {
-          setFormData({
-            name: '',
-            category: '',
-            cultivarCode: '',
-            flowerSize: '',
-            petalCount: '',
-            fragrance: '',
-            diseaseResistance: '',
-            growthType: '',
-            usageType: [],
-            recommendedPosition: [],
-            imageUrl: '',
-            continuousBlooming: '',
-            multiBlooming: '',
-            growthPower: '',
-            coldResistance: '',
-            description: ''
-          });
+          setFormData(initialFormData);
           setImagePreview(null);
         }
 
@@ -229,7 +172,8 @@ export default function WikiRegisterPage() {
         setMessage({ type: 'error', text: '제출 중 오류가 발생했습니다.' });
       }
     } catch (error) {
-      setMessage({ type: 'error', text: '서버 연결 오류가 발생했습니다.' });
+      const msg = error.response?.data?.message || '서버 연결 오류가 발생했습니다.';
+      setMessage({ type: 'error', text: msg });
       console.error('제출 오류:', error);
     } finally {
       setIsSubmitting(false);
@@ -239,11 +183,9 @@ export default function WikiRegisterPage() {
   const handleCheckboxChange = (field, value) => {
     setFormData(prevState => {
       const currentValues = Array.isArray(prevState[field]) ? prevState[field] : [];
-
       const updatedValues = currentValues.includes(value)
         ? currentValues.filter(v => v !== value)
         : [...currentValues, value];
-
       return {
         ...prevState,
         [field]: updatedValues
@@ -261,23 +203,12 @@ export default function WikiRegisterPage() {
     }
   };
 
-  // 인증 확인이 완료되지 않았거나 로그인하지 않은 경우
-  if (!localStorage.getItem('access')) {
-    return (
-      <div className="form-container">
-        <div className="message info">
-          로그인이 필요한 서비스입니다.
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="form-container">
       <h1 className="form-title">
         {isEditMode ? '장미 도감 수정' : isResubmitMode ? '장미 도감 보완 제출' : '장미 도감 등록'}
       </h1>
-      
+
       {loading && (
         <div className="message info">
           도감 정보를 불러오는 중
