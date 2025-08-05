@@ -52,8 +52,8 @@ const GroupCattingList = () => {
         <div className="chatroom-list">
           {Array.isArray(chatRoomList) && chatRoomList.map(chat => (
             <div key={chat.roomId} className="chatroom-item">
-              <div>{chat.roomId}</div>
-              <div>{chat.roomName}</div>
+              {/* <div>{chat.roomId}</div> */}
+              <div>{chat.roomName} ({chat.participantCount})</div>
               <div>
                 <Button variant="contained" color="primary" onClick={() => joinChatRoom(chat.roomId)}>참여하기</Button>
               </div>
