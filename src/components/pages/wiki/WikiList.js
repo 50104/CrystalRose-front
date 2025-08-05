@@ -11,6 +11,7 @@ export default function WikiListPage() {
   const [disabledWikiIds, setDisabledWikiIds] = useState([]);
   const { isLogin } = GetUser();
   const navigate = useNavigate();
+  const [modificationTargetWikiIds, setModificationTargetWikiIds] = useState([]);
 
   const SCROLL_POSITION_KEY = 'wikiListScrollPosition'; // 스크롤 위치 저장 키
 
@@ -24,9 +25,22 @@ export default function WikiListPage() {
       }
     };
 
+    const fetchModificationTargets = async () => {
+      try {
+        const res = await axiosInstance.get('/api/v1/wiki/user/modification/list');
+        const targetWikiIds = res.data
+          .filter(item => item.status === 'PENDING' || item.status === 'REJECTED')
+          .map(item => item.originalWikiId);
+        setModificationTargetWikiIds(targetWikiIds);
+      } catch (err) {
+        console.error('도감 수정 요청 목록 조회 실패', err);
+      }
+    };
+
     const init = async () => {
       if (isLogin) {
         await fetchMyWikiIds();
+        await fetchModificationTargets();
       }
       await fetchWikiEntries();
     };
@@ -152,9 +166,9 @@ export default function WikiListPage() {
                     <h2 className="wiki-entry-name">{entry.name}</h2>
                       <div className="wiki-entry-name-row">
                         <p className="wiki-entry-category mobile-only">{entry.category}</p>
-                        {entry.modificationStatus === 'PENDING' && (
-                          <span className="wiki-modification-badge modification-pending">수정 검토 중</span>
-                        )}
+                          {modificationTargetWikiIds.includes(entry.id) && (
+                            <span className="wiki-modification-badge modification-pending">수정 검토 중</span>
+                          )}
                         <p className="wiki-entry-category pc-only">{entry.category}</p>
                       </div>
                     </div>
