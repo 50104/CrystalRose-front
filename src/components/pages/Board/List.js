@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { noAuthAxios, axiosInstance } from '@utils/axios';
+import { axiosInstance } from '@utils/axios';
 import { format, parseISO } from 'date-fns';
 import { jwtDecode } from 'jwt-decode';
 import Pagination from './Pagination';
@@ -33,7 +33,7 @@ function List() {
   const toggleFixedPost = async (id) => {
     try {
       await axiosInstance.put(`/api/v1/admin/board/${id}/fix`);
-      const res = await noAuthAxios.get(`/api/v1/board/list?page=${currentPage}`);
+      const res = await axiosInstance.get(`/api/v1/board/list?page=${currentPage}`);
       const result = res.data;
       setFixedPosts(result.fixedList || []);
       setContents(Array.isArray(result.content) ? result.content : []);
@@ -44,7 +44,7 @@ function List() {
   };
 
   useEffect(() => {
-    noAuthAxios.get(`/api/v1/board/list?page=${currentPage}`)
+    axiosInstance.get(`/api/v1/board/list?page=${currentPage}`)
       .then(res => {
         const data = res.data;
         setFixedPosts(data.fixedList || []);
