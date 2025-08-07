@@ -143,6 +143,8 @@ function CommentList({ nestedComments, userData, boardNo, onRefresh, formatDateT
       <div className="commentContent">
         {comment.deleted ? (
           <em className="deletedComment">삭제된 댓글입니다.</em>
+        ) : comment.isBlocked ? (
+          <em className="deletedComment">차단한 사용자 댓글입니다.</em>
         ) : (
           <>
             {comment.parentId && comment.parentNickname && (
