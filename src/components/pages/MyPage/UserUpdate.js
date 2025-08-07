@@ -140,7 +140,7 @@ const UserUpdate = () => {
         } catch (error) {
             console.error('이메일 전송 실패:', error.response ? error.response.data : error.message);
             setUserEmailError(true);
-            setUserEmailMessage('이메일 전송 실패.');
+            setUserEmailMessage('이메일 전송에 실패했습니다.');
         }
     };
 
@@ -173,7 +173,7 @@ const UserUpdate = () => {
         } catch (error) {
             console.error('이메일 번호 인증 실패:', error.response ? error.response.data : error.message);
             setCertificationNumberError(true);
-            setCertificationNumberMessage('인증번호 확인 실패.');
+            setCertificationNumberMessage('올바르지 않은 인증번호입니다.');
         }
     };
 
