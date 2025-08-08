@@ -58,51 +58,64 @@ function List() {
     navigate(`/list?page=${page}`);
   };
 
-  const renderRow = (c, isFixed = false) => (
-    <a key={c.boardNo} href={`/content/${c.boardNo}?page=${currentPage}`} className="table-row">
-      <div className="col-category desktop-only">
-        <span className="category-tag">{c.boardTag}</span>
-      </div>
-      <div className="col-title">
-        <span className="category-tag mobile-only">{c.boardTag}</span>
-        <span className="title-text">{c.boardTitle}</span>
-        {isFixed && <span className="pin-icon">📌</span>}
-        {c.commentCount > 0 && <span className="comment-count">[{c.commentCount}]</span>}
-        {isAdmin && (
-          <button
-            className="pin-toggle-btn desktop-only"
-            onClick={(e) => {
-              e.preventDefault();
-              toggleFixedPost(c.boardNo);
-            }}
-          >
-            {isFixed ? '해제' : '고정'}
-          </button>
-        )}
-        <div className="title-meta mobile-only">
-          <span className="col-author">
-            {c.writerStatus === 'DELETED' ? '탈퇴한 사용자' : c.writerNick}
-            {isAdmin && (
-              <button
-                className="pin-toggle-btn"
-                onClick={(e) => {
-                  e.preventDefault();
-                  toggleFixedPost(c.boardNo);
-                }}
-              >
-                {isFixed ? '해제' : '고정'}
-              </button>
-            )}
-          </span>
-          <span className="col-date">{formatDate(c.createdDate)}</span>
+  const renderRow = (c, isFixed = false) => {
+    const handleClick = (e) => {
+      e.preventDefault();
+      if (c.isBlockedWriter) {
+        const confirmOpen = window.confirm('차단한 사용자의 게시글입니다. 열람하시겠습니까?');
+        if (!confirmOpen) return;
+      }
+      navigate(`/content/${c.boardNo}?page=${currentPage}`);
+    };
+
+    return (
+      <div key={c.boardNo} className="table-row" onClick={handleClick}>
+        <div className="col-category desktop-only">
+          <span className="category-tag">{c.boardTag}</span>
         </div>
+        <div className="col-title">
+          <span className="category-tag mobile-only">{c.boardTag}</span>
+          <span className="title-text">{c.boardTitle}</span>
+          {isFixed && <span className="pin-icon">📌</span>}
+          {c.commentCount > 0 && <span className="comment-count">[{c.commentCount}]</span>}
+          {isAdmin && (
+            <button
+              className="pin-toggle-btn desktop-only"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleFixedPost(c.boardNo);
+              }}
+            >
+              {isFixed ? '해제' : '고정'}
+            </button>
+          )}
+          <div className="title-meta mobile-only">
+            <span className="col-author">
+              {c.writerStatus === 'DELETED' ? '탈퇴한 사용자' : c.writerNick}
+              {isAdmin && (
+                <button
+                  className="pin-toggle-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFixedPost(c.boardNo);
+                  }}
+                >
+                  {isFixed ? '해제' : '고정'}
+                </button>
+              )}
+            </span>
+            <span className="col-date">{formatDate(c.createdDate)}</span>
+          </div>
+        </div>
+        <div className="col-author desktop-only">
+          {c.writerStatus === 'DELETED' ? '탈퇴한 사용자' : c.writerNick}
+        </div>
+        <div className="col-date desktop-only">{formatDate(c.createdDate)}</div>
+        <div className="col-views desktop-only">{c.viewCount || 0}</div>
+        <div className="col-likes desktop-only">{c.recommendCount || 0}</div>
       </div>
-      <div className="col-author desktop-only">{c.writerStatus === 'DELETED' ? '탈퇴한 사용자' : c.writerNick}</div>
-      <div className="col-date desktop-only">{formatDate(c.createdDate)}</div>
-      <div className="col-views desktop-only">{c.viewCount || 0}</div>
-      <div className="col-likes desktop-only">{c.recommendCount || 0}</div>
-    </a>
-  );
+    );
+  };
 
   return (
     <div className="list-container">
