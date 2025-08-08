@@ -9,9 +9,9 @@ export default function WikiListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [disabledWikiIds, setDisabledWikiIds] = useState([]);
+  const [setModificationTargetWikiIds] = useState([]);
   const { isLogin } = GetUser();
   const navigate = useNavigate();
-  const [modificationTargetWikiIds, setModificationTargetWikiIds] = useState([]);
 
   const SCROLL_POSITION_KEY = 'wikiListScrollPosition'; // 스크롤 위치 저장 키
 
@@ -40,13 +40,13 @@ export default function WikiListPage() {
     const init = async () => {
       if (isLogin) {
         await fetchMyWikiIds();
-        await fetchModificationTargets();
       }
+      await fetchModificationTargets();
       await fetchWikiEntries();
     };
 
     init();
-  }, [isLogin]);
+  }, [isLogin, setModificationTargetWikiIds]);
 
   // 스크롤 위치 복원
   useEffect(() => {
@@ -96,13 +96,11 @@ export default function WikiListPage() {
     setError(null);
     try {
       const response = await noAuthAxios.get(`/api/v1/wiki/list`);
-
       const entries = Array.isArray(response.data)
         ? response.data
         : Array.isArray(response.data.data)
           ? response.data.data
           : [];
-
       setWikiEntries(entries);
     } catch (err) {
       setError(err.response?.data?.message || err.message || '데이터를 불러오는 데 실패했습니다.');
@@ -146,7 +144,7 @@ export default function WikiListPage() {
         </div>
       ) : (
         <div className="wiki-entries-grid">
-          {Array.isArray(wikiEntries) && wikiEntries.map(entry => (
+          {wikiEntries.map(entry => (
             <div key={entry.id} className="wiki-entry-card-link" onClick={() => handleDetailNavigation(entry.id)}>
               <div className="wiki-entry-card">
                 <div className="wiki-image-wrapper">
@@ -154,7 +152,8 @@ export default function WikiListPage() {
                     <img src={entry.imageUrl} alt={entry.name} className="wiki-entry-image" />
                   )}
                   {isLogin && !disabledWikiIds.includes(entry.id) && (
-                    <div style={{cursor: 'pointer'}}
+                    <div
+                      style={{ cursor: 'pointer' }}
                       onClick={(e) => handleRoseRegistration(e, entry)}
                       className="wiki-register-overlay-button"
                     >
@@ -163,16 +162,21 @@ export default function WikiListPage() {
                   )}
                   <div className="wiki-entry-content">
                     <div className="wiki-entry-header">
-                    <h2 className="wiki-entry-name">{entry.name}</h2>
+                      <h2 className="wiki-entry-name">{entry.name}</h2>
                       <div className="wiki-entry-name-row">
                         <p className="wiki-entry-category mobile-only">{entry.category}</p>
-                          {modificationTargetWikiIds.includes(entry.id) && (
-                            <span className="wiki-modification-badge modification-pending">수정 검토 중</span>
-                          )}
+
+                        {['PENDING', 'REJECTED'].includes(entry.modificationStatus) && (
+                          <span className="wiki-modification-badge modification-pending">수정 검토 중</span>
+                        )}
+
                         <p className="wiki-entry-category pc-only">{entry.category}</p>
                       </div>
                     </div>
-                    <p className="wiki-entry-description">{entry.description?.substring(0, 100)}{entry.description?.length > 100 ? '...' : ''}</p>
+                    <p className="wiki-entry-description">
+                      {entry.description?.substring(0, 100)}
+                      {entry.description?.length > 100 ? '...' : ''}
+                    </p>
                   </div>
                 </div>
               </div>
