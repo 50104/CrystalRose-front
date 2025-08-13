@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
 import './AdminReport.css';
 
@@ -40,12 +41,14 @@ export default function AdminReport() {
               </div>
               <div className="details">
                 <p><b>신고자:</b> {r.reporterNickname}</p>
-                <p><b>사유:</b> {r.reason}</p>
+                <p><b>신고 사유:</b> {r.reason}</p>
                 <p>
-                  <b>제목:</b>{' '}
+                  <b>해당 게시글 제목:</b>{' '}
+                  <Link to={`/content/${r.boardNo}`} className="link">
                     {r.postTitle}
+                  </Link>
                 </p>
-                <p><b>시간:</b> {r.reportedAt}</p>
+                <p><b>접수 시간:</b> {r.reportedAt}</p>
               </div>
             </li>
           ))}
