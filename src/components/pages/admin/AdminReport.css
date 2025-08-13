@@ -63,3 +63,27 @@
   color: #1d4ed8;
   border-bottom-color: #1d4ed8;
 }
+
+.link { 
+  color: #2563eb; text-decoration: underline; cursor: pointer; 
+}
+
+.link:hover { 
+  color: #1d4ed8; 
+}
+
+.clickable { 
+  cursor: pointer; 
+}
+
+.disabled { 
+  opacity: .7; 
+}
+
+.row { 
+  display: flex; gap: 8px; align-items: baseline; 
+}
+
+.muted { 
+  color: #555; 
+}
