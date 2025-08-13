@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { axiosInstance } from '@utils/axios';
-import styles from './AdminReport.css';
+import './AdminReport.css';
 
 export default function AdminReport() {
   const [reports, setReports] = useState([]);
@@ -23,8 +23,8 @@ export default function AdminReport() {
     fetchReports();
   }, []);
 
-  if (loading) return <div className={styles.loading}>불러오는 중</div>;
-  if (error) return <div className={styles.error}>{error}</div>;
+  if (loading) return <div className="loading">불러오는 중</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="container">
@@ -41,7 +41,10 @@ export default function AdminReport() {
               <div className="details">
                 <p><b>신고자:</b> {r.reporterNickname}</p>
                 <p><b>사유:</b> {r.reason}</p>
-                <p><b>내용:</b> {r.postContent}</p>
+                <p>
+                  <b>제목:</b>{' '}
+                    {r.postTitle}
+                </p>
                 <p><b>시간:</b> {r.reportedAt}</p>
               </div>
             </li>
