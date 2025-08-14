@@ -2,6 +2,7 @@ import { axiosInstance, retryableRequest, checkNetworkStatus } from '@utils/axio
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { getAccessToken } from './token';
+import { getAccess } from '../tokenStore';
 
 export const GetUser = () => {
   const [isLogin, setIsLogin] = useState(false);
@@ -11,7 +12,7 @@ export const GetUser = () => {
   const [userId, setUserId] = useState('');
 
   useEffect(() => {
-    const token = localStorage.getItem('access');
+    const token = getAccess();
     if (token) {
       setIsLogin(true);
       const decodedToken = jwtDecode(token);
@@ -61,7 +62,7 @@ export const useUserData = () => {
 };
 
 export const getUserData = async (setIsLogin) => {
-  const token = localStorage.getItem('access');
+  const token = getAccess();
   if (!token) {
       return;
   }
@@ -88,7 +89,7 @@ export const getUserData = async (setIsLogin) => {
 };
 
 export const fetchUser = async () => {
-  const token = localStorage.getItem('access');
+  const token = getAccess();
   if (!token) {
     throw new Error('로그인이 필요한 요청입니다.');
   }

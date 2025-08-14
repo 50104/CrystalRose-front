@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { oauthAxiosInstance, retryableRequest, checkNetworkStatus, clearServiceWorkerCache } from '@utils/axios';
+import { setAccess } from '../../../utils/tokenStore';
+import { useNavigate } from 'react-router-dom';
 
 export function OAuthCallback() {
   const [status, setStatus] = useState('로그인 처리 중');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getAccessToken = async () => {
@@ -23,13 +26,13 @@ export function OAuthCallback() {
         );
 
         if (response.data.accessToken) {
-          localStorage.setItem('access', response.data.accessToken);
+          setAccess(response.data.accessToken);
           // console.log('Access Token 저장 완료');
           setStatus('로그인 완료! 페이지를 이동합니다...');
           
           // 약간의 지연 후 리디렉션
           setTimeout(() => {
-            window.location.href = '/';
+            navigate('/');
           }, 500);
         } else {
           throw new Error('Access Token을 받지 못했습니다');
@@ -71,7 +74,7 @@ export function OAuthCallback() {
     };
 
     getAccessToken();
-  }, []);
+  }, [navigate]);
 
   return (
     <div style={{ 

@@ -8,6 +8,7 @@ import { format, isSameDay, parseISO } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import './StompChatPage.css';
 import { getAccessToken } from '@utils/api/token';
+import { getAccess } from '../../../utils/tokenStore';
 
 const StompChatPage = () => {
   const { roomId } = useParams();
@@ -21,7 +22,7 @@ const StompChatPage = () => {
   const [roomTitle, setRoomTitle] = useState('채팅방');
   const chatBoxRef = useRef(null);
   const isSubscribedRef = useRef(false);
-  const token = localStorage.getItem('access');
+  const token = getAccess();
 
   const getWsUrl = () => {
     const defaultHost = window.location.hostname === 'localhost'
@@ -194,7 +195,7 @@ const StompChatPage = () => {
 
   const sendMessage = () => {
     if (newMessage.trim() === '') return;
-    const token = localStorage.getItem('access');
+    const token = getAccess();
     let sender = null;
     if (token) {
       const decoded = jwtDecode(token);

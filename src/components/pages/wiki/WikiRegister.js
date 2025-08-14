@@ -4,6 +4,7 @@ import './WikiRegister.css';
 import { axiosInstance } from '@utils/axios';
 import { safeConvertToWebP } from '../../../utils/imageUtils';
 import RatingSelector from './WikiSelector';
+import { getAccess } from '../../../utils/tokenStore';
 
 const initialFormData = {
   name: '',
@@ -40,7 +41,7 @@ export default function WikiRegisterPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('access');
+    const token = getAccess();
     if (!token) {
       navigate('/login');
     }

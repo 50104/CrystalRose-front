@@ -6,6 +6,7 @@ import './CalendarMain.css';
 import MonthlyCalendar from './CalendarMonthly';
 import CareLogModal from './CareLogModal';
 import CareLogRegister from './CareLogRegister';
+import { getAccess } from '../../../utils/tokenStore';
 
 const CARE_LABELS = {
   watering: '💧',
@@ -40,14 +41,13 @@ const CalendarMain = () => {
   // 토큰 체크
   useEffect(() => {
     const checkAndRefreshToken = async () => {
-      const token = localStorage.getItem('access');
+      const token = getAccess();
       if (!token) return;
 
       try {
         await getAccessToken();
       } catch (error) {
         console.error('토큰 재발급 실패', error);
-        localStorage.removeItem('access');
         window.location.href = '/login';
       }
     };
