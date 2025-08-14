@@ -1,77 +1,100 @@
 import axios from 'axios';
+import { getAccess, setAccess, clearAccess } from './tokenStore';
 
 export const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:4000',
   withCredentials: true,
   timeout: 15000, // 15초 타임아웃 설정
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  // 304 상태 코드도 성공으로 처리
-  validateStatus: function (status) {
-    return (status >= 200 && status < 300) || status === 304;
-  }
+  headers: { 'Content-Type': 'application/json' },
+  validateStatus: (s) => (s >= 200 && s < 300) || s === 304,
 });
 
 // 요청 인터셉터
-axiosInstance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('access');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
+axiosInstance.interceptors.request.use((config) => {
+  const token = getAccess();
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+// 리프레시 전용 클라이언트(반복 호출 방지)
+export const reissueClient = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:4000',
+  withCredentials: true,
+  timeout: 15000,
+  headers: { 'Content-Type': 'application/json' },
+});
+
+// 동시 갱신 제어
+let isRefreshing = false;
+let refreshWaiters = [];
+const onRefreshed = (newToken) => {
+  refreshWaiters.forEach((cb) => cb(newToken));
+  refreshWaiters = [];
+};
+
+// 요청 인터셉터
+axiosInstance.interceptors.request.use((config) => {
+  const url = config.url || '';
+  // /reissue 요청에는 Authorization 붙이지 않음
+  if (!url.includes('/reissue')) {
+    const token = getAccess();
+    if (token) config.headers.Authorization = `Bearer ${token}`;
   }
-);
+  return config;
+});
 
-// 응답 인터셉터
+// 응답 인터셉터: 401 → /reissue → 메모리에만 저장
 axiosInstance.interceptors.response.use(
-  (response) => {
-    // 304 Not Modified는 정상적인 응답으로 처리
-    if (response.status === 304) {
-      console.log('304 Not Modified - 캐시된 데이터 사용');
-    }
-    return response;
-  },
+  (res) => res,
   async (error) => {
-    const originalRequest = error.config;
+    const original = error.config;
+    const status = error.response?.status;
+    const url = original?.url || '';
 
-    // 네트워크 오류 처리
-    if (!error.response) {
-      console.error('네트워크 오류:', error.message);
-      return Promise.reject(new Error('네트워크 연결을 확인해주세요.'));
+    if (!error.response) return Promise.reject(error); // 네트워크 오류
+
+    if (url.includes('/reissue')) { // 무한루프 방지
+      return Promise.reject(error);
     }
 
-    // 401 Unauthorized 처리
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+    // 401이면 액세스 갱신 플로우
+    if (status === 401 && !original._retry) {
+      original._retry = true;
 
-      try {
-        console.log('401 에러 발생, 토큰 갱신 시도');
-        const response = await axiosInstance.post('/reissue', {}, {
-          withCredentials: true
+      // 다른 요청이 갱신 진행시 기다렸다가 재시도
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          refreshWaiters.push((newToken) => {
+            if (newToken) {
+              original.headers.Authorization = `Bearer ${newToken}`;
+              resolve(axiosInstance(original));
+            } else {
+              reject(error);
+            }
+          });
         });
-        
-        if (response.status === 200 && response.data.accessToken) {
-          localStorage.setItem('access', response.data.accessToken);
-          originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
-          return axiosInstance(originalRequest);
-        }
-      } catch (refreshError) {
-        console.error('토큰 갱신 실패:', refreshError);
-        localStorage.removeItem('access');
+      }
+
+      // /reissue 1회 호출
+      isRefreshing = true;
+      try {
+        const r = await reissueClient.post('/reissue', {});
+        const newToken = r.data?.accessToken;
+        setAccess(newToken);
+        isRefreshing = false;
+        onRefreshed(newToken);
+
+        // 원래 요청 재시도
+        original.headers.Authorization = `Bearer ${newToken}`;
+        return axiosInstance(original);
+      } catch (e) {
+        isRefreshing = false;
+        onRefreshed(null);
+        clearAccess();
         window.location.href = '/login';
-        return Promise.reject(refreshError);
+        return Promise.reject(e);
       }
     }
-
-    // 기타 HTTP 에러 처리
-    const errorMessage = error.response?.data?.message || error.message || '알 수 없는 오류가 발생했습니다.';
-    console.error(`HTTP ${error.response?.status} 오류:`, errorMessage);
-    
     return Promise.reject(error);
   }
 );
