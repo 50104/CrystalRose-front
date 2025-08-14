@@ -7,12 +7,30 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import { clearServiceWorkerCache, reregisterServiceWorker } from '@utils/axios';
+import { reissueClient } from './utils/axios';
+import { setAccess } from './utils/tokenStore';
 
 const queryClient = new QueryClient();
 
 function App() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [waitingWorker, setWaitingWorker] = useState(null);
+  const [initDone, setInitDone] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const r = await reissueClient.post('/reissue', {});
+        if (r.data?.accessToken) {
+          setAccess(r.data.accessToken);
+        }
+      } catch (err) {
+        console.log('자동 로그인 실패', err);
+      } finally {
+        setInitDone(true);
+      }
+    })();
+  }, []);
 
   // 업데이트 감지
   useEffect(() => {
@@ -34,6 +52,8 @@ function App() {
         await reregisterServiceWorker();
     }
   };
+
+  if (!initDone) return <div>로딩 중</div>;
 
   return (
     <QueryClientProvider client={queryClient}>
