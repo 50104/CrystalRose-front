@@ -5,6 +5,7 @@ import { format, parseISO } from 'date-fns';
 import { jwtDecode } from 'jwt-decode';
 import Pagination from './Pagination';
 import './List.css';
+import { getAccess } from '../../../utils/tokenStore';
 
 function formatDate(date) {
   return date ? format(parseISO(date), 'yy/MM/dd HH:mm') : '-';
@@ -21,13 +22,12 @@ function List() {
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
 
   useEffect(() => {
-    const token = localStorage.getItem('access');
-    if (token) {
-      const decoded = jwtDecode(token);
-      if (decoded.userRole === 'ROLE_ADMIN') {
-        setIsAdmin(true);
-      }
-    }
+    const t = getAccess();
+    if (!t) return;
+    try {
+      const { userRole } = jwtDecode(t);
+      setIsAdmin(userRole === 'ROLE_ADMIN');
+    } catch {}
   }, []);
 
   const toggleFixedPost = async (id) => {
