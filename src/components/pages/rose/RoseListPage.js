@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './RoseListPage.css';
 import { HiOutlinePencilAlt } from 'react-icons/hi';
+import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import { axiosInstance } from '@utils/axios';
 
 export default function RoseListPage() {
   const [roses, setRoses] = useState([]);
+  const [sortOrder, setSortOrder] = useState('desc'); // 날짜 정렬 기준
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -124,10 +126,31 @@ export default function RoseListPage() {
     );
   }
 
+  // 정렬된 리스트 반환
+  const sortedRoses = [...roses].sort((a, b) => {
+    const dateA = new Date(a.acquiredDate);
+    const dateB = new Date(b.acquiredDate);
+    if (sortOrder === 'asc') {
+      return dateA - dateB;
+    } else {
+      return dateB - dateA;
+    }
+  });
+
   return (
     <div className="rose-list-container">
       <div className="rose-list-header">
-        <h1 className="rose-list-title">내 장미 목록</h1>
+        <div className='rose-title-button'>
+          <h1 className="rose-list-title">내 장미 목록</h1>
+          <button
+            className="rose-list-toggle-sort-btn"
+            onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px', padding: 0 }}
+            title={sortOrder === 'asc' ? '날짜 내림차순' : '날짜 오름차순'}
+          >
+            {sortOrder === 'asc' ? <FaArrowUp /> : <FaArrowDown />}
+          </button>
+        </div>
         <div className="rose-list-buttons">
           <div onClick={() => handleNavigateWithScroll('/diaries/list')} className="rose-diary-button">성장기록</div>
           <div onClick={() => handleNavigateWithScroll('/rose/register')} className="rose-register-button">+ 장미 등록</div>
@@ -144,7 +167,7 @@ export default function RoseListPage() {
         </div>
       ) : (
         <div className="rose-entries-grid">
-          {roses.map(rose => (
+          {sortedRoses.map(rose => (
             <div key={rose.id} className="rose-entry-card">
               <div className="rose-image-wrapper">
                 {rose.imageUrl && (
