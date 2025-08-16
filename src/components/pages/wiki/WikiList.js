@@ -9,7 +9,7 @@ export default function WikiListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [disabledWikiIds, setDisabledWikiIds] = useState([]);
-  const [setModificationTargetWikiIds] = useState([]);
+  const [modificationTargetWikiIds, setModificationTargetWikiIds] = useState([]);
   const { isLogin } = GetUser();
   const navigate = useNavigate();
 
@@ -163,15 +163,23 @@ export default function WikiListPage() {
                   <div className="wiki-entry-content">
                     <div className="wiki-entry-header">
                       <h2 className="wiki-entry-name">{entry.name}</h2>
-                      <div className="wiki-entry-name-row">
-                        <p className="wiki-entry-category mobile-only">{entry.category}</p>
+                        <div className="wiki-entry-name-row">
+                          <p className="wiki-entry-category mobile-only">{entry.category}</p>
 
-                        {['PENDING', 'REJECTED'].includes(entry.modificationStatus) && (
-                          <span className="wiki-modification-badge modification-pending">수정 검토 중</span>
-                        )}
+                          {modificationTargetWikiIds.includes(entry.id) ? (
+                            <span className="wiki-modification-badge modification-pending">
+                              수정 요청 중
+                            </span>
+                          ) : (
+                            ['PENDING', 'REJECTED'].includes(entry.modificationStatus) && (
+                              <span className="wiki-modification-badge modification-pending">
+                              수정 검토 중
+                              </span>
+                            )
+                          )}
 
-                        <p className="wiki-entry-category pc-only">{entry.category}</p>
-                      </div>
+                          <p className="wiki-entry-category pc-only">{entry.category}</p>
+                        </div>
                     </div>
                     <p className="wiki-entry-description">
                       {entry.description?.substring(0, 100)}
