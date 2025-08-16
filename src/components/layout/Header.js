@@ -1,26 +1,25 @@
 import logo from '@assets/images/branding/50104.png';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { fetchUser } from '@utils/api/user';
 import { logoutFunction } from '@utils/api/token';
 import './Header.css';
+import { useUser } from '../common/UserContext';
 
 const Header = ({ updateAvailable, reloadPage }) => {
-  const [userData, setUserData] = useState(null);
-  const [isLogin, setIsLogin] = useState(false);
+  const { user, setUser } = useUser();
 
   useEffect(() => {
     const loadUser = async () => {
       try {
         const data = await fetchUser();
-        setUserData(data);
-        setIsLogin(true);
+        setUser(data);
       } catch (error) {
         console.error('사용자 정보 불러오기 실패:', error);
-        setIsLogin(false);
+        setUser(null);
       }
     };
     loadUser();
-  }, []);
+  }, [setUser]);
 
   // 버전 업데이트 알림 상태에 따라 body에 클래스 추가/제거
   useEffect(() => {
@@ -46,20 +45,28 @@ const Header = ({ updateAvailable, reloadPage }) => {
 
       {/* UserInfo 영역 */}
       <div className="nav_userInfo">
-        {!isLogin ? (
+        {!user ? (
           <>
             <a href="/join"><div>회원가입</div></a>
             <a href="/login"><div>로그인</div></a>
           </>
         ) : (
           <>
-            {userData?.userRole === 'ROLE_ADMIN' && (
-              <a href="/admin"><div>{userData.userNick}님 관리자 페이지</div></a>
+            {user?.userRole === 'ROLE_ADMIN' && (
+              <a href="/admin"><div>{user.userNick}님 관리자 페이지</div></a>
             )}
-            {userData?.userRole !== 'ROLE_ADMIN' && userData?.userRole !== 'ROLE_WRITER' && (
-              <a href="/mypage"><div>{userData.userNick}님 마이페이지</div></a>
+            {user?.userRole !== 'ROLE_ADMIN' && user?.userRole !== 'ROLE_WRITER' && (
+              <a href="/mypage"><div>{user.userNick}님 마이페이지</div></a>
             )}
-            <div onClick={logoutFunction} className="cursor">로그아웃</div>
+            <div
+              onClick={() => {
+                logoutFunction();
+                setUser(null); // ✅ 로그아웃 시 Context 비움
+              }}
+              className="cursor"
+            >
+              로그아웃
+            </div>
           </>
         )}
       </div>
@@ -80,12 +87,12 @@ const Header = ({ updateAvailable, reloadPage }) => {
           </ul>
           <ul className="mobile-only">
             <li>
-              {userData?.userRole === 'ROLE_ADMIN' && (
+              {user?.userRole === 'ROLE_ADMIN' && (
                 <a href="/admin"><div>관리자 페이지</div></a>
               )}
             </li>
             <li>
-              {userData?.userRole !== 'ROLE_ADMIN' && userData?.userRole !== 'ROLE_WRITER' && (
+              {user?.userRole !== 'ROLE_ADMIN' && user?.userRole !== 'ROLE_WRITER' && (
                 <a href="/mypage"><div>마이페이지</div></a>
               )}
             </li>

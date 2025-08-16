@@ -9,6 +9,7 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import { clearServiceWorkerCache, reregisterServiceWorker } from '@utils/axios';
 import { reissueClient } from './utils/axios';
 import { setAccess } from './utils/tokenStore';
+import { UserProvider } from './components/common/UserContext';
 
 const queryClient = new QueryClient();
 
@@ -47,9 +48,9 @@ function App() {
   const reloadPage = async () => {
     const confirm = window.confirm("새 버전이 있습니다. 업데이트 하시겠습니까?");
     if (waitingWorker && confirm) {
-        waitingWorker.postMessage({ type: 'SKIP_WAITING' });
-        await clearServiceWorkerCache();
-        await reregisterServiceWorker();
+      waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+      await clearServiceWorkerCache();
+      await reregisterServiceWorker();
     }
   };
 
@@ -57,13 +58,15 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="web">
-        <Header updateAvailable={updateAvailable} reloadPage={reloadPage} />
-        <div className="content_area">
-          <AppRoutes />
+      <UserProvider>
+        <div className="web">
+          <Header updateAvailable={updateAvailable} reloadPage={reloadPage} />
+          <div className="content_area">
+            <AppRoutes />
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
+      </UserProvider>
     </QueryClientProvider>
   );
 }

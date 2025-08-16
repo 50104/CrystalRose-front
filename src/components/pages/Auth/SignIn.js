@@ -5,6 +5,8 @@ import InputBox from '@components/common/InputBox';
 import { noAuthAxios } from '@utils/axios';
 import { setAccess } from '@utils/tokenStore';
 import { useNavigate } from 'react-router-dom';
+import { fetchUser } from '@utils/api/user';
+import { useUser } from '../../common/UserContext';
 
 function SignIn() {
   const navigate = useNavigate();
@@ -19,6 +21,8 @@ function SignIn() {
 
   const userPwdPattern = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*]{8,13}$/;
   const userIdPattern = /^(?=.*[a-zA-Z])[-a-zA-Z0-9_.]{5,10}$/;
+
+  const { setUser } = useUser();
 
   const handleUserId = (e) => {
     const { value } = e.target;
@@ -83,6 +87,9 @@ function SignIn() {
         return;
       }
       setAccess(accessToken);
+
+      const userInfo = await fetchUser();
+      setUser(userInfo);
 
       if (isWithdrawal) {
         const confirmUndo = window.confirm("탈퇴 요청된 계정입니다. 철회하시겠습니까?");
