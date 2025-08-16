@@ -3,6 +3,7 @@ import { axiosInstance, noAuthAxios } from '@utils/axios';
 import { GetUser } from '@utils/api/user';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { safeConvertToWebP } from '../../../utils/imageUtils';
+import ImageCropperModal from '../../../utils/ImageCropper.js';
 import './RoseRegister.css';
 
 export default function RoseRegister({ onSuccess }) {
@@ -26,6 +27,8 @@ export default function RoseRegister({ onSuccess }) {
   const [message, setMessage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState(roseData?.imageUrl || null);
+
+  const [cropFile, setCropFile] = useState(null);
 
   const validateForm = () => {
     const requiredFields = [
@@ -92,25 +95,26 @@ export default function RoseRegister({ onSuccess }) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const finalFile = await safeConvertToWebP(file);
-
+  const handleCropConfirm = async (croppedBlob) => {
     setUploading(true);
     try {
-      const uploadForm = new FormData();
-      uploadForm.append('file', finalFile);
-      const res = await axiosInstance.post(`/api/roses/image/upload`, uploadForm, {
-        headers: { 'Content-Type': undefined }
+      const croppedFile = new File([croppedBlob], "cropped.jpg", { type: "image/jpeg" });
+      const webpFile = await safeConvertToWebP(croppedFile);
+
+      const formData = new FormData();
+      formData.append("file", webpFile);
+      const res = await axiosInstance.post("/api/roses/image/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
       });
+
       setFormData(prev => ({ ...prev, imageUrl: res.data.url }));
       setImagePreview(res.data.url);
     } catch (err) {
-      console.error('이미지 업로드 실패:', err);
-      setMessage({ type: 'error', text: '이미지 업로드에 실패했습니다.' });
+      console.error("이미지 업로드 실패:", err);
+      setMessage({ type: "error", text: "이미지 업로드에 실패했습니다." });
     } finally {
       setUploading(false);
+      setCropFile(null);
     }
   };
 
@@ -193,11 +197,21 @@ export default function RoseRegister({ onSuccess }) {
                 id="rose-image-input"
                 type="file"
                 accept="image/*"
-                onChange={handleImageUpload}
+                onChange={(e) => {
+                  if (e.target.files[0]) setCropFile(e.target.files[0]);
+                }}
+                onClick={(e) => (e.target.value = null)}
                 disabled={uploading}
-                style={{ display: 'none' }}
+                style={{ display: "none" }}
               />
-              {uploading && <p className="rose-upload-status">업로드 중...</p>}
+              {cropFile && (  
+                <ImageCropperModal
+                  file={cropFile}
+                  onConfirm={handleCropConfirm}
+                  onCancel={() => setCropFile(null)}
+                />
+              )}
+              {uploading && <p className="rose-upload-status">업로드 중</p>}
             </div>
           </div>
 
