@@ -76,7 +76,7 @@
   cursor: pointer; 
 }
 
-.disabled { 
+.adminCommentReport .disabled { 
   opacity: .7; 
 }
 
