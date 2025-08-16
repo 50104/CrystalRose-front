@@ -11,14 +11,37 @@
   margin-bottom: 1rem;
 }
 
+.diary-title-button {
+  display: flex;
+  align-items: center;
+}
+
 .diary-list-title {
   font-size: 2rem;
   font-weight: 700;
   color: #111827;
-  text-align: center;
+  /* text-align: center; */
+  margin: 0;
+  margin-right: 10px;
+}
+
+.diary-list-toggle-sort-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 0;
+  color: #4b5563;
+  transition: color 0.2s;
+  justify-content: center;
+}
+
+.diary-list-toggle-sort-btn:hover {
+  color: #111827;
 }
 
 .diary-list-buttons {
+  cursor: pointer;
   display: flex;
   gap: 1rem;
 }
@@ -100,13 +123,26 @@
   .diary-list-header {
     flex-direction: column;
     gap: 1rem;
-    align-items: stretch;
+    text-align: center;
+    align-items: center;
   }
   
+  .diary-title-button {
+    justify-content: center;
+    width: 100%;
+    flex: 1;
+  }
+
+  .diary-list-title {
+    display: flex;
+    align-items: center;
+  }
+
   .diary-list-buttons {
     flex-direction: row;
     gap: 0.5rem;
     width: 100%;
+    justify-content: center;
   }
 
   .diary-register-button,

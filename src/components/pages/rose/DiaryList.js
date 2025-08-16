@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
 import CareLogModal from '../calendar_care/CareLogModal';
+import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import './DiaryList.css';
 
 const CARE_LABELS = {
@@ -20,6 +21,7 @@ export default function DiaryListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedLog, setSelectedLog] = useState(null);
+  const [sortOrder, setSortOrder] = useState('desc');
   const navigate = useNavigate();
 
   const SCROLL_POSITION_KEY = 'diaryListScrollPosition'; // 스크롤 위치 저장 키
@@ -42,10 +44,7 @@ export default function DiaryListPage() {
       sessionStorage.setItem(SCROLL_POSITION_KEY, window.pageYOffset.toString());
     };
     window.addEventListener('beforeunload', saveScrollPosition);
-
-    return () => {
-      window.removeEventListener('beforeunload', saveScrollPosition);
-    };
+    return () => window.removeEventListener('beforeunload', saveScrollPosition);
   }, []);
 
   const handleNavigateWithScroll = (path) => {
@@ -76,32 +75,55 @@ export default function DiaryListPage() {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
   const handleCardClick = (dateStr) => {
     const log = careLogs[dateStr];
-    if (log) setSelectedLog(log); 
+    if (log) setSelectedLog(log);
   };
 
-  const handleCloseModal = () => {
-    setSelectedLog(null);
-  };
+  const handleCloseModal = () => setSelectedLog(null);
 
   if (loading) return <div className="diary-list-loading">불러오는 중</div>;
   if (error) return <div className="diary-list-error">{error}</div>;
 
+  const sortedDiaries = [...diaries].sort((a, b) => {
+    const dateA = new Date(a.recordedAt);
+    const dateB = new Date(b.recordedAt);
+    return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+  });
+
   return (
     <div className="diary-list-container">
       <div className="diary-list-header">
-        <h1 className="diary-list-title">전체 성장 기록</h1>
+        <div className="diary-title-button">
+          <h1 className="diary-list-title">전체 성장 기록</h1>
+          <button
+            className="diary-list-toggle-sort-btn"
+            onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+            title={sortOrder === 'asc' ? '날짜 내림차순' : '날짜 오름차순'}
+          >
+            {sortOrder === 'asc' ? <FaArrowUp /> : <FaArrowDown />}
+          </button>
+        </div>
+
         <div className="diary-list-buttons">
-          <div style={{cursor: 'pointer'}} onClick={() => {
-            sessionStorage.removeItem(SCROLL_POSITION_KEY);
-            navigate('/roses/list');
-          }} className="diary-roses-button">내 장미</div>
-          <div style={{cursor: 'pointer'}} onClick={() => handleNavigateWithScroll('/diaries/register')} className="diary-register-button">+ 기록 등록</div>
+          <div
+            onClick={() => {
+              sessionStorage.removeItem(SCROLL_POSITION_KEY);
+              navigate('/roses/list');
+            }}
+            className="diary-roses-button"
+          >
+            내 장미
+          </div>
+          <div
+            onClick={() => handleNavigateWithScroll('/diaries/register')}
+            className="diary-register-button"
+          >
+            + 기록 등록
+          </div>
         </div>
       </div>
 
@@ -109,7 +131,7 @@ export default function DiaryListPage() {
         <div className="diary-list-empty">등록된 성장 기록이 없습니다.</div>
       ) : (
         <div className="diary-grid">
-          {diaries.map(diary => {
+          {sortedDiaries.map(diary => {
             const dateStr = new Date(diary.recordedAt).toLocaleDateString('sv-SE');
             const careLog = careLogs[dateStr];
             const careItems = careLog
@@ -146,12 +168,7 @@ export default function DiaryListPage() {
         </div>
       )}
 
-      {selectedLog && (
-        <CareLogModal
-          log={selectedLog}
-          onClose={handleCloseModal}
-        />
-      )}
+      {selectedLog && <CareLogModal log={selectedLog} onClose={handleCloseModal} />}
     </div>
   );
 }
