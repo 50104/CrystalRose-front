@@ -48,6 +48,8 @@ export default function MyRejectedWikisList({ rejectedList, pendingList, loading
       setPendingDetail(null);
     } else {
       setSelectedPending(entry);
+      setSelectedRejected(null);
+      setRejectedDetail(null);
       try {
         const res = await axiosInstance.get(`/api/v1/wiki/detail/${entry.id}`);
         setPendingDetail(res.data);
@@ -64,6 +66,8 @@ export default function MyRejectedWikisList({ rejectedList, pendingList, loading
       setRejectedDetail(null);
     } else {
       setSelectedRejected(entry);
+      setSelectedPending(null);
+      setPendingDetail(null);
       try {
         const res = await axiosInstance.get(`/api/v1/wiki/detail/${entry.id}`);
         setRejectedDetail(res.data);
