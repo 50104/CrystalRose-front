@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './MyRejectedModificationsPage.css';
 import { axiosInstance } from '../../../utils/axios';
 
@@ -7,6 +7,11 @@ export default function MyRejectedWikisList({ rejectedList, pendingList, loading
   const [pendingDetail, setPendingDetail] = useState(null);
   const [selectedRejected, setSelectedRejected] = useState(null);
   const [rejectedDetail, setRejectedDetail] = useState(null);
+  const [pendingItems, setPendingItems] = useState(pendingList);
+
+  useEffect(() => {
+    setPendingItems(pendingList || []);
+  }, [pendingList]);
 
   const renderEntryDetail = (detail) => {
     if (!detail) return <p>상세 정보 불러오는 중</p>;
@@ -53,7 +58,7 @@ export default function MyRejectedWikisList({ rejectedList, pendingList, loading
       try {
         const res = await axiosInstance.get(`/api/v1/wiki/detail/${entry.id}`);
         setPendingDetail(res.data);
-      } catch (err) {
+      } catch {
         setPendingDetail(null);
       }
     }
@@ -74,6 +79,21 @@ export default function MyRejectedWikisList({ rejectedList, pendingList, loading
       } catch (err) {
         setRejectedDetail(null);
       }
+    }
+  };
+
+  const handleCancelPending = async (entryId) => {
+    if (!window.confirm('정말 제출을 취소하시겠습니까?')) return;
+    try {
+      await axiosInstance.delete(`/api/v1/wiki/user/${entryId}`);
+      alert('도감 제출이 취소되었습니다.');
+      setPendingItems(pendingItems.filter((item) => item.id !== entryId));
+      if (selectedPending?.id === entryId) {
+        setSelectedPending(null);
+        setPendingDetail(null);
+      }
+    } catch (err) {
+      alert('제출 취소 중 오류가 발생했습니다.');
     }
   };
 
@@ -123,11 +143,11 @@ export default function MyRejectedWikisList({ rejectedList, pendingList, loading
       {/* 제출된 도감 목록 */}
       <section className="modification-section">
         <h2 className="pending-title">제출된 도감 목록</h2>
-        {Array.isArray(pendingList) && pendingList.length === 0 ? (
+        {Array.isArray(pendingItems) && pendingItems.length === 0 ? (
           <div className="no-entries">제출된 도감이 없습니다.</div>
         ) : (
           <div className="entries-list">
-            {Array.isArray(pendingList) && pendingList.map((item) => (
+            {Array.isArray(pendingItems) && pendingItems.map((item) => (
               <div
                 key={item.id}
                 className={`entry-card ${selectedPending?.id === item.id ? 'selected' : ''}`}
@@ -139,6 +159,15 @@ export default function MyRejectedWikisList({ rejectedList, pendingList, loading
                     <h3 className="entry-name">{item.name}</h3>
                     <span className="entry-date">{formatDate(item.createdDate)}</span>
                   </div>
+                  <button
+                    className="cancel-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCancelPending(item.id);
+                    }}
+                  >
+                    제출 취소
+                  </button>
                 </div>
                 {selectedPending?.id === item.id && (
                   <div className="entry-details">
