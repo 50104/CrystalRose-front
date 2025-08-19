@@ -111,6 +111,26 @@ export default function RejectedModificationList() {
     }
   };
 
+  // 제출 취소 핸들러
+  const handleCancelPending = async (id) => {
+    if (!window.confirm("제출을 취소하시겠습니까?")) return;
+
+    try {
+      await axiosInstance.delete(`/api/v1/wiki/user/modification/${id}/cancel`);
+      alert("제출이 취소되었습니다.");
+
+      // 취소 후 목록 갱신
+      setPendingList(prev => prev.filter(item => item.id !== id));
+      if (selectedPending?.id === id) {
+        setSelectedPending(null);
+        setPendingDetail(null);
+      }
+    } catch (err) {
+      console.error("제출 취소 실패:", err);
+      alert("제출 취소 중 오류가 발생했습니다.");
+    }
+  };
+
   if (loading) {
     return (
       <div className="rejected-modification-container">
@@ -180,6 +200,14 @@ export default function RejectedModificationList() {
                   <div className="entry-info">
                     <h3 className="entry-name">{item.name}</h3>
                     <span className="entry-date">{formatDate(item.createdDate)}</span>
+                  </div>
+                  <div className="entry-actions">
+                    <button
+                      onClick={e => { e.stopPropagation(); handleCancelPending(item.id); }}
+                      className="cancel-button"
+                    >
+                      제출 취소
+                    </button>
                   </div>
                 </div>
                 {selectedPending?.id === item.id && (
