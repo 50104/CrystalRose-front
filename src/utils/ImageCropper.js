@@ -45,7 +45,7 @@ export default function ImageCropperModal({ file, onConfirm, onCancel }) {
   );
 }
 
-async function getCroppedImg(imageSrc, crop) {
+async function getCroppedImg(imageSrc, crop, mimeType = "image/png") {
   const createImage = (url) =>
     new Promise((resolve, reject) => {
       const img = new Image();
@@ -61,6 +61,7 @@ async function getCroppedImg(imageSrc, crop) {
   canvas.width = crop.width;
   canvas.height = crop.height;
 
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(
     image,
     crop.x, crop.y, crop.width, crop.height,
@@ -74,6 +75,6 @@ async function getCroppedImg(imageSrc, crop) {
         return;
       }
       resolve(blob);
-    }, "image/jpeg");
+    }, mimeType);
   });
 }

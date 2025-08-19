@@ -21,16 +21,26 @@ export const convertToWebP = (file, quality = 0.8) => {
         canvas.height = img.height;
 
         const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // 투명도 보존
         ctx.drawImage(img, 0, 0);
 
-        canvas.toBlob((blob) => {
-          const webpFile = new File(
-            [blob],
-            file.name.replace(/\.\w+$/, ".webp"),
-            { type: "image/webp" }
-          );
-          resolve(webpFile);
-        }, "image/webp", quality);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              const fallbackFile = new File([file], file.name, { type: file.type });
+              resolve(fallbackFile);
+              return;
+            }
+            const webpFile = new File(
+              [blob],
+              file.name.replace(/\.\w+$/, ".webp"),
+              { type: "image/webp" }
+            );
+            resolve(webpFile);
+          },
+          "image/webp",
+          quality
+        );
       };
     };
     reader.readAsDataURL(file);
