@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
 import './DiaryRegister.css';
 import { safeConvertToWebP } from '../../../utils/imageUtils';
+import ImageCropperModal from '../../../utils/ImageCropper.js';
 
 export default function DiaryRegister({ onSuccess, mode = 'register', initialData = null }) {
   const { diaryId, roseId: paramRoseId } = useParams();
@@ -21,6 +22,8 @@ export default function DiaryRegister({ onSuccess, mode = 'register', initialDat
     recordedAt: '',
     imageUrl: ''
   });
+
+  const [cropFile, setCropFile] = useState(null);
 
   const isEditMode = mode === 'edit' || location.pathname.includes('/edit/');
 
@@ -81,19 +84,19 @@ export default function DiaryRegister({ onSuccess, mode = 'register', initialDat
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const finalFile = await safeConvertToWebP(file);
+  const handleCropConfirm = async (croppedBlob) => {
     setUploading(true);
     try {
+      const croppedFile = new File([croppedBlob], "cropped.jpg", { type: "image/jpeg" });
+      const webpFile = await safeConvertToWebP(croppedFile);
+
       const form = new FormData();
-      form.append('file', finalFile);
+      form.append('file', webpFile);
       const res = await axiosInstance.post(`/api/diaries/image/upload`, form, {
-        headers: {'Content-Type': undefined}
+        headers: { "Content-Type": "multipart/form-data" }
       });
       const url = res.data.url;
+
       setFormData(prev => ({ ...prev, imageUrl: url }));
       setImagePreview(url);
     } catch (err) {
@@ -101,6 +104,7 @@ export default function DiaryRegister({ onSuccess, mode = 'register', initialDat
       setMessage({ type: 'error', text: '이미지 업로드 실패' });
     } finally {
       setUploading(false);
+      setCropFile(null);
     }
   };
 
@@ -180,10 +184,20 @@ export default function DiaryRegister({ onSuccess, mode = 'register', initialDat
                 id="diary-image-input"
                 type="file"
                 accept="image/*"
-                onChange={handleImageUpload}
+                onChange={(e) => {
+                  if (e.target.files[0]) setCropFile(e.target.files[0]);
+                }}
+                onClick={(e) => (e.target.value = null)}
                 disabled={uploading}
                 style={{ display: 'none' }}
               />
+              {cropFile && (
+                <ImageCropperModal
+                  file={cropFile}
+                  onConfirm={handleCropConfirm}
+                  onCancel={() => setCropFile(null)}
+                />
+              )}
               {uploading && <p className="diary-upload-status">업로드 중...</p>}
             </div>
           </div>
