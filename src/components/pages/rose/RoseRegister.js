@@ -98,7 +98,10 @@ export default function RoseRegister({ onSuccess }) {
   const handleCropConfirm = async (croppedBlob) => {
     setUploading(true);
     try {
-      const croppedFile = new File([croppedBlob], "cropped.jpg", { type: "image/jpeg" });
+      const mimeType = croppedBlob.type || "image/jpeg";
+      const extension = mimeType.split("/")[1] || "jpg";
+      const croppedFile = new File([croppedBlob], `cropped.${extension}`, { type: mimeType });
+
       const webpFile = await safeConvertToWebP(croppedFile);
 
       const formData = new FormData();

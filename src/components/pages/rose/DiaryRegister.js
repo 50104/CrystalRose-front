@@ -87,16 +87,19 @@ export default function DiaryRegister({ onSuccess, mode = 'register', initialDat
   const handleCropConfirm = async (croppedBlob) => {
     setUploading(true);
     try {
-      const croppedFile = new File([croppedBlob], "cropped.jpg", { type: "image/jpeg" });
+      const mimeType = croppedBlob.type || "image/jpeg";
+      const extension = mimeType.split("/")[1] || "jpg";
+      const croppedFile = new File([croppedBlob], `cropped.${extension}`, { type: mimeType });
+
       const webpFile = await safeConvertToWebP(croppedFile);
 
       const form = new FormData();
-      form.append('file', webpFile);
+      form.append("file", webpFile);
       const res = await axiosInstance.post(`/api/diaries/image/upload`, form, {
         headers: { "Content-Type": "multipart/form-data" }
       });
-      const url = res.data.url;
 
+      const url = res.data.url;
       setFormData(prev => ({ ...prev, imageUrl: url }));
       setImagePreview(url);
     } catch (err) {
