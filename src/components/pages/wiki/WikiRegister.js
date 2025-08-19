@@ -5,6 +5,7 @@ import { axiosInstance } from '@utils/axios';
 import { safeConvertToWebP } from '../../../utils/imageUtils';
 import RatingSelector from './WikiSelector';
 import { getAccess } from '../../../utils/tokenStore';
+import ImageCropperModal from '../../../utils/ImageCropper';
 
 const initialFormData = {
   name: '',
@@ -39,6 +40,7 @@ export default function WikiRegisterPage() {
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [cropFile, setCropFile] = useState(null);
 
   useEffect(() => {
     const token = getAccess();
@@ -93,28 +95,31 @@ export default function WikiRegisterPage() {
     }
   }, [id, isEditMode, isResubmitMode, loadWikiData]);
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const finalFile = await safeConvertToWebP(file);
-
+  const handleCropConfirm = async (croppedBlob) => {
     setUploading(true);
     try {
+      const mimeType = croppedBlob.type || "image/png";
+      const extension = mimeType.split("/")[1] || "png";
+      const croppedFile = new File([croppedBlob], `cropped.${extension}`, { type: mimeType });
+
+      const webpFile = await safeConvertToWebP(croppedFile);
+
       const formData = new FormData();
-      formData.append('file', finalFile);
+      formData.append("file", webpFile);
 
       const response = await axiosInstance.post(`/api/v1/wiki/image/upload`, formData, {
-        headers: { 'Content-Type': undefined }
+        headers: { "Content-Type": "multipart/form-data" }
       });
 
       const url = response.data.url;
       setFormData(prev => ({ ...prev, imageUrl: url }));
       setImagePreview(url);
     } catch (error) {
-      console.error('이미지 업로드 실패:', error);
-      setMessage({ type: 'error', text: '이미지 업로드에 실패했습니다.' });
+      console.error("이미지 업로드 실패:", error);
+      setMessage({ type: "error", text: "이미지 업로드에 실패했습니다." });
     } finally {
       setUploading(false);
+      setCropFile(null);
     }
   };
 
@@ -246,10 +251,21 @@ export default function WikiRegisterPage() {
                 id="image-input"
                 type="file"
                 accept="image/*"
-                onChange={handleImageUpload}
+                onChange={(e) => {
+                  if (e.target.files[0]) setCropFile(e.target.files[0]);
+                }}
+                onClick={(e) => (e.target.value = null)}
                 disabled={uploading}
                 style={{ display: 'none' }}
               />
+              {cropFile && (
+                <ImageCropperModal
+                  file={cropFile}
+                  onConfirm={handleCropConfirm}
+                  onCancel={() => setCropFile(null)}
+                />
+              )}
+
               {uploading && <p className="upload-status">업로드 중</p>}
             </div>
           </div>
