@@ -1,22 +1,16 @@
+// src/utils/axios.js
 import axios from 'axios';
 import { getAccess, setAccess, clearAccess } from './tokenStore';
 
 export const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:4000',
   withCredentials: true,
-  timeout: 15000, // 15초 타임아웃 설정
+  timeout: 15000,
   headers: { 'Content-Type': 'application/json' },
   validateStatus: (s) => (s >= 200 && s < 300) || s === 304,
 });
 
-// 요청 인터셉터
-axiosInstance.interceptors.request.use((config) => {
-  const token = getAccess();
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
-
-// 리프레시 전용 클라이언트(반복 호출 방지)
+// reissue 전용 클라이언트(반복 호출 방지)
 export const reissueClient = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:4000',
   withCredentials: true,
@@ -34,20 +28,44 @@ const onRefreshed = (newToken) => {
 
 // 요청 인터셉터
 axiosInstance.interceptors.request.use((config) => {
+  config.headers = config.headers || {};
   const url = config.url || '';
-  // /reissue 요청에는 Authorization 붙이지 않음
-  if (!url.includes('/reissue')) {
-    const token = getAccess();
-    if (token) config.headers.Authorization = `Bearer ${token}`;
+
+  if (config.skipAuth) {
+    delete config.headers.Authorization;
+    return config;
   }
+
+  if (url.includes('/reissue')) { // /reissue 예외
+    delete config.headers.Authorization;
+    return config;
+  }
+
+  try { // 외부 도메인 토큰 제거
+    const base = new URL(axiosInstance.defaults.baseURL);
+    const target = new URL(url, axiosInstance.defaults.baseURL);
+    if (target.origin !== base.origin) {
+      delete config.headers.Authorization;
+      return config;
+    }
+  } catch (e) {
+  }
+
+  const token = getAccess();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    delete config.headers.Authorization;
+  }
+
   return config;
-});
+}, (err) => Promise.reject(err));
 
 // 응답 인터셉터: 401 → /reissue → 메모리에만 저장
 axiosInstance.interceptors.response.use(
   (res) => res,
   async (error) => {
-    const original = error.config;
+    const original = error.config || {};
     const status = error.response?.status;
     const url = original?.url || '';
 
@@ -57,7 +75,6 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // 401이면 액세스 갱신 플로우
     if (status === 401 && !original._retry) {
       original._retry = true;
 
@@ -66,6 +83,7 @@ axiosInstance.interceptors.response.use(
         return new Promise((resolve, reject) => {
           refreshWaiters.push((newToken) => {
             if (newToken) {
+              original.headers = original.headers || {};
               original.headers.Authorization = `Bearer ${newToken}`;
               resolve(axiosInstance(original));
             } else {
@@ -80,12 +98,13 @@ axiosInstance.interceptors.response.use(
       try {
         const r = await reissueClient.post('/reissue', {});
         const newToken = r.data?.accessToken;
-        setAccess(newToken);
+        if (newToken) setAccess(newToken);
         isRefreshing = false;
         onRefreshed(newToken);
 
         // 원래 요청 재시도
-        original.headers.Authorization = `Bearer ${newToken}`;
+        original.headers = original.headers || {};
+        if (newToken) original.headers.Authorization = `Bearer ${newToken}`;
         return axiosInstance(original);
       } catch (e) {
         isRefreshing = false;
@@ -95,31 +114,24 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(e);
       }
     }
+
     return Promise.reject(error);
   }
 );
 
-// OAuth 요청을 위한 별도 인스턴스 (조건부 요청 허용)
+// OAuth 인스턴스
 export const oauthAxiosInstance = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:4000',
   withCredentials: true,
-  timeout: 20000, // OAuth는 더 긴 타임아웃
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  // 조건부 요청(304)을 허용하기 위한 설정
-  validateStatus: function (status) {
-    return (status >= 200 && status < 300) || status === 304; // 304도 성공으로 처리
-  }
+  timeout: 20000,
+  headers: { 'Content-Type': 'application/json' },
+  validateStatus: (status) => (status >= 200 && status < 300) || status === 304
 });
 
 // OAuth 전용 응답 인터셉터 (토큰 갱신 로직 제외)
 oauthAxiosInstance.interceptors.response.use(
   (response) => {
-    // 304 Not Modified는 정상적인 응답으로 처리
-    if (response.status === 304) {
-      console.log('OAuth 304 Not Modified - 캐시된 데이터 사용');
-    }
+    if (response.status === 304) console.log('OAuth 304 Not Modified - 캐시된 데이터 사용');
     return response;
   },
   (error) => {
@@ -127,21 +139,17 @@ oauthAxiosInstance.interceptors.response.use(
       console.error('OAuth 네트워크 오류:', error.message);
       return Promise.reject(new Error('OAuth 서버 연결을 확인해주세요.'));
     }
-    
     const errorMessage = error.response?.data?.message || error.message || 'OAuth 인증 오류가 발생했습니다.';
     console.error(`OAuth HTTP ${error.response?.status} 오류:`, errorMessage);
-    
     return Promise.reject(error);
   }
 );
 
-// 인증이 필요 없는 요청을 위한 axios 인스턴스
+// 인증이 필요 없는 인스턴스
 export const noAuthAxios = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:4000',
   withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: { 'Content-Type': 'application/json' },
 });
 
 // 서비스 워커 관련 유틸리티 함수
@@ -149,9 +157,7 @@ export const clearServiceWorkerCache = async () => {
   if ('serviceWorker' in navigator && 'caches' in window) {
     try {
       const cacheNames = await caches.keys();
-      await Promise.all(
-        cacheNames.map(cacheName => caches.delete(cacheName))
-      );
+      await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
       console.log('Service worker cache cleared');
     } catch (error) {
       console.error('Service worker cache clear failed:', error);
@@ -181,9 +187,7 @@ export const reregisterServiceWorker = async () => {
 };
 
 // 네트워크 상태 확인 함수
-export const checkNetworkStatus = () => {
-  return navigator.onLine;
-};
+export const checkNetworkStatus = () => navigator.onLine;
 
 // 재시도 가능한 axios 요청 함수
 export const retryableRequest = async (requestFn, maxRetries = 3, initialDelay = 1000) => {
