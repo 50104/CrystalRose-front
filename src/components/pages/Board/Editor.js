@@ -25,46 +25,28 @@ class CustomUploadAdapter {
     const file = await this.loader.file;
     const finalFile = await safeConvertToWebP(file);
 
-    try { // Pre-signed URL
+    try {
       const result = await uploadImage(finalFile, true, { 
         domainType: 'BOARD', 
         folderName: 'boards',
+        multipartEndpoint: '/api/v1/board/image/upload',
         multipartData: { boardTag: this.tag }
       });
       
       if (result.success) {
         return { default: result.fileUrl };
       } else {
-        console.warn('Pre-signed URL 실패, 멀티파트 방식으로 시도:', result.error);
-        return await this.fallbackUpload(finalFile);
+        console.error('이미지 업로드 실패:', result.error);
+        throw new Error(result.error);
       }
     } catch (error) {
       console.error('업로드 오류:', error);
-      return await this.fallbackUpload(finalFile);
+      throw error;
     }
   }
 
-  async fallbackUpload(file) {
-    return new Promise((resolve, reject) => {
-      const data = new FormData();
-      data.append('file', file);
-      data.append('boardTag', this.tag);
-
-      axiosInstance.post('/api/v1/board/image/upload', data, {
-        headers: { 'Content-Type': undefined }
-      })
-        .then(res => {
-          if (res.data && res.data.url) {
-            resolve({ default: res.data.url });
-          } else {
-            reject('이미지 업로드 실패');
-          }
-        })
-        .catch(reject);
-    });
+  abort() {
   }
-
-  abort() {}
 }
 
 function Editor() {
