@@ -4,6 +4,7 @@ import { useUserData } from '@utils/api/user';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { safeConvertToWebP } from '../../../utils/imageUtils';
+import { uploadImage } from '../../../utils/imageUploadUtils';
 import { axiosInstance } from '@utils/axios';
 import styles from './CKEditor.module.css';
 import './Editor.css';
@@ -24,9 +25,29 @@ class CustomUploadAdapter {
     const file = await this.loader.file;
     const finalFile = await safeConvertToWebP(file);
 
+    try { // Pre-signed URL
+      const result = await uploadImage(finalFile, true, { 
+        domainType: 'BOARD', 
+        folderName: 'boards',
+        multipartData: { boardTag: this.tag }
+      });
+      
+      if (result.success) {
+        return { default: result.fileUrl };
+      } else {
+        console.warn('Pre-signed URL 실패, 멀티파트 방식으로 시도:', result.error);
+        return await this.fallbackUpload(finalFile);
+      }
+    } catch (error) {
+      console.error('업로드 오류:', error);
+      return await this.fallbackUpload(finalFile);
+    }
+  }
+
+  async fallbackUpload(file) {
     return new Promise((resolve, reject) => {
       const data = new FormData();
-      data.append('file', finalFile);
+      data.append('file', file);
       data.append('boardTag', this.tag);
 
       axiosInstance.post('/api/v1/board/image/upload', data, {
@@ -42,6 +63,7 @@ class CustomUploadAdapter {
         .catch(reject);
     });
   }
+
   abort() {}
 }
 
