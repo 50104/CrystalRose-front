@@ -51,7 +51,7 @@ export async function uploadImageWithPreSignedUrl(file, domainType, folderName =
   }
 }
 
-export async function uploadImageWithMultipart(file, extraData = {}) {
+export async function uploadImageWithMultipart(file, uploadEndpoint, extraData = {}) {
   try { // 멀티파트
     const formData = new FormData();
     formData.append('file', file);
@@ -62,7 +62,7 @@ export async function uploadImageWithMultipart(file, extraData = {}) {
       }
     });
 
-    const res = await axiosInstance.post('/api/v1/board/image/upload', formData, {});
+    const res = await axiosInstance.post(uploadEndpoint, formData, {});
 
     if (res?.data && res.data.url) {
       return { success: true, fileUrl: res.data.url };
@@ -85,6 +85,7 @@ export async function uploadImage(file, usePreSignedUrl = true, opts = {}) {
 
   const folderName = opts.folderName || null;
   const multipartData = opts.multipartData || {}; // 멀티파트용 추가 데이터
+  const multipartEndpoint = opts.multipartEndpoint;
 
   // 파일 유효성 검증
   if (!file) return { success: false, error: '파일이 선택되지 않았습니다.' };
@@ -96,9 +97,19 @@ export async function uploadImage(file, usePreSignedUrl = true, opts = {}) {
   if (file.size > maxSize) return { success: false, error: '파일 크기가 너무 큽니다. (최대 10MB)' };
 
   if (usePreSignedUrl) {
-    return await uploadImageWithPreSignedUrl(file, domainType, folderName);
+    const preSignedResult = await uploadImageWithPreSignedUrl(file, domainType, folderName);
+    
+    if (!preSignedResult.success && multipartEndpoint) {
+      console.warn('⚠️ Pre-signed URL 실패, 멀티파트 방식으로 fallback:', preSignedResult.error);
+      return await uploadImageWithMultipart(file, multipartEndpoint, multipartData);
+    }
+    
+    return preSignedResult;
   } else {
-    return await uploadImageWithMultipart(file, multipartData);
+    if (!multipartEndpoint) {
+      return { success: false, error: '멀티파트 방식에는 업로드 엔드포인트가 필요합니다.' };
+    }
+    return await uploadImageWithMultipart(file, multipartEndpoint, multipartData);
   }
 }
 
