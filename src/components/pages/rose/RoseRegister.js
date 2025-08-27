@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { axiosInstance, noAuthAxios } from '@utils/axios';
 import { GetUser } from '@utils/api/user';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { safeConvertToWebP } from '../../../utils/imageUtils';
-import ImageCropperModal from '../../../utils/ImageCropper.js';
+import ImageUploader from '../../common/ImageUploader';
 import './RoseRegister.css';
 
 export default function RoseRegister({ onSuccess }) {
@@ -25,10 +24,6 @@ export default function RoseRegister({ onSuccess }) {
   const [disabledWikiIds, setDisabledWikiIds] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [imagePreview, setImagePreview] = useState(roseData?.imageUrl || null);
-
-  const [cropFile, setCropFile] = useState(null);
 
   const validateForm = () => {
     const requiredFields = [
@@ -68,7 +63,6 @@ export default function RoseRegister({ onSuccess }) {
 
     if (!isEditMode && roseData?.wikiId) {
       setFormData(prev => ({ ...prev, imageUrl: '' }));
-      setImagePreview(null);
     }
   }, [isLogin, roseData, isEditMode]);
 
@@ -95,30 +89,8 @@ export default function RoseRegister({ onSuccess }) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleCropConfirm = async (croppedBlob) => {
-    setUploading(true);
-    try {
-      const mimeType = croppedBlob.type || "image/jpeg";
-      const extension = mimeType.split("/")[1] || "jpg";
-      const croppedFile = new File([croppedBlob], `cropped.${extension}`, { type: mimeType });
-
-      const webpFile = await safeConvertToWebP(croppedFile);
-
-      const formData = new FormData();
-      formData.append("file", webpFile);
-      const res = await axiosInstance.post("/api/roses/image/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-
-      setFormData(prev => ({ ...prev, imageUrl: res.data.url }));
-      setImagePreview(res.data.url);
-    } catch (err) {
-      console.error("이미지 업로드 실패:", err);
-      setMessage({ type: "error", text: "이미지 업로드에 실패했습니다." });
-    } finally {
-      setUploading(false);
-      setCropFile(null);
-    }
+  const handleImageUploadSuccess = (imageUrl) => {
+    setFormData(prev => ({ ...prev, imageUrl }));
   };
 
   const handleSubmit = async (e) => {
@@ -149,7 +121,6 @@ export default function RoseRegister({ onSuccess }) {
       setFormData({
         wikiId: '', nickname: '', acquiredDate: '', locationNote: '', imageUrl: ''
       });
-      setImagePreview(null);
       onSuccess?.();
       navigate("/roses/list");
     } catch (err) {
@@ -180,41 +151,16 @@ export default function RoseRegister({ onSuccess }) {
         <div className="rose-top-section">
           <div className="rose-image-upload-section">
             <div className="rose-image-upload-container">
-              {imagePreview ? (
-                <img
-                  src={imagePreview}
-                  alt="preview"
-                  className="rose-image-preview"
-                  onClick={() => document.getElementById('rose-image-input').click()}
-                />
-              ) : (
-                <div
-                  className="rose-image-placeholder"
-                  onClick={() => document.getElementById('rose-image-input').click()}
-                >
-                  <div className="rose-upload-icon">📷</div>
-                  <p>클릭하여 이미지 업로드 <span className="diary-required">*</span></p>
-                </div>
-              )}
-              <input
-                id="rose-image-input"
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  if (e.target.files[0]) setCropFile(e.target.files[0]);
-                }}
-                onClick={(e) => (e.target.value = null)}
-                disabled={uploading}
-                style={{ display: "none" }}
+              <ImageUploader
+                currentImageUrl={formData.imageUrl}
+                onUploadSuccess={handleImageUploadSuccess}
+                domainType="ROSE"
+                folderName="roses"
+                multipartEndpoint="/api/roses/image/upload"
+                multipartData={{}}
+                required={true}
+                placeholder="클릭하여 이미지 업로드"
               />
-              {cropFile && (  
-                <ImageCropperModal
-                  file={cropFile}
-                  onConfirm={handleCropConfirm}
-                  onCancel={() => setCropFile(null)}
-                />
-              )}
-              {uploading && <p className="rose-upload-status">업로드 중</p>}
             </div>
           </div>
 
@@ -295,7 +241,7 @@ export default function RoseRegister({ onSuccess }) {
           <button
             onClick={handleSubmit}
             className="rose-submit-button"
-            disabled={isSubmitting || !isLogin || uploading || !isFormValid()}
+            disabled={isSubmitting || !isLogin || !isFormValid()}
           >
             {isSubmitting ? '처리 중...' : isEditMode ? '수정' : '장미 등록'}
           </button>
@@ -309,7 +255,7 @@ export default function RoseRegister({ onSuccess }) {
                 navigate('/roses/list');
               }
             }}
-            disabled={isSubmitting || uploading}
+            disabled={isSubmitting}
           >
             취소
           </button>
