@@ -2,10 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './WikiRegister.css';
 import { axiosInstance } from '@utils/axios';
-import { safeConvertToWebP } from '../../../utils/imageUtils';
 import RatingSelector from './WikiSelector';
 import { getAccess } from '../../../utils/tokenStore';
-import ImageCropperModal from '../../../utils/ImageCropper';
+import ImageUploader from '../../common/ImageUploader';
 
 const initialFormData = {
   name: '',
@@ -37,10 +36,7 @@ export default function WikiRegisterPage() {
   const [formData, setFormData] = useState(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [cropFile, setCropFile] = useState(null);
 
   useEffect(() => {
     const token = getAccess();
@@ -78,8 +74,9 @@ export default function WikiRegisterPage() {
         description: ''
       });
 
+      // 기존 이미지 URL이 있다면 formData에 설정
       if (wikiData.imageUrl) {
-        setImagePreview(wikiData.imageUrl);
+        setFormData(prev => ({ ...prev, imageUrl: wikiData.imageUrl }));
       }
     } catch (err) {
       console.error('보완 제출 데이터 로딩 실패:', err);
@@ -95,32 +92,9 @@ export default function WikiRegisterPage() {
     }
   }, [id, isEditMode, isResubmitMode, loadWikiData]);
 
-  const handleCropConfirm = async (croppedBlob) => {
-    setUploading(true);
-    try {
-      const mimeType = croppedBlob.type || "image/png";
-      const extension = mimeType.split("/")[1] || "png";
-      const croppedFile = new File([croppedBlob], `cropped.${extension}`, { type: mimeType });
-
-      const webpFile = await safeConvertToWebP(croppedFile);
-
-      const formData = new FormData();
-      formData.append("file", webpFile);
-
-      const response = await axiosInstance.post(`/api/v1/wiki/image/upload`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-
-      const url = response.data.url;
-      setFormData(prev => ({ ...prev, imageUrl: url }));
-      setImagePreview(url);
-    } catch (error) {
-      console.error("이미지 업로드 실패:", error);
-      setMessage({ type: "error", text: "이미지 업로드에 실패했습니다." });
-    } finally {
-      setUploading(false);
-      setCropFile(null);
-    }
+  // ImageUploader 성공 콜백
+  const handleImageUploadSuccess = (imageUrl) => {
+    setFormData(prev => ({ ...prev, imageUrl }));
   };
 
   const handleChange = (e) => {
@@ -170,7 +144,6 @@ export default function WikiRegisterPage() {
 
         if (!isEditMode && !isResubmitMode) {
           setFormData(initialFormData);
-          setImagePreview(null);
         }
 
         navigate('/wiki/list');
@@ -231,42 +204,16 @@ export default function WikiRegisterPage() {
         <div className="top-section">
           <div className="image-upload-section">
             <div className="image-upload-container">
-              {imagePreview ? (
-                <img 
-                  src={imagePreview} 
-                  alt="preview" 
-                  className="image-preview"
-                  onClick={() => document.getElementById('image-input').click()}
-                />
-              ) : (
-                <div 
-                  className="image-placeholder"
-                  onClick={() => document.getElementById('image-input').click()}
-                >
-                  <div className="upload-icon">📷</div>
-                  <p>클릭하여 이미지 업로드 <span className="required">*</span></p>
-                </div>
-              )}
-              <input
-                id="image-input"
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  if (e.target.files[0]) setCropFile(e.target.files[0]);
-                }}
-                onClick={(e) => (e.target.value = null)}
-                disabled={uploading}
-                style={{ display: 'none' }}
+              <ImageUploader
+                currentImageUrl={formData.imageUrl}
+                onUploadSuccess={handleImageUploadSuccess}
+                domainType="WIKI"
+                folderName="wikis"
+                multipartEndpoint="/api/v1/wiki/image/upload"
+                multipartData={{}}
+                required={true}
+                placeholder="클릭하여 이미지 업로드"
               />
-              {cropFile && (
-                <ImageCropperModal
-                  file={cropFile}
-                  onConfirm={handleCropConfirm}
-                  onCancel={() => setCropFile(null)}
-                />
-              )}
-
-              {uploading && <p className="upload-status">업로드 중</p>}
             </div>
           </div>
 
@@ -463,7 +410,7 @@ export default function WikiRegisterPage() {
         <div className="form-actions">
           <button
             onClick={handleSubmit}
-            disabled={isSubmitting || uploading || loading}
+            disabled={isSubmitting || loading}
             className="submit-button"
           >
             {isSubmitting 
@@ -474,8 +421,8 @@ export default function WikiRegisterPage() {
           <button
             type="button"
             onClick={handleCancel}
-            disabled={isSubmitting || uploading || loading}
-            className="cancel-button"
+            disabled={isSubmitting || loading}
+            className="wiki-cancel-button"
           >
             취소
           </button>
