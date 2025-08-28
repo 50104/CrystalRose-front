@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { axiosInstance } from '@utils/axios';
+import ImageUploader from '../../common/ImageUploader';
 import './DiaryRegister.css';
-import { safeConvertToWebP } from '../../../utils/imageUtils';
-import ImageCropperModal from '../../../utils/ImageCropper.js';
 
 export default function DiaryRegister({ onSuccess, mode = 'register', initialData = null }) {
   const { diaryId, roseId: paramRoseId } = useParams();
@@ -11,8 +10,6 @@ export default function DiaryRegister({ onSuccess, mode = 'register', initialDat
   const location = useLocation();
 
   const [roseList, setRoseList] = useState([]);
-  const [uploading, setUploading] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
 
@@ -22,8 +19,6 @@ export default function DiaryRegister({ onSuccess, mode = 'register', initialDat
     recordedAt: '',
     imageUrl: ''
   });
-
-  const [cropFile, setCropFile] = useState(null);
 
   const isEditMode = mode === 'edit' || location.pathname.includes('/edit/');
 
@@ -39,7 +34,6 @@ export default function DiaryRegister({ onSuccess, mode = 'register', initialDat
             recordedAt: data.recordedAt?.slice(0, 10) || '',
             imageUrl: data.imageUrl || ''
           });
-          setImagePreview(data.imageUrl || null);
         } catch (err) {
           console.error("수정 데이터 불러오기 실패", err);
           alert("수정할 데이터를 불러오지 못했습니다.");
@@ -84,31 +78,8 @@ export default function DiaryRegister({ onSuccess, mode = 'register', initialDat
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleCropConfirm = async (croppedBlob) => {
-    setUploading(true);
-    try {
-      const mimeType = croppedBlob.type || "image/jpeg";
-      const extension = mimeType.split("/")[1] || "jpg";
-      const croppedFile = new File([croppedBlob], `cropped.${extension}`, { type: mimeType });
-
-      const webpFile = await safeConvertToWebP(croppedFile);
-
-      const form = new FormData();
-      form.append("file", webpFile);
-      const res = await axiosInstance.post(`/api/diaries/image/upload`, form, {
-        headers: { "Content-Type": "multipart/form-data" }
-      });
-
-      const url = res.data.url;
-      setFormData(prev => ({ ...prev, imageUrl: url }));
-      setImagePreview(url);
-    } catch (err) {
-      console.error('이미지 업로드 실패', err);
-      setMessage({ type: 'error', text: '이미지 업로드 실패' });
-    } finally {
-      setUploading(false);
-      setCropFile(null);
-    }
+  const handleImageUploadSuccess = (imageUrl) => {
+    setFormData(prev => ({ ...prev, imageUrl }));
   };
 
   const handleSubmit = async (e) => {
@@ -167,41 +138,16 @@ export default function DiaryRegister({ onSuccess, mode = 'register', initialDat
         <div className="diary-top-section">
           <div className="diary-image-upload-section">
             <div className="diary-image-upload-container">
-              {imagePreview ? (
-                <img
-                  src={imagePreview}
-                  alt="preview"
-                  className="diary-image-preview"
-                  onClick={() => document.getElementById('diary-image-input').click()}
-                />
-              ) : (
-                <div
-                  className="diary-image-placeholder"
-                  onClick={() => document.getElementById('diary-image-input').click()}
-                >
-                  <div className="diary-upload-icon">📷</div>
-                  <p>클릭하여 이미지 업로드 <span className="diary-required">*</span></p>
-                </div>
-              )}
-              <input
-                id="diary-image-input"
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  if (e.target.files[0]) setCropFile(e.target.files[0]);
-                }}
-                onClick={(e) => (e.target.value = null)}
-                disabled={uploading}
-                style={{ display: 'none' }}
+              <ImageUploader
+                currentImageUrl={formData.imageUrl}
+                onUploadSuccess={handleImageUploadSuccess}
+                domainType="DIARY"
+                folderName="diaries"
+                multipartEndpoint="/api/diaries/image/upload"
+                multipartData={{}}
+                required={true}
+                placeholder="클릭하여 이미지 업로드"
               />
-              {cropFile && (
-                <ImageCropperModal
-                  file={cropFile}
-                  onConfirm={handleCropConfirm}
-                  onCancel={() => setCropFile(null)}
-                />
-              )}
-              {uploading && <p className="diary-upload-status">업로드 중...</p>}
             </div>
           </div>
 
@@ -255,7 +201,7 @@ export default function DiaryRegister({ onSuccess, mode = 'register', initialDat
           <button
             onClick={handleSubmit}
             className="diary-submit-button"
-            disabled={isSubmitting || uploading || !isFormValid()}
+            disabled={isSubmitting || !isFormValid()}
           >
             {isSubmitting ? (isEditMode ? '수정 중' : '등록 중') : (isEditMode ? '기록 수정' : '기록 등록')}
           </button>
