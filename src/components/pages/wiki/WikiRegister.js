@@ -151,7 +151,20 @@ export default function WikiRegisterPage() {
         setMessage({ type: 'error', text: '제출 중 오류가 발생했습니다.' });
       }
     } catch (error) {
+      const status = error.response?.status;
+      const code = error.response?.data?.code;
       const msg = error.response?.data?.message || '서버 연결 오류가 발생했습니다.';
+
+      if (status === 409 && (
+          code === 'WIKI_MODIFICATION_IN_PROGRESS' ||
+          code === 'WIKI_CONCURRENT_MODIFICATION' ||
+          code === 'OPTIMISTIC_LOCK_FAILURE'
+      )) {
+        alert(msg);
+        setIsSubmitting(false);
+        return;
+      }
+
       setMessage({ type: 'error', text: msg });
       console.error('제출 오류:', error);
     } finally {
