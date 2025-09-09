@@ -233,20 +233,6 @@
   line-height: 1.5;
 }
 
-.cancel-btn {
-  background: #f87171;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 4px 10px;
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-
-.cancel-btn:hover {
-  background: #ef4444;
-}
-
 .cancel-button {
   background-color: #f87171;
   color: white;

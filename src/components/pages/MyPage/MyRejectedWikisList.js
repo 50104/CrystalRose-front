@@ -159,15 +159,17 @@ export default function MyRejectedWikisList({ rejectedList, pendingList, loading
                     <h3 className="entry-name">{item.name}</h3>
                     <span className="entry-date">{formatDate(item.createdDate)}</span>
                   </div>
-                  <button
-                    className="cancel-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCancelPending(item.id);
-                    }}
-                  >
-                    제출 취소
-                  </button>
+                  <div className="entry-actions">
+                    <button
+                      className="cancel-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCancelPending(item.id);
+                      }}
+                    >
+                      제출 취소
+                    </button>
+                  </div>
                 </div>
                 {selectedPending?.id === item.id && (
                   <div className="entry-details">
