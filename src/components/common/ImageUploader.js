@@ -205,7 +205,7 @@ const ImageUploader = ({
               <div className="spinner"></div>
               <span>업로드 중... {uploadProgress}%</span>
               {uploadProgress > 0 && (
-                <div className="progress-bar">
+                <div className="image-progress-bar">
                   <div 
                     className="progress-fill" 
                     style={{ width: `${uploadProgress}%` }}

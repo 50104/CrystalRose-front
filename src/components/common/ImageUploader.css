@@ -93,7 +93,7 @@
   to { transform: rotate(360deg); }
 }
 
-.progress-bar {
+.image-progress-bar {
   width: 80%;
   height: 6px;
   background-color: #e5e7eb;
