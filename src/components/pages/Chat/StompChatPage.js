@@ -37,12 +37,6 @@ const StompChatPage = () => {
     if (box) box.scrollTop = box.scrollHeight;
   };
 
-  // 복합 커서 생성 함수
-  const createCursor = (message) => {
-    if (!message || !message.createdDate || !message.id) return null;
-    return `${message.createdDate}:${message.id}`;
-  };
-
   const prevMessagesRef = useRef([]);
   useEffect(() => {
     const prevMessages = prevMessagesRef.current;
@@ -162,21 +156,13 @@ const StompChatPage = () => {
     const box = chatBoxRef.current;
     const scrollHeightBefore = box?.scrollHeight;
     const oldest = messages[0];
-    
-    // 복합 커서 생성
-    const cursor = createCursor(oldest);
+    const cursor = oldest?.createdDate;
 
     try {
-      const params = cursor ? { cursor } : {};
-      const res = await axiosInstance.get(`/api/v1/chat/history/${roomId}`, { params });
-      
+      const res = await axiosInstance.get(`/api/v1/chat/history/${roomId}`, { params: { cursor } });
       const existingIds = new Set(messages.map((m) => m.id));
       const newUniqueMessages = res.data.filter((m) => !existingIds.has(m.id));
-      
-      if (res.data.length === 0) {
-        setHasMore(false);
-      }
-      
+      if (res.data.length === 0) setHasMore(false);
       if (newUniqueMessages.length > 0) {
         setMessages((prev) => [...newUniqueMessages, ...prev]);
         setTimeout(() => {
@@ -186,8 +172,6 @@ const StompChatPage = () => {
             box.scrollTop = offset > 0 ? offset : 1;
           }
         }, 0);
-      } else {
-        setHasMore(false);
       }
     } catch (error) {
       console.error('이전 메시지 로딩 실패:', error);
