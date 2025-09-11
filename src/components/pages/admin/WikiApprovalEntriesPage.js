@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './WikiApproval.css';
 import './WikiApprovalEntries.css';
 
@@ -11,6 +11,28 @@ export default function NewEntryApproval({
   onReject, 
   formatDate 
 }) {
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [showRejectInputForId, setShowRejectInputForId] = useState(null);
+
+  const handleRejectClick = (entryId) => {
+    if (showRejectInputForId === entryId) {
+      setShowRejectInputForId(null);
+      setRejectionReason('');
+    } else {
+      setShowRejectInputForId(entryId);
+    }
+  };
+
+  const submitRejection = (entryId) => {
+    if (!rejectionReason.trim()) {
+      alert('거부 사유를 입력해주세요.');
+      return;
+    }
+    onReject(entryId, rejectionReason);
+    setShowRejectInputForId(null);
+    setRejectionReason('');
+  };
+  
   const renderEntryDetail = (detail) => {
     if (!detail) return <p>상세 정보를 불러오는 중입니다...</p>;
 
@@ -80,7 +102,7 @@ export default function NewEntryApproval({
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
-                      onReject(entry.id);
+                      handleRejectClick(entry.id);
                     }}
                     className="reject-button"
                   >
@@ -88,6 +110,25 @@ export default function NewEntryApproval({
                   </button>
                 </div>
               </div>
+              {showRejectInputForId === entry.id && (
+                <div 
+                  className="rejection-reason-box" 
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <textarea 
+                    placeholder="거부 사유를 입력해주세요"
+                    value={rejectionReason}
+                    onChange={(e) => setRejectionReason(e.target.value)}
+                  />
+                  <button 
+                    className="submit-rejection-button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      submitRejection(entry.id);
+                    }}
+                  >제출</button>
+                </div>
+              )}
               {selectedEntry?.id === entry.id && (
                 <div className="entry-details">
                   {entryDetail ? (

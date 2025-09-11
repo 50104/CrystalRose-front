@@ -51,9 +51,9 @@ export default function WikiApprovalPage() {
     }
   };
 
-  const handleReject = async (id) => {
+  const handleReject = async (id, rejectionReason) => {
     try {
-      await axiosInstance.patch(`/api/v1/admin/wiki/${id}/reject`);
+      await axiosInstance.patch(`/api/v1/admin/wiki/${id}/reject`, { reason: rejectionReason });
       setPendingEntries(pendingEntries.filter(entry => entry.id !== id));
       setMessage({ type: 'success', text: '도감이 거부되었습니다.' });
     } catch (err) {
