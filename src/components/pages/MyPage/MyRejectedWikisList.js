@@ -130,7 +130,7 @@ export default function MyRejectedWikisList({ rejectedList, pendingList, loading
                 {selectedRejected?.id === item.id && (
                   <div className="entry-details">
                     <p>거절 사유</p>
-                    <div className="reason-text">{item.description || '사유가 제공되지 않았습니다.'}</div>
+                    <div className="reason-text">{item.rejectionReason || '사유가 제공되지 않았습니다.'}</div>
                     {renderEntryDetail(rejectedDetail)}
                   </div>
                 )}
