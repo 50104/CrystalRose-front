@@ -159,13 +159,23 @@ export default function WikiApprovalPage() {
       <div className="tab-menu">
         <button 
           className={`tab-button ${activeTab === 'entries' ? 'active' : ''}`}
-          onClick={() => setActiveTab('entries')}
+          onClick={() => {
+            setActiveTab('entries');
+            setSelectedEntry(null);
+            setComparisonData(null);
+            setEntryDetail(null);
+          }}
         >
           신규 등록 승인 ({pendingEntries.length})
         </button>
         <button 
           className={`tab-button ${activeTab === 'modifications' ? 'active' : ''}`}
-          onClick={() => setActiveTab('modifications')}
+          onClick={() => {
+            setActiveTab('modifications');
+            setSelectedEntry(null);
+            setComparisonData(null);
+            setEntryDetail(null);
+          }}
         >
           수정 승인 ({pendingModifications.length})
         </button>
