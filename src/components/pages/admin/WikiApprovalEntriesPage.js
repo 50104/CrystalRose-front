@@ -34,7 +34,7 @@ export default function NewEntryApproval({
   };
   
   const renderEntryDetail = (detail) => {
-    if (!detail) return <p>상세 정보를 불러오는 중입니다...</p>;
+    if (!detail) return <p>상세 정보를 불러오는 중입니다</p>;
 
     return (
       <div className="entry-detail-box">
@@ -86,8 +86,10 @@ export default function NewEntryApproval({
             >
               <div className="entry-header">
                 <div className="entry-info">
-                  <h3 className="entry-name">{entry.name}</h3>
-                  <span className="entry-date">{formatDate(entry.createdDate)}</span>
+                  <div className="entry-topline">
+                    <h3 className="entry-name">{entry.name}</h3>
+                    <span className="entry-date">{formatDate(entry.createdDate)}</span>
+                  </div>
                 </div>
                 <div className="entry-actions">
                   <button 
@@ -131,6 +133,12 @@ export default function NewEntryApproval({
               )}
               {selectedEntry?.id === entry.id && (
                 <div className="entry-details">
+                  {typeof entry.rejectionReason === 'string' && entry.rejectionReason.trim() !== '' && (
+                    <>
+                      <p>보완 사유</p>
+                      <div className="reason-text">{entry.rejectionReason}</div>
+                    </>
+                  )}
                   {entryDetail ? (
                     renderEntryDetail(entryDetail)
                   ) : (
