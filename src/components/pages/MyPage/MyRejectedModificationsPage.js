@@ -32,7 +32,7 @@ export default function RejectedModificationList() {
   }, []);
 
   const goToResubmitPage = (id) => {
-    navigate(`/wiki/resubmit/${id}`);
+    navigate(`/wiki/resubmit/${id}`, { state: { targetType: 'MOD' } });
   };
 
   const formatDate = (dateString) => {

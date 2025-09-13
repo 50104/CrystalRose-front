@@ -37,6 +37,8 @@ export default function WikiRegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [hasModificationRecord, setHasModificationRecord] = useState(false);
+  const targetType = location.state?.targetType;
 
   useEffect(() => {
     const token = getAccess();
@@ -48,12 +50,33 @@ export default function WikiRegisterPage() {
   const loadWikiData = useCallback(async (wikiId) => {
     setLoading(true);
     try {
-      const endpoint = isResubmitMode
-        ? `/api/v1/wiki/user/modification/${wikiId}`
-        : `/api/v1/wiki/detail/${wikiId}`;
+      let response;
+      let wikiData;
 
-      const response = await axiosInstance.get(endpoint);
-      const wikiData = response.data;
+      if (isResubmitMode) {
+        if (targetType === 'MOD') { // 수정 요청
+          response = await axiosInstance.get(`/api/v1/wiki/user/modification/${wikiId}`);
+          wikiData = response.data;
+          setHasModificationRecord(true);
+        } else if (targetType === 'WIKI') { // 거절된 원본 도감
+          response = await axiosInstance.get(`/api/v1/wiki/user/rejected/${wikiId}`);
+          wikiData = response.data;
+          setHasModificationRecord(false);
+        } else {
+          try {
+            response = await axiosInstance.get(`/api/v1/wiki/user/modification/${wikiId}`);
+            wikiData = response.data;
+            setHasModificationRecord(true);
+          } catch (_) {
+            response = await axiosInstance.get(`/api/v1/wiki/user/rejected/${wikiId}`);
+            wikiData = response.data;
+            setHasModificationRecord(false);
+          }
+        }
+      } else {
+        response = await axiosInstance.get(`/api/v1/wiki/detail/${wikiId}`);
+        wikiData = response.data;
+      }
 
       setFormData({
         name: wikiData.name || '',
@@ -74,7 +97,6 @@ export default function WikiRegisterPage() {
         description: ''
       });
 
-      // 기존 이미지 URL이 있다면 formData에 설정
       if (wikiData.imageUrl) {
         setFormData(prev => ({ ...prev, imageUrl: wikiData.imageUrl }));
       }
@@ -84,7 +106,7 @@ export default function WikiRegisterPage() {
     } finally {
       setLoading(false);
     }
-  }, [isResubmitMode]);
+  }, [isResubmitMode, targetType]);
 
   useEffect(() => {
     if ((isEditMode || isResubmitMode) && id) {
@@ -130,7 +152,10 @@ export default function WikiRegisterPage() {
       if (isEditMode) {
         response = await axiosInstance.put(`/api/v1/wiki/modify/${id}`, dataToSubmit);
       } else if (isResubmitMode) {
-        response = await axiosInstance.patch(`/api/v1/wiki/user/modification/${id}/resubmit`, dataToSubmit);
+        const patchUrl = hasModificationRecord
+          ? `/api/v1/wiki/user/modification/${id}/resubmit`
+          : `/api/v1/wiki/user/${id}/resubmit`;
+        response = await axiosInstance.patch(patchUrl, dataToSubmit);
       } else {
         response = await axiosInstance.post(`/api/v1/wiki/register`, dataToSubmit);
       }
@@ -146,7 +171,11 @@ export default function WikiRegisterPage() {
           setFormData(initialFormData);
         }
 
-        navigate('/wiki/list');
+        if (isResubmitMode) {
+          navigate('/mypage/wiki/list');
+        } else {
+          navigate('/wiki/list');
+        }
       } else {
         setMessage({ type: 'error', text: '제출 중 오류가 발생했습니다.' });
       }
@@ -189,7 +218,7 @@ export default function WikiRegisterPage() {
     if (isEditMode && id) {
       navigate(`/wiki/detail/${id}`);
     } else if (isResubmitMode) {
-      navigate('/mypage/wiki/rejected');
+      navigate('/mypage/wiki/list');
     } else {
       navigate('/wiki/list');
     }

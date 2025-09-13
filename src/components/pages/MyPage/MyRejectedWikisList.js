@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './MyRejectedModificationsPage.css';
 import { axiosInstance } from '../../../utils/axios';
 
@@ -8,6 +9,7 @@ export default function MyRejectedWikisList({ rejectedList, pendingList, loading
   const [selectedRejected, setSelectedRejected] = useState(null);
   const [rejectedDetail, setRejectedDetail] = useState(null);
   const [pendingItems, setPendingItems] = useState(pendingList);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setPendingItems(pendingList || []);
@@ -97,6 +99,11 @@ export default function MyRejectedWikisList({ rejectedList, pendingList, loading
     }
   };
 
+  const goResubmitPage = (e, id) => {
+    e.stopPropagation();
+    navigate(`/wiki/resubmit/${id}`, { state: { targetType: 'WIKI' } });
+  };
+
   if (loading) {
     return (
       <div className="rejected-modification-container">
@@ -125,6 +132,14 @@ export default function MyRejectedWikisList({ rejectedList, pendingList, loading
                   <div className="entry-info">
                     <h3 className="entry-name">{item.name}</h3>
                     <span className="entry-date">{formatDate(item.createdDate)}</span>
+                  </div>
+                  <div className="entry-actions">
+                    <button
+                      className="approve-button"
+                      onClick={(e) => { e.stopPropagation(); goResubmitPage(e, item.id); }}
+                    >
+                      보완 제출
+                    </button>
                   </div>
                 </div>
                 {selectedRejected?.id === item.id && (
