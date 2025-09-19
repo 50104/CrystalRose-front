@@ -12,15 +12,47 @@ export const GetUser = () => {
   const [userId, setUserId] = useState('');
 
   useEffect(() => {
-    const token = getAccess();
-    if (token) {
-      setIsLogin(true);
-      const decodedToken = jwtDecode(token);
-      setUserNick(decodedToken.userNick);
-      setUserRole(decodedToken.userRole);
-      setUserEmail(decodedToken.userEmail);
-      setUserId(decodedToken.userId);
-    }
+    const checkToken = () => {
+      const token = getAccess();
+      if (token) {
+        try {
+          const decodedToken = jwtDecode(token);
+          // 토큰 만료 시간 체크
+          const currentTime = Date.now() / 1000;
+          if (decodedToken.exp > currentTime) {
+            setIsLogin(true);
+            setUserNick(decodedToken.userNick);
+            setUserRole(decodedToken.userRole);
+            setUserEmail(decodedToken.userEmail);
+            setUserId(decodedToken.userId);
+          } else { // 토큰 만료
+            setIsLogin(false);
+            setUserNick('');
+            setUserRole('');
+            setUserEmail('');
+            setUserId('');
+          }
+        } catch (error) { // 토큰 디코딩 실패
+          setIsLogin(false);
+          setUserNick('');
+          setUserRole('');
+          setUserEmail('');
+          setUserId('');
+        }
+      } else {
+        setIsLogin(false);
+        setUserNick('');
+        setUserRole('');
+        setUserEmail('');
+        setUserId('');
+      }
+    };
+    checkToken();
+    
+    // 토큰 변경 감지
+    const interval = setInterval(checkToken, 30000); // 30초
+    
+    return () => clearInterval(interval);
   }, []);
 
   return { isLogin, userNick, userRole, userEmail, userId };
