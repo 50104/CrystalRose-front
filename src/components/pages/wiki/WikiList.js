@@ -21,6 +21,9 @@ export default function WikiListPage() {
         const res = await axiosInstance.get('/api/roses/mine/wiki-ids');
         setDisabledWikiIds(res.data);
       } catch (err) {
+        if (err.response?.status === 401) {
+          return;
+        }
         console.error('내 장미 도감 ID 목록 조회 실패', err);
       }
     };
@@ -33,6 +36,9 @@ export default function WikiListPage() {
           .map(item => item.originalWikiId);
         setModificationTargetWikiIds(targetWikiIds);
       } catch (err) {
+        if (err.response?.status === 401) {
+          return;
+        }
         console.error('도감 수정 요청 목록 조회 실패', err);
       }
     };
@@ -40,8 +46,8 @@ export default function WikiListPage() {
     const init = async () => {
       if (isLogin) {
         await fetchMyWikiIds();
+        await fetchModificationTargets();
       }
-      await fetchModificationTargets();
       await fetchWikiEntries();
     };
 
