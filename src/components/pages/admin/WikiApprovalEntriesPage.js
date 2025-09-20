@@ -135,7 +135,7 @@ export default function NewEntryApproval({
                 <div className="entry-details">
                   {typeof entry.rejectionReason === 'string' && entry.rejectionReason.trim() !== '' && (
                     <>
-                      <p>보완 사유</p>
+                      <p>보완 내용</p>
                       <div className="reason-text">{entry.rejectionReason}</div>
                     </>
                   )}

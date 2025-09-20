@@ -85,7 +85,7 @@ export default function ModificationApproval({
           <p><strong>요청자:</strong> {comparisonData.requesterNick}</p>
           {comparisonData.description && (
             <div className="modification-reason">
-              <p><strong>수정 사유:</strong></p>
+              <p><strong>수정 내용:</strong></p>
               <div className="reason-text">{comparisonData.description}</div>
             </div>
           )}
