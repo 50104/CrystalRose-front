@@ -11,6 +11,7 @@ export default function WikiListPage() {
   const [disabledWikiIds, setDisabledWikiIds] = useState([]);
   const [modificationTargetWikiIds, setModificationTargetWikiIds] = useState([]);
   const [showUnregisteredOnly, setShowUnregisteredOnly] = useState(false);
+  const [showWishlistOnly, setShowWishlistOnly] = useState(false);
   const [wishlistIds, setWishlistIds] = useState([]);
   const { isLogin } = GetUser();
   const navigate = useNavigate();
@@ -157,10 +158,19 @@ export default function WikiListPage() {
   };
 
   const filteredWikiEntries = wikiEntries.filter(entry => {
-    if (!isLogin || !showUnregisteredOnly) return true;
+    if (!isLogin) return true;
     
-    const isRegistered = disabledWikiIds.includes(entry.id);
-    return !isRegistered;
+    if (showUnregisteredOnly) { // 등록 가능한 장미
+      const isRegistered = disabledWikiIds.includes(entry.id);
+      if (isRegistered) return false;
+    }
+    
+    if (showWishlistOnly) { // 위시리스트
+      const isInWishlist = wishlistIds.includes(entry.id);
+      if (!isInWishlist) return false;
+    }
+    
+    return true;
   });
 
   if (loading) {
@@ -188,16 +198,27 @@ export default function WikiListPage() {
         <h1 className="wiki-list-title">장미 도감 목록</h1>
         <div className="wiki-header-controls">
           {isLogin && (
-            <div className="wiki-filter-checkbox">
-              <label className="checkbox-container">
-                <input
-                  type="checkbox"
-                  checked={showUnregisteredOnly}
-                  onChange={(e) => setShowUnregisteredOnly(e.target.checked)}
-                />
-                <span className="checkmark"></span>
-                <span className="checkbox-label">내 장미로 등록 가능한 장미</span>
-              </label>
+            <div className="wiki-filter-controls">
+              <div className="wiki-filter-star">
+                <div 
+                  className={`filter-star ${showUnregisteredOnly ? 'active' : ''}`}
+                  onClick={() => setShowUnregisteredOnly(!showUnregisteredOnly)}
+                  title={showUnregisteredOnly ? '모든 장미 보기' : '등록 가능한 장미만 보기'}
+                >
+                  🌹
+                </div>
+                <span className="filter-label">등록 가능</span>
+              </div>
+              <div className="wiki-filter-star">
+                <div 
+                  className={`filter-star ${showWishlistOnly ? 'active' : ''}`}
+                  onClick={() => setShowWishlistOnly(!showWishlistOnly)}
+                  title={showWishlistOnly ? '모든 장미 보기' : '위시리스트 장미만 보기'}
+                >
+                  ★
+                </div>
+                <span className="filter-label">위시리스트</span>
+              </div>
             </div>
           )}
           <div onClick={() => navigate('/wiki/register')} className="wiki-register-button">
@@ -209,9 +230,17 @@ export default function WikiListPage() {
       {filteredWikiEntries.length === 0 ? (
         <div className="wiki-list-no-entries">
           {isLogin 
-            ? (showUnregisteredOnly 
-                ? '등록 가능한 장미 도감이 없습니다.' 
-                : '등록된 장미 도감이 없습니다.')
+            ? (() => {
+                if (showUnregisteredOnly && showWishlistOnly) {
+                  return '등록 가능하고 위시리스트에 있는 장미 도감이 없습니다.';
+                } else if (showUnregisteredOnly) {
+                  return '등록 가능한 장미 도감이 없습니다.';
+                } else if (showWishlistOnly) {
+                  return '위시리스트에 있는 장미 도감이 없습니다.';
+                } else {
+                  return '등록된 장미 도감이 없습니다.';
+                }
+              })()
             : '등록된 장미 도감이 없습니다.'
           }
         </div>

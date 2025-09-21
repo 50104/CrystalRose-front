@@ -18,66 +18,53 @@
   gap: 1rem;
 }
 
-.wiki-filter-checkbox {
+.wiki-filter-controls {
   display: flex;
+  gap: 1rem;
   align-items: center;
 }
 
-.checkbox-container {
+.wiki-filter-star {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.filter-star {
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #374151;
-}
-
-.checkbox-container input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.checkmark {
-  position: relative;
-  height: 18px;
-  width: 18px;
+  justify-content: center;
   background-color: #f3f4f6;
   border: 2px solid #d1d5db;
-  border-radius: 3px;
-  margin-right: 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
   transition: all 0.3s ease;
+  user-select: none;
 }
 
-.checkbox-container:hover .checkmark {
+.filter-star:hover {
   border-color: #ec4899;
+  background-color: #fce7f3;
+  transform: scale(1.1);
 }
 
-.checkbox-container input:checked ~ .checkmark {
+.filter-star.active {
   background-color: #ec4899;
   border-color: #ec4899;
+  color: white;
+  box-shadow: 0 4px 8px rgba(236, 72, 153, 0.3);
 }
 
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-  left: 5px;
-  top: 2px;
-  width: 4px;
-  height: 8px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-}
-
-.checkbox-container input:checked ~ .checkmark:after {
-  display: block;
-}
-
-.checkbox-label {
+.filter-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-align: center;
   white-space: nowrap;
-  user-select: none;
 }
 
 .wiki-list-title {
@@ -433,8 +420,19 @@
     align-items: stretch;
   }
 
-  .wiki-filter-checkbox {
+  .wiki-filter-controls {
+    gap: 0.75rem;
     justify-content: center;
+  }
+
+  .filter-star {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .filter-label {
+    font-size: 0.7rem;
   }
 
   .checkbox-label {
