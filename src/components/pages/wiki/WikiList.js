@@ -11,6 +11,7 @@ export default function WikiListPage() {
   const [disabledWikiIds, setDisabledWikiIds] = useState([]);
   const [modificationTargetWikiIds, setModificationTargetWikiIds] = useState([]);
   const [showUnregisteredOnly, setShowUnregisteredOnly] = useState(false);
+  const [wishlistIds, setWishlistIds] = useState([]);
   const { isLogin } = GetUser();
   const navigate = useNavigate();
 
@@ -44,10 +45,24 @@ export default function WikiListPage() {
       }
     };
 
+    const fetchUserWishlist = async () => {
+      try {
+        const res = await axiosInstance.get('/api/v1/wiki/wishlist');
+        const wishlistWikiIds = res.data.map(item => item.wikiId);
+        setWishlistIds(wishlistWikiIds);
+      } catch (err) {
+        if (err.response?.status === 401) {
+          return;
+        }
+        console.error('위시리스트 조회 실패', err);
+      }
+    };
+
     const init = async () => {
       if (isLogin) {
         await fetchMyWikiIds();
         await fetchModificationTargets();
+        await fetchUserWishlist();
       }
       await fetchWikiEntries();
     };
@@ -96,6 +111,30 @@ export default function WikiListPage() {
         }
       }
     });
+  };
+
+  const handleWishlistToggle = async (e, wikiId) => {
+    e.stopPropagation();
+    
+    if (!isLogin) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    try {
+      const isInWishlist = wishlistIds.includes(wikiId);
+      
+      if (isInWishlist) { // 위시 제거
+        await axiosInstance.delete(`/api/v1/wiki/wishlist/${wikiId}`);
+        setWishlistIds(prev => prev.filter(id => id !== wikiId));
+      } else { // 위시 추가
+        await axiosInstance.post('/api/v1/wiki/wishlist', { wikiId });
+        setWishlistIds(prev => [...prev, wikiId]);
+      }
+    } catch (err) {
+      console.error('위시리스트 토글 실패', err);
+      alert('위시리스트 처리에 실패했습니다.');
+    }
   };
 
   const fetchWikiEntries = async () => {
@@ -184,6 +223,15 @@ export default function WikiListPage() {
                 <div className="wiki-image-wrapper">
                   {entry.imageUrl && (
                     <img src={entry.imageUrl} alt={entry.name} className="wiki-entry-image" />
+                  )}
+                  {isLogin && (
+                    <div
+                      className={`wishlist-star ${wishlistIds.includes(entry.id) ? 'active' : ''}`}
+                      onClick={(e) => handleWishlistToggle(e, entry.id)}
+                      title={wishlistIds.includes(entry.id) ? '위시리스트에서 제거' : '위시리스트에 추가'}
+                    >
+                      ★
+                    </div>
                   )}
                   {isLogin && !disabledWikiIds.includes(entry.id) && (
                     <div
