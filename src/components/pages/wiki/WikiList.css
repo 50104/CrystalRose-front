@@ -12,6 +12,74 @@
   margin-bottom: 1rem;
 }
 
+.wiki-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.wiki-filter-checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.checkbox-container input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkmark {
+  position: relative;
+  height: 18px;
+  width: 18px;
+  background-color: #f3f4f6;
+  border: 2px solid #d1d5db;
+  border-radius: 3px;
+  margin-right: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.checkbox-container:hover .checkmark {
+  border-color: #ec4899;
+}
+
+.checkbox-container input:checked ~ .checkmark {
+  background-color: #ec4899;
+  border-color: #ec4899;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkbox-label {
+  white-space: nowrap;
+  user-select: none;
+}
+
 .wiki-list-title {
   font-size: 2rem;
   font-weight: 700;
@@ -317,4 +385,27 @@
 
 .wiki-register-overlay-button:hover {
   background-color: rgba(79, 70, 229, 0.95);
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  .wiki-header-controls {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  .wiki-filter-checkbox {
+    justify-content: center;
+  }
+
+  .checkbox-label {
+    font-size: 0.8rem;
+  }
+
+  .wiki-register-button {
+    text-align: center;
+    padding: 0.625rem 1rem;
+    font-size: 0.9rem;
+  }
 }

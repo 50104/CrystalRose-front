@@ -10,6 +10,7 @@ export default function WikiListPage() {
   const [error, setError] = useState(null);
   const [disabledWikiIds, setDisabledWikiIds] = useState([]);
   const [modificationTargetWikiIds, setModificationTargetWikiIds] = useState([]);
+  const [showUnregisteredOnly, setShowUnregisteredOnly] = useState(false);
   const { isLogin } = GetUser();
   const navigate = useNavigate();
 
@@ -116,6 +117,13 @@ export default function WikiListPage() {
     }
   };
 
+  const filteredWikiEntries = wikiEntries.filter(entry => {
+    if (!isLogin || !showUnregisteredOnly) return true;
+    
+    const isRegistered = disabledWikiIds.includes(entry.id);
+    return !isRegistered;
+  });
+
   if (loading) {
     return (
       <div className="wiki-list-loading-container">
@@ -139,18 +147,38 @@ export default function WikiListPage() {
     <div className="wiki-list-container">
       <div className="wiki-list-header">
         <h1 className="wiki-list-title">장미 도감 목록</h1>
-        <div onClick={() => navigate('/wiki/register')} className="wiki-register-button">
-          + 도감 등록
+        <div className="wiki-header-controls">
+          {isLogin && (
+            <div className="wiki-filter-checkbox">
+              <label className="checkbox-container">
+                <input
+                  type="checkbox"
+                  checked={showUnregisteredOnly}
+                  onChange={(e) => setShowUnregisteredOnly(e.target.checked)}
+                />
+                <span className="checkmark"></span>
+                <span className="checkbox-label">내 장미로 등록 가능한 장미</span>
+              </label>
+            </div>
+          )}
+          <div onClick={() => navigate('/wiki/register')} className="wiki-register-button">
+            + 도감 등록
+          </div>
         </div>
       </div>
       
-      {wikiEntries.length === 0 ? (
+      {filteredWikiEntries.length === 0 ? (
         <div className="wiki-list-no-entries">
-          등록된 장미 도감이 없습니다.
+          {isLogin 
+            ? (showUnregisteredOnly 
+                ? '등록 가능한 장미 도감이 없습니다.' 
+                : '등록된 장미 도감이 없습니다.')
+            : '등록된 장미 도감이 없습니다.'
+          }
         </div>
       ) : (
         <div className="wiki-entries-grid">
-          {wikiEntries.map(entry => (
+          {filteredWikiEntries.map(entry => (
             <div key={entry.id} className="wiki-entry-card-link" onClick={() => handleDetailNavigation(entry.id)}>
               <div className="wiki-entry-card">
                 <div className="wiki-image-wrapper">
