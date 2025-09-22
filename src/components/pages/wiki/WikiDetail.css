@@ -382,3 +382,66 @@
 .wiki-detail-delete-button:hover {
   background-color: #cd98ff;
 }
+
+/* 위시리스트 별 아이콘 */
+.wiki-detail-image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.wishlist-star-detail {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  color: #9ca3af;
+  transition: all 0.3s ease;
+  z-index: 2;
+  user-select: none;
+}
+
+.wishlist-star-detail:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
+  color: #fbbf24;
+}
+
+.wishlist-star-detail.active {
+  color: #fbbf24;
+  text-shadow: 0 0 10px #fbbf24;
+  background-color: rgba(251, 191, 36, 0.2);
+}
+
+.wishlist-star-detail.loading {
+  opacity: 0.6;
+  pointer-events: none;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  .wishlist-star-detail {
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+    top: 0.75rem;
+    left: 0.75rem;
+  }
+}

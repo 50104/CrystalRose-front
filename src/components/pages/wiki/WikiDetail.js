@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link as RouterLink } from 'react-router-dom';
 import { useUserData } from '../../../utils/api/user';
 import { getAccessToken } from '@utils/api/token';
-import { noAuthAxios } from '@utils/axios';
+import { noAuthAxios, axiosInstance } from '@utils/axios';
 import { jwtDecode } from 'jwt-decode';
 import './WikiDetail.css';
 import { getAccess } from '../../../utils/tokenStore';
@@ -14,6 +14,8 @@ export default function WikiDetailPage() {
   const [error, setError] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
   const { isLogin } = useUserData();
   
     useEffect(() => {
@@ -106,6 +108,44 @@ export default function WikiDetailPage() {
 
     fetchWikiEntryDetail();
   }, [wikiId]);
+
+  useEffect(() => {
+    const checkWishlistStatus = async () => {
+      if (!isLogin || !wikiId) return;
+      
+      try {
+        const response = await axiosInstance.get(`/api/v1/wiki/wishlist/check/${wikiId}`);
+        setIsInWishlist(response.data.isInWishlist);
+      } catch (err) {
+        console.error('위시리스트 상태 확인 실패', err);
+      }
+    };
+
+    checkWishlistStatus();
+  }, [isLogin, wikiId]);
+
+  const handleWishlistToggle = async () => {
+    if (!isLogin) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
+    setWishlistLoading(true);
+    try {
+      if (isInWishlist) { // 위시 제거
+        await axiosInstance.delete(`/api/v1/wiki/wishlist/${wikiId}`);
+        setIsInWishlist(false);
+      } else { // 위시 추가
+        await axiosInstance.post('/api/v1/wiki/wishlist', { wikiId: parseInt(wikiId) });
+        setIsInWishlist(true);
+      }
+    } catch (err) {
+      console.error('위시리스트 토글 실패', err);
+      alert('위시리스트 처리에 실패했습니다.');
+    } finally {
+      setWishlistLoading(false);
+    }
+  };
 
   const retryFetch = async () => {
     setLoading(true);
@@ -220,7 +260,18 @@ export default function WikiDetailPage() {
       <div className="wiki-detail-content-wrapper">
         <div className="wiki-detail-left-section">
           {wikiEntry.imageUrl && (
-            <img src={wikiEntry.imageUrl} alt={wikiEntry.name} className="wiki-detail-image" />
+            <div className="wiki-detail-image-container">
+              <img src={wikiEntry.imageUrl} alt={wikiEntry.name} className="wiki-detail-image" />
+              {isLogin && (
+                <div
+                  className={`wishlist-star-detail ${isInWishlist ? 'active' : ''} ${wishlistLoading ? 'loading' : ''}`}
+                  onClick={handleWishlistToggle}
+                  title={isInWishlist ? '위시리스트에서 제거' : '위시리스트에 추가'}
+                >
+                  ★
+                </div>
+              )}
+            </div>
           )}
           {!isMobile && (
             <div className="wiki-detail-image-info">
