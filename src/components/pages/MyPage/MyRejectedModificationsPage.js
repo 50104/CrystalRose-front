@@ -161,6 +161,11 @@ export default function RejectedModificationList() {
                     <span className="entry-date">{formatDate(item.createdDate)}</span>
                   </div>
                   <div className="entry-actions">
+                    {item.remainingDays !== undefined && item.remainingDays !== null && (
+                      <span className="deletion-warning">
+                        {item.remainingDays === 0 ? '제출 마감일' : `${item.remainingDays}일 후 제출 마감`}
+                      </span>
+                    )}
                     <button 
                       onClick={e => { e.stopPropagation(); goToResubmitPage(item.id); }}
                       className="approve-button"
