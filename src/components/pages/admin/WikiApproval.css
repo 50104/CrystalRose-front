@@ -78,6 +78,12 @@
   display: flex;
 }
 
+.entry-topline {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
 .entry-name {
   font-size: 1.125rem;
   font-weight: 600;
@@ -214,10 +220,17 @@
     margin-bottom: 0.5rem;
   }
 
-  .entry-date {
+  .entry-topline {
     display: flex;
-    justify-content: center;
+    width: 100%;
     align-items: center;
+  }
+
+  .entry-date {
     margin-left: auto;
+    text-align: right;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
   }
 }
