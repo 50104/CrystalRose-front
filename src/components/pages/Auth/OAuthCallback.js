@@ -15,7 +15,7 @@ export function OAuthCallback() {
           throw new Error('네트워크 연결을 확인해주세요.');
         }
 
-        setStatus('토큰 요청 중...');
+        setStatus('토큰 요청 중');
         
         // 재시도 로직으로 토큰 요청
         const response = await retryableRequest(
@@ -28,7 +28,7 @@ export function OAuthCallback() {
         if (response.data.accessToken) {
           setAccess(response.data.accessToken);
           // console.log('Access Token 저장 완료');
-          setStatus('로그인 완료! 페이지를 이동합니다...');
+          setStatus('로그인 완료! 페이지를 이동합니다');
           
           // 약간의 지연 후 리디렉션
           setTimeout(() => {

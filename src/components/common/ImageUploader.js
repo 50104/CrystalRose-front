@@ -203,7 +203,7 @@ const ImageUploader = ({
           {uploading ? (
             <div className="upload-status">
               <div className="spinner"></div>
-              <span>업로드 중... {uploadProgress}%</span>
+              <span>업로드 중 {uploadProgress}%</span>
               {uploadProgress > 0 && (
                 <div className="image-progress-bar">
                   <div 

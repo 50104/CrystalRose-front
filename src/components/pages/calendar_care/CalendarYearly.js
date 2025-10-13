@@ -75,7 +75,7 @@ const YearlyCalendar = ({
       })}
       {loading && (
         <div className="loading-indicator">
-          <div className="spinner">불러오는 중</div>
+          <div className="spinner"></div>
         </div>
       )}
     </div>

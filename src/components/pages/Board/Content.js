@@ -190,7 +190,7 @@ function Content() {
     }
   };
 
-  if (!content) return <div>Loading...</div>;
+  if (!content) return <div>Loading</div>;
   const isNotice = content.boardTag === '공지';
   const isAdminWriter = content.writer?.userNick?.toLowerCase() === 'admin';
 

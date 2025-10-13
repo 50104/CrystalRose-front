@@ -243,7 +243,7 @@ export default function RoseRegister({ onSuccess }) {
             className="rose-submit-button"
             disabled={isSubmitting || !isLogin || !isFormValid()}
           >
-            {isSubmitting ? '처리 중...' : isEditMode ? '수정' : '장미 등록'}
+            {isSubmitting ? '처리 중' : isEditMode ? '수정' : '장미 등록'}
           </button>
           <button
             type="button"

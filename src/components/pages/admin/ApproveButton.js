@@ -20,7 +20,7 @@ const ApproveButton = ({ id }) => {
       onClick={() => mutation.mutate(id)}
       disabled={mutation.isLoading}
     >
-      {mutation.isLoading ? '처리 중...' : '승인'}
+      {mutation.isLoading ? '처리 중' : '승인'}
     </button>
   );
 };

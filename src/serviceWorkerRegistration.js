@@ -97,7 +97,7 @@ function registerValidSW(swUrl, config) {
       if (!registerValidSW.retried) {
         registerValidSW.retried = true;
         setTimeout(() => {
-          // console.log('Retrying service worker registration...');
+          // console.log('Retrying service worker registration');
           registerValidSW(swUrl, config);
         }, 3000);
       }
