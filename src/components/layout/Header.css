@@ -197,21 +197,21 @@ body.update-alert-active .calendar-toolbar {
   }
 
   .nav_menu {
-    flex: 1;
+    /* flex: 1; */
     display: flex;
     align-items: center;
-    padding-left: 15px !important;
+    padding-left: 20px !important;
   }
 
   .nav_menu ul {
     flex-wrap: nowrap;
     white-space: nowrap;
-    font-size: 14px;
-    gap: 20px;
+    font-size: 15px;
+    gap: 33px;
     justify-content: center;
     align-items: center;
     margin: 0;
-    margin-right: 15px;
+    margin-right: 33px;
   }
 
   .nav_menu ul li {

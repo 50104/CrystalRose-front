@@ -21,7 +21,6 @@ const Header = ({ updateAvailable, reloadPage }) => {
     loadUser();
   }, [setUser]);
 
-  // 버전 업데이트 알림 상태에 따라 body에 클래스 추가/제거
   useEffect(() => {
     if (updateAvailable) {
       document.body.classList.add('update-alert-active');
@@ -61,7 +60,7 @@ const Header = ({ updateAvailable, reloadPage }) => {
             <div
               onClick={() => {
                 logoutFunction();
-                setUser(null); // ✅ 로그아웃 시 Context 비움
+                setUser(null);
               }}
               className="cursor"
             >
@@ -83,7 +82,7 @@ const Header = ({ updateAvailable, reloadPage }) => {
             <li><a href="/wiki/list">도감</a></li>
             <li><a href="/roses/list">내 장미</a></li>
             <li><a href="/list">게시판</a></li>
-            <li><a href="/groupchatting/list">그룹채팅</a></li>
+            {/* <li><a href="/groupchatting/list">그룹채팅</a></li> */}
           </ul>
           <ul className="mobile-only">
             <li>

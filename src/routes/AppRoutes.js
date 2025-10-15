@@ -97,9 +97,9 @@ function AppRoutes() {
 
         {/* 채팅 관련 */}
         {/* <Route path="/memberList" element={<MemberList />} /> */}
-        <Route path="/chatpage/:roomId" element={<StompChatPage />} />
-        <Route path="/groupChatting/list" element={<GroupChattingList />} />
-        <Route path="/my/chat/page" element={<MyChatPage />} />
+        <Route path="/501chatpage/:roomId" element={<StompChatPage />} />
+        <Route path="/501groupChatting/list" element={<GroupChattingList />} />
+        <Route path="/501my/chat/page" element={<MyChatPage />} />
 
         {/* 신고 차단 */}
         <Route path="/mypage/blocks" element={<MyBlockList />} />
